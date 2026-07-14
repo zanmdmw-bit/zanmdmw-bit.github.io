@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#eee5d6">
+  <title>人物档案 · 双陆世界</title>
+  <style>
+    :root{--paper:#f3ecdf;--card:#fffaf1;--ink:#2f2923;--muted:#7d7164;--line:#d8c9b3;--copper:#a75b38;--sage:#5e7668;--shadow:0 18px 48px rgba(68,48,29,.11)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 86% 0,rgba(199,123,79,.17),transparent 34%),linear-gradient(135deg,var(--paper),#faf6ee 58%,#eadfce);color:var(--ink);font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif;min-height:100vh}
+    a{color:inherit}.grain{position:fixed;inset:0;pointer-events:none;opacity:.2;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.07'/%3E%3C/svg%3E")}
+    header{height:74px;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:0 clamp(18px,4vw,64px);border-bottom:1px solid rgba(119,95,66,.17);background:rgba(249,244,235,.72);backdrop-filter:blur(14px);position:sticky;top:0;z-index:20}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none}.sigil{display:grid;place-items:center;width:39px;height:39px;border-radius:12px;background:var(--ink);color:#fff7ea;font:800 12px Georgia;letter-spacing:.12em}.brand b{font:700 17px Georgia,"Microsoft YaHei"}.brand small{display:block;color:var(--muted);font-size:9px;letter-spacing:.13em;margin-top:2px}.back{padding:9px 13px;border:1px solid var(--line);border-radius:999px;text-decoration:none;background:rgba(255,250,241,.7);font-size:12px}
+    main{max-width:1400px;margin:auto;padding:38px clamp(18px,4vw,64px) 80px}.hero{display:grid;grid-template-columns:minmax(330px,.78fr) minmax(0,1.22fr);gap:28px;align-items:start}.portrait-shell{position:sticky;top:102px}.portrait{aspect-ratio:3/4;border-radius:28px;overflow:hidden;background:linear-gradient(145deg,#e8d8c2,#f9f1e6);border:1px solid rgba(182,156,120,.45);box-shadow:var(--shadow);position:relative}.portrait img{width:100%;height:100%;object-fit:cover;display:block}.portrait .fallback{height:100%;display:grid;place-items:center;font:700 120px Georgia;color:rgba(167,91,56,.35)}.concept{position:absolute;left:16px;right:16px;bottom:15px;padding:10px 12px;border-radius:13px;background:rgba(255,250,241,.84);backdrop-filter:blur(10px);color:#6e6256;font-size:10px;line-height:1.5}
+    .identity{padding:22px 8px 30px}.eyebrow{margin:0 0 11px;color:var(--copper);font-size:10px;font-weight:800;letter-spacing:.18em}.identity h1{font:700 clamp(48px,7vw,92px)/.98 Georgia,"Microsoft YaHei";margin:0;letter-spacing:-.05em}.role{font:700 18px Georgia,"Microsoft YaHei";color:var(--sage);margin:14px 0 18px}.lead{max-width:760px;color:#665c51;line-height:1.9;font-size:14px}.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}.chip{padding:8px 11px;border:1px solid #dfcdb3;border-radius:999px;background:#f1e6d6;color:#6f5c48;font-size:11px}
+    .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin:0 0 20px}.fact,.section{background:rgba(255,250,241,.88);border:1px solid rgba(182,156,120,.42);box-shadow:0 8px 27px rgba(68,48,29,.055);border-radius:18px}.fact{padding:16px}.fact small{display:block;color:var(--muted);font-size:10px;margin-bottom:6px}.fact b{font:700 16px Georgia,"Microsoft YaHei"}
+    .section-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.section{padding:22px}.section.wide{grid-column:1/-1}.section h2{margin:0 0 13px;font:700 18px Georgia,"Microsoft YaHei"}.section h2:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--copper);margin-right:9px;vertical-align:2px}.section .body{white-space:pre-wrap;color:#5f564d;font-size:13px;line-height:1.9}.section .body strong{color:var(--ink)}
+    .pager{display:flex;justify-content:space-between;gap:12px;margin-top:24px}.pager a{flex:1;text-decoration:none;border:1px solid var(--line);border-radius:16px;background:rgba(255,250,241,.76);padding:15px 18px;font-size:12px}.pager a:last-child{text-align:right}.pager small{display:block;color:var(--muted);margin-bottom:4px}
+    .loading{position:fixed;inset:0;z-index:99;background:var(--paper);display:grid;place-items:center;color:var(--muted)}.loading.hide{opacity:0;visibility:hidden;transition:.3s}.loading b{display:block;color:var(--ink);font:700 28px Georgia;margin-bottom:8px}
+    @media(max-width:900px){.hero{grid-template-columns:1fr}.portrait-shell{position:relative;top:0;max-width:620px;margin:auto}.portrait{aspect-ratio:4/5}.section-grid{grid-template-columns:1fr}.section.wide{grid-column:auto}}
+    @media(max-width:560px){header{height:64px}.hero{gap:16px}.identity h1{font-size:50px}.facts{grid-template-columns:1fr}.portrait{border-radius:20px}.section{padding:18px}.pager{display:grid}.pager a:last-child{text-align:left}}
+  </style>
+</head>
+<body>
+  <div class="grain"></div>
+  <div class="loading" id="loading"><div><b>人物档案</b>正在调取唯一当前版……</div></div>
+  <header><a class="brand" href="index.html"><span class="sigil">RP</span><span><b>双陆世界</b><small>PERSON ARCHIVE</small></span></a><a class="back" href="index.html#characters">← 返回人物列表</a></header>
+  <main>
+    <div class="hero">
+      <div class="portrait-shell"><div class="portrait" id="portrait"></div></div>
+      <div>
+        <section class="identity"><p class="eyebrow" id="group">PERSON & RELATIONS</p><h1 id="name">—</h1><p class="role" id="role">—</p><p class="lead" id="lead"></p><div class="chips" id="chips"></div></section>
+        <div class="facts" id="facts"></div>
+        <div class="section-grid" id="sections"></div>
+        <div class="pager" id="pager"></div>
+      </div>
+    </div>
+  </main>
+  <script>
+    const PEOPLE={
+      '千叶':['qianye','资源核心 · 单手剑冒险者'],'方雪':['fangxue','商业谈判 · 现实执行'],'沈鸢':['shenyuan','视觉顾问 · 远程魔法'],'陈苗':['chenmiao','总账 · 风险记录'],'许清禾':['xuqinghe','医疗卫生 · 治疗魔法'],'林雁':['linyan','警戒防务 · 近战训练'],'孟晓雨':['mengxiaoyu','后勤辅助 · 基础魔法'],'周小曼':['zhouxiaoman','短弓 · 快速反应'],'江澜':['jianglan','后排观察 · 高生存'],'唐梨':['tangli','妆发服装 · 精细魔法'],
+      '杜晴':['duqing','治疗学习 · 生活辅助'],'夏芸':['xiayun','治疗防守 · 家庭照护'],'顾岚':['gulan','远程魔法 · 精细控制'],'秦蓉':['qinrong','长矛护卫 · 前排防守'],'周曼宁':['zhoumanning','治疗清洁 · 照护辅助'],'罗芳':['luofang','短矛防守 · 女儿保护'],'陆婉':['luwan','弓箭观察 · 生活魔法'],'秦瑶':['qinyao','机动远程 · 短弓魔法'],'艾琳':['ailin','本地礼仪 · 家务管理'],'诺拉':['nuola','家务学习 · 恢复适应'],'史莱姆公主':['slime-princess','智慧恒辉胶 · 特殊伙伴']
+    };
+    const ORDER=Object.keys(PEOPLE),CORE=ORDER.slice(0,10),NEW=ORDER.slice(10,18),LOCAL=['艾琳','诺拉'];
+    const $=s=>document.querySelector(s),esc=s=>(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    async function gunzip(url){const r=await fetch(url);if(!r.ok)throw Error(url+' '+r.status);const ds=new DecompressionStream('gzip');return await new Response(r.body.pipeThrough(ds)).text()}
+    function allSections(text){const clean=text.replace(/\r/g,''),re=/\n={20,}\n([^\n]+)\n={20,}\n/g,h=[...clean.matchAll(re)];return h.map((m,i)=>({title:m[1].trim(),body:clean.slice(m.index+m[0].length,i+1<h.length?h[i+1].index:clean.length).trim()}))}
+    function field(body,label){const m=body.match(new RegExp('(?:^|\\n)'+label+'：\\s*\\n([^\\n]+)'));return m?m[1].trim().replace(/。$/,''):'档案未明确记录'}
+    function blocks(body){const re=/(?:^|\n)([^\n：]{1,32})：\s*\n/g,h=[...body.matchAll(re)];if(!h.length)return[{title:'完整记录',body}];const out=[];if(h[0].index>0&&body.slice(0,h[0].index).trim())out.push({title:'补充记录',body:body.slice(0,h[0].index).trim()});h.forEach((m,i)=>out.push({title:m[1].trim(),body:body.slice(m.index+m[0].length,i+1<h.length?h[i+1].index:body.length).trim()}));return out.filter(x=>x.body)}
+    function group(name){if(CORE.includes(name))return'核心成员';if(NEW.includes(name))return'后加入成员';if(LOCAL.includes(name))return'本土成员';if(name==='史莱姆公主')return'特殊伙伴';return'结构与外部节点'}
+    function resolve(id,sections){const bySlug=ORDER.find(n=>PEOPLE[n][0]===id);return bySlug||sections.find(x=>x.title===id)?.title||'千叶'}
+    function href(name){return `person.html?id=${encodeURIComponent(PEOPLE[name]?.[0]||name)}`}
+    async function init(){
+      try{
+        const text=await gunzip('assets/characters.txt.gz'),records=allSections(text),id=new URLSearchParams(location.search).get('id')||'qianye',name=resolve(id,records),record=records.find(x=>x.title===name);
+        if(!record)throw Error('未找到该人物档案');
+        const profile=PEOPLE[name],role=profile?.[1]||group(name),items=blocks(record.body);
+        document.title=`${name} · 人物档案 · 双陆世界`;$('#name').textContent=name;$('#role').textContent=role;$('#group').textContent=`${group(name)} · PERSON ARCHIVE`;
+        const age=field(record.body,'年龄'),origin=field(record.body,'出身')!=='档案未明确记录'?field(record.body,'出身'):field(record.body,'背景'),level=field(record.body,'等级');
+        $('#lead').textContent=(items.find(x=>/性格|当前心理|定位|背景/.test(x.title))?.body||record.body).replace(/\n+/g,' · ').slice(0,280);
+        $('#chips').innerHTML=[group(name),role,field(record.body,'与千叶')].filter(x=>x&&x!=='档案未明确记录').map(x=>`<span class="chip">${esc(x)}</span>`).join('');
+        $('#facts').innerHTML=[['年龄',age],['前职业 / 出身',origin],['等级',level]].map(x=>`<div class="fact"><small>${x[0]}</small><b>${esc(x[1])}</b></div>`).join('');
+        $('#sections').innerHTML=items.map((x,i)=>`<section class="section ${x.body.length>700?'wide':''}"><h2>${esc(x.title)}</h2><div class="body">${esc(x.body)}</div></section>`).join('');
+        const portrait=profile?`assets/portraits/${profile[0]}.webp`:'';$('#portrait').innerHTML=portrait?`<img src="${portrait}" alt="${esc(name)}真人风角色肖像"><div class="concept">真人风视觉提案 · 依据人物职责与性格生成；未在正史中明确的外貌细节不作为世界观定稿。</div>`:`<div class="fallback">${esc(name[0]||'？')}</div><div class="concept">该节点暂无人物肖像；完整文字仍来自唯一当前档案。</div>`;
+        const idx=ORDER.indexOf(name);if(idx>=0){const prev=ORDER[(idx-1+ORDER.length)%ORDER.length],next=ORDER[(idx+1)%ORDER.length];$('#pager').innerHTML=`<a href="${href(prev)}"><small>上一位</small>${esc(prev)}</a><a href="${href(next)}"><small>下一位</small>${esc(next)}</a>`}
+        $('#loading').classList.add('hide');
+      }catch(e){$('#loading').innerHTML=`<div><b>档案载入失败</b>${esc(e.message)}</div>`}
+    }
+    init();
+  </script>
+</body>
+</html>
