@@ -102,8 +102,8 @@
     .character-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}
     .char-card{display:block;background:rgba(255,250,241,.88);border:1px solid rgba(182,156,120,.42);border-radius:20px;overflow:hidden;box-shadow:0 8px 24px rgba(68,48,29,.05);cursor:pointer;transition:.2s;color:inherit;text-decoration:none;min-height:100%}
     .char-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:#c8aa82}
-    .char-photo{height:230px;background:linear-gradient(145deg,#e9dac4,#f9f1e6);overflow:hidden;position:relative}
-    .char-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s ease}.char-card:hover .char-photo img{transform:scale(1.025)}
+    .char-photo{height:250px;background:linear-gradient(145deg,#e9dac4,#f9f1e6);overflow:hidden;position:relative}
+    .char-photo img{width:100%;height:100%;object-fit:cover;object-position:center 22%;display:block;transition:transform .4s ease}.char-card:hover .char-photo img{transform:scale(1.025)}
     .char-photo span{position:absolute;left:13px;bottom:12px;padding:5px 9px;border-radius:999px;background:rgba(255,250,241,.88);backdrop-filter:blur(8px);font-size:10px;color:var(--muted)}
     .char-copy{padding:17px 18px 19px}.char-top{display:flex;gap:13px;align-items:center}.char-top .avatar{width:52px;height:52px;border-radius:16px;font-size:18px;margin:0}
     .char-top h3{margin:0;font:700 17px Georgia,"Microsoft YaHei"}.char-top small{color:var(--muted);font-size:10px}
@@ -231,17 +231,17 @@
     function renderStatus(){let list=DATA.statusSections;if(query)list=list.filter(x=>(x.title+x.body).toLowerCase().includes(query.toLowerCase()));$('#statusGrid').innerHTML=list.map((x,i)=>detail(x,String(i+1).padStart(2,'0'))).join('')}
     const LOCATIONS=[
       {name:'灰石镇',x:49,y:47,icon:'城',kind:'home',meta:['当前活动中心','城镇内'],text:'边境商业小城与主剧情中心。穿越者分流、公会登记、市场交易、寄售、救济和多条关系线都从这里展开。',events:['事件007｜抵达灰石镇外','事件011｜正式进入灰石镇','事件221｜施粮名声扩散']},
-      {name:'旧木匠院',x:43,y:52,icon:'院',kind:'home',meta:['当前据点','25人常住'],text:'千叶当前合法承租的核心据点。后勤、资金、训练、史莱姆培养和人物关系都在院内汇合，租期至第59日上午。',events:['事件210｜续租与院内扩容','事件225｜剑术训练与院内日常','事件234｜综合考核完成']},
-      {name:'冒险者公会',x:55,y:42,icon:'会',meta:['任务节点','灰石镇内'],text:'千叶完成登记、领取和交付委托的主要机构；低级任务、巢穴清理与灰骨岭任务线均与此有关。',events:['事件008｜新人任务与受伤','事件034｜正式登记冒险者','事件209｜领取灰骨岭任务']},
-      {name:'霍记布铺',x:58,y:50,icon:'布',meta:['商业节点','灰石镇内'],text:'霍夫人渠道所在。礼裙、女眷商品、补货与深紫实用礼服询价均在这里形成长期商业线。',events:['事件048｜首次女眷货成交','事件223｜深酒红礼裙成交','事件231｜复购与深紫询价']},
-      {name:'东四十二号废品摊',x:58,y:57,icon:'摊',meta:['资金线','灰石镇东市'],text:'千叶出资、方雪参与谈价的特殊回收与处理渠道。当前处于恢复经营与寻找新货源阶段。',events:['事件211｜低收获与市场协调','事件232｜公共资金与市场隐线']},
-      {name:'东门与旧外棚',x:39,y:42,icon:'门',meta:['穿越者聚集','施粮地点'],text:'早期临时生存、神殿救济与穿越者分流区域；第32日三千个面包施粮使千叶的名声和关系冲突集中爆发。',events:['事件007｜分流区与外棚','事件217｜发放三千面包','事件218—220｜关系冲突与余波']},
+      {name:'旧木匠院',x:45,y:57,icon:'院',kind:'home',meta:['当前据点','25人常住'],text:'千叶当前合法承租的核心据点。后勤、资金、训练、史莱姆培养和人物关系都在院内汇合，租期至第59日上午。',events:['事件210｜续租与院内扩容','事件225｜剑术训练与院内日常','事件234｜综合考核完成']},
+      {name:'冒险者公会',x:57,y:39,icon:'会',meta:['任务节点','灰石镇内'],text:'千叶完成登记、领取和交付委托的主要机构；低级任务、巢穴清理与灰骨岭任务线均与此有关。',events:['事件008｜新人任务与受伤','事件034｜正式登记冒险者','事件209｜领取灰骨岭任务']},
+      {name:'霍记布铺',x:62,y:49,icon:'布',meta:['商业节点','灰石镇内'],text:'霍夫人渠道所在。礼裙、女眷商品、补货与深紫实用礼服询价均在这里形成长期商业线。',events:['事件048｜首次女眷货成交','事件223｜深酒红礼裙成交','事件231｜复购与深紫询价']},
+      {name:'东四十二号废品摊',x:60,y:61,icon:'摊',meta:['资金线','灰石镇东市'],text:'千叶出资、方雪参与谈价的特殊回收与处理渠道。当前处于恢复经营与寻找新货源阶段。',events:['事件211｜低收获与市场协调','事件232｜公共资金与市场隐线']},
+      {name:'东门与旧外棚',x:35,y:39,icon:'门',meta:['穿越者聚集','施粮地点'],text:'早期临时生存、神殿救济与穿越者分流区域；第32日三千个面包施粮使千叶的名声和关系冲突集中爆发。',events:['事件007｜分流区与外棚','事件217｜发放三千面包','事件218—220｜关系冲突与余波']},
       {name:'旧采石场',x:24,y:27,icon:'矿',kind:'danger',meta:['高危旧址','哥布林巢穴'],text:'成熟哥布林巢穴、巫医与首领战的核心地点。千叶已完成清除，但深层裂隙和地形危险仍使其成为关键高危坐标。',events:['事件120—155｜采石场侦察与清剿','巫医与首领击杀','深层裂隙仍未等同安全']},
       {name:'灰骨岭东坡',x:82,y:19,icon:'岭',kind:'danger',meta:['当前任务','未知兽群'],text:'《灰骨岭东坡兽群压制》的目标区域，也是高阶单手剑训练后的下一阶段实战检验。任务尚未完成。',events:['事件209｜取得压制任务','事件233｜实战剑术后半段','事件234｜出发前综合考核']},
       {name:'北石商道',x:86,y:62,icon:'路',kind:'danger',meta:['外部商路','救援事件'],text:'四名幸存者救援与鳞背巨鳄相关事件发生方向，连接灰石镇和更外侧交通线。',events:['北石商道四名幸存者救援','12级鳞背巨鳄击杀','后续名声与公会评价']},
       {name:'黑颚沟',x:66,y:84,icon:'沟',kind:'danger',meta:['山匪势力','谈判线'],text:'千叶与山匪进行现实谈判的重要地点。这里展示了灰石镇周边秩序、利益交换与武力边界。',events:['黑颚沟山匪谈判','未被写成已彻底清除的安全区']},
       {name:'黑鸦领边境商道',x:12,y:72,icon:'界',meta:['降临点','第1日'],text:'千叶与约70名地球人集体降临的起点，经本土商队与旧牌楼路线前往灰石镇。',events:['事件001｜集体穿越','事件002｜边境废弃商道','事件003—007｜随商队抵达灰石镇']},
-      {name:'神殿与白布棚',x:36,y:57,icon:'救',meta:['救济节点','灰石镇外'],text:'老人、孩子、伤员与照护者优先的早期救济区域，也是穿越者生存条件差异最直观的地点之一。',events:['事件007｜白布棚分流','早期饮水、食物与医疗压力']}
+      {name:'神殿与白布棚',x:34,y:61,icon:'救',meta:['救济节点','灰石镇外'],text:'老人、孩子、伤员与照护者优先的早期救济区域，也是穿越者生存条件差异最直观的地点之一。',events:['事件007｜白布棚分流','早期饮水、食物与医疗压力']}
     ];
     function selectLocation(i){const l=LOCATIONS[i];$('#mapTitle').textContent=l.name;$('#mapText').textContent=l.text;$('#mapMeta').innerHTML=l.meta.map(x=>`<span>${esc(x)}</span>`).join('');$('#mapEvents').innerHTML=l.events.map(x=>`<span class="event-ref">${esc(x)}</span>`).join('')}
     function renderMap(){const map=$('#map');map.querySelectorAll('.node').forEach(x=>x.remove());LOCATIONS.forEach((l,i)=>map.insertAdjacentHTML('beforeend',`<button class="node ${l.kind||''}" style="left:${l.x}%;top:${l.y}%" data-loc="${i}"><i>${l.icon}</i><b>${l.name}</b></button>`));$$('[data-loc]').forEach(b=>b.onclick=()=>selectLocation(+b.dataset.loc));selectLocation(0)}
