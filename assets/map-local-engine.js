@@ -4,6 +4,7 @@
  */
 const WORLD_LOCAL_MAP_ENGINE=(()=>{
   const regionBox={x:19460,y:12390,w:1040,h:950};
+  const graystoneArt={x:19875.5,y:12907,w:9,h:6,minScale:2200,fullScale:2800,fadeScale:6100,maxScale:6800,cols:3,rows:2,tileW:3,tileH:3,base:'assets/map-tiles/graystone-surroundings/z0'};
   const terrainZones=[
     {kind:'region-plain',points:[[19470,12420],[19920,12410],[20035,12635],[19962,12940],[19780,13180],[19475,13140]],name:'黑羽河谷平原'},
     {kind:'region-highland',points:[[19915,12405],[20475,12400],[20490,13070],[20225,13125],[19955,12935],[20020,12630]],name:'灰骨岭与铜岭山地'},
@@ -186,6 +187,14 @@ const WORLD_LOCAL_MAP_ENGINE=(()=>{
     g.append(town)
   }
 
-  function render(ctx){const {D,E,S,scale}=ctx,sc=scale();if(sc<45)return;makeCaches(D);const defs=S.querySelector('defs');if(defs)addDefs(defs,E,D);const g=E('g',{id:'localDetailLayers','pointer-events':'none'});renderRegional(ctx,g,sc);if(sc>=780)renderHinterland(ctx,g,sc);if(sc>=2500)renderTown(ctx,g,sc);S.append(g)}
+  function renderTownArt(ctx,g,sc){
+    if(sc<graystoneArt.minScale||sc>graystoneArt.maxScale)return;
+    const {E}=ctx;let opacity=1;if(sc<graystoneArt.fullScale)opacity=(sc-graystoneArt.minScale)/(graystoneArt.fullScale-graystoneArt.minScale);else if(sc>graystoneArt.fadeScale)opacity=(graystoneArt.maxScale-sc)/(graystoneArt.maxScale-graystoneArt.fadeScale);opacity=Math.max(0,Math.min(1,opacity));
+    const art=E('g',{class:'graystone-illustrated-tiles',opacity,'pointer-events':'none'}),overlap=.002;
+    for(let row=0;row<graystoneArt.rows;row++)for(let col=0;col<graystoneArt.cols;col++)art.append(E('image',{href:`${graystoneArt.base}/${col}-${row}.webp`,x:graystoneArt.x+col*graystoneArt.tileW-overlap,y:graystoneArt.y+row*graystoneArt.tileH-overlap,width:graystoneArt.tileW+overlap*2,height:graystoneArt.tileH+overlap*2,preserveAspectRatio:'none','image-rendering':'auto'}));
+    g.append(art)
+  }
+
+  function render(ctx){const {D,E,S,scale}=ctx,sc=scale();if(sc<45)return;makeCaches(D);const defs=S.querySelector('defs');if(defs)addDefs(defs,E,D);const g=E('g',{id:'localDetailLayers','pointer-events':'none'});renderRegional(ctx,g,sc);if(sc>=780)renderHinterland(ctx,g,sc);if(sc>=2500)renderTown(ctx,g,sc);renderTownArt(ctx,g,sc);S.append(g)}
   return{render,regionBox};
 })();

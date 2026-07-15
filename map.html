@@ -19,10 +19,10 @@
       <div class="back"><a href="index.html">RP总览</a><a href="world.html">世界观</a></div>
       <div class="search"><input id="search" placeholder="搜索国家、城市、遗迹或迷宫"><div class="results" id="results"></div></div>
       <div class="section-label">快速定位</div><div class="quick"><button data-focus="world">世界全图</button><button data-focus="莱萨恩王国">莱萨恩</button><button data-focus="黑鸦领">黑鸦领</button><button data-focus="灰石镇">灰石镇</button></div>
-      <div class="section-label">地图图层</div><div class="layer"><button class="on" data-layer="images">矢量图鉴地貌</button><button class="on" data-layer="borders">国界与领地</button><button class="on" data-layer="settlements">城市与村镇</button><button class="on" data-layer="roads">道路与河流</button><button class="on" data-layer="sites">遗迹、迷宫与事件</button></div>
+      <div class="section-label">地图图层</div><div class="layer"><button class="on" data-layer="images">手绘底图与矢量细节</button><button class="on" data-layer="borders">国界与领地</button><button class="on" data-layer="settlements">城市与村镇</button><button class="on" data-layer="roads">道路与河流</button><button class="on" data-layer="sites">遗迹、迷宫与事件</button></div>
       <div class="section-label">测距</div><button class="tool-button" id="measureToggle" style="width:100%">开启两点测距</button>
       <div class="section-label">图例</div><div class="legend"><span><i style="background:#bb996f"></i>人类帝国</span><span><i style="background:#d4b98b"></i>王国与公国</span><span><i style="background:#779479"></i>精灵与森林政权</span><span><i style="background:#9c7c63"></i>兽人、矮人与山地政权</span><span><i style="background:#8e4d3e"></i>危险地点</span></div>
-      <div class="section-label">比例原则</div><div class="scale-note">地貌纹理、山林图鉴、农田、屋顶和院落全部按公里坐标实时绘制。缩放只会加载更多矢量细节，不会放大位图。</div>
+      <div class="section-label">比例原则</div><div class="scale-note">灰石镇周边在合适比例显示手绘瓦片；继续放大时自动淡出图片并切换到矢量街巷和建筑，避免把低一级图片强行放大。</div>
     </aside>
     <main class="map-wrap" id="mapWrap">
       <svg class="map" id="map" xmlns="http://www.w3.org/2000/svg" aria-label="双陆世界连续缩放矢量地图"></svg>
@@ -30,7 +30,7 @@
       <div class="hud"><div class="crumb" id="crumb">世界全图 · 48,000 × 24,000 km</div><div class="controls"><button id="zoomOut">−</button><button id="zoomIn">＋</button><button id="home">⌂</button><button id="fullscreen">全屏</button></div></div>
       <div class="bottom-hud"><div class="scale-bar"><b id="scaleText">5000 km</b><div class="scale-line" id="scaleLine"></div></div><div class="coord" id="coord">0, 0 km</div></div>
     </main>
-    <aside class="right" id="rightPanel"><div class="type" id="detailType">WORLD ATLAS</div><h1 id="detailTitle">双陆世界</h1><p id="detailText">从世界全图连续放大，可以依次查看文明诸国、黑鸦领地貌、灰石镇周边，以及城墙内的街道、建筑和院落。</p><div class="facts" id="detailFacts"></div><div class="actions" id="detailActions"></div><div class="measure" id="measureBox"><b>距离与行程</b><p>开启测距后在地图上选择两个位置。</p></div><div class="status-note">地图版本：无损矢量图鉴地图 v4。黑鸦领地貌、灰石镇近郊和城内建筑均使用分级矢量素材；放大后继续生成屋脊、院落与街巷细节。</div></aside>
+    <aside class="right" id="rightPanel"><div class="type" id="detailType">WORLD ATLAS</div><h1 id="detailTitle">双陆世界</h1><p id="detailText">从世界全图连续放大，可以依次查看文明诸国、黑鸦领地貌、灰石镇周边，以及城墙内的街道、建筑和院落。</p><div class="facts" id="detailFacts"></div><div class="actions" id="detailActions"></div><div class="measure" id="measureBox"><b>距离与行程</b><p>开启测距后在地图上选择两个位置。</p></div><div class="status-note">地图版本：手绘瓦片混合地图 v5。灰石镇周边使用六块高清手绘瓦片；进入街区级缩放后，底图自动切换为可无限放大的矢量建筑与院落。</div></aside>
   </div>
   <script src="assets/world-map-data.js"></script>
   <script src="assets/map-local-engine.js"></script>
