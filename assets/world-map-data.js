@@ -110,7 +110,7 @@ const WORLD_MAP_DATA=(()=>{
     {name:'北石商道',kind:'road-major',points:[[19880,12910],[19891,12901],[19911,12898.5],[19922.5,12875.5]]},
     {name:'黑颚沟旧路',kind:'road',points:[[19880,12910],[19892,12924],[19903,12938],[19913.5,12948.5]]},
     {name:'鸦堡大道',kind:'road-major',points:[[19710,12740],[19745,12810],[19810,12845],[19855,12878],[19880,12910]]},
-    {name:'黑羽河',kind:'river-local',points:[[19840,12882],[19861,12894],[19876,12903],[19888,12916],[19910,12940]]}
+    {name:'黑羽河',kind:'river-local',points:[[19840,12882],[19861,12894],[19874,12902],[19877,12905],[19876.5,12908],[19876.2,12912],[19878,12914],[19884,12915.5],[19888,12916],[19910,12940]]}
   ];
   const townGeometry={
     wall:[[19878.25,12909.05],[19879.2,12908.72],[19880.55,12908.7],[19881.42,12909.16],[19881.72,12910.08],[19881.45,12910.95],[19880.35,12911.42],[19879.1,12911.28],[19878.28,12910.62]],
@@ -128,22 +128,5 @@ const WORLD_MAP_DATA=(()=>{
       [[19879.55,12909.45],[19880.0,12909.95],[19880.65,12910.35],[19881.35,12910.7]]
     ]
   };
-  /* 分级图像底图仍使用同一公里坐标系。以后增加新地区时，按此格式追加即可：
-   * x/y/w/h 控制图像覆盖的真实范围，minScale/maxScale 控制在哪一级缩放出现。
-   */
-  const illustratedMaps=[
-    {
-      id:'black-raven-region-art',name:'黑鸦领及灰石镇周边地貌',kind:'region-art',
-      src:'assets/maps/black-raven-region.webp',x:19688.8,y:12725.6,w:560,h:407.6,
-      minScale:45,maxScale:2100,opacity:.98,mask:'regionFade',
-      note:'约560公里宽的领地级图像层；地貌图像负责视觉，正式地点与距离仍由坐标层控制。'
-    },
-    {
-      id:'graystone-town-art',name:'灰石镇城内街道图',kind:'town-art',
-      src:'assets/maps/graystone-town.webp',x:19877.4,y:12907.75,w:6,h:4.5,
-      minScale:1500,maxScale:Infinity,opacity:1,mask:'townFade',
-      note:'约6×4.5公里的城镇级图像层，包含城墙内完整街道、建筑群与东门外棚区。'
-    }
-  ];
-  return{bounds,civBox,civShape,land,terrain,waters,rivers,macroLabels,polities,blackRaven,lordships,specialSettlements,localPlaces,localRoads,townGeometry,illustratedMaps};
+  return{bounds,civBox,civShape,land,terrain,waters,rivers,macroLabels,polities,blackRaven,lordships,specialSettlements,localPlaces,localRoads,townGeometry};
 })();
