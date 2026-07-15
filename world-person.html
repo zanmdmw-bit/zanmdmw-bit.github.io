@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#e8dfcf">
+  <title>双陆世界 · 人物档案</title>
+  <style>
+    :root{--paper:#f3ecdf;--card:#fffaf1;--ink:#2f2923;--muted:#766b60;--line:#d8c9b3;--copper:#a75b38;--sage:#5e7668;--gold:#b58a42;--shadow:0 14px 40px rgba(68,48,29,.09)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);font:16px/1.8 "Microsoft YaHei","PingFang SC",Arial,sans-serif;background:radial-gradient(circle at 88% -10%,rgba(199,123,79,.18),transparent 34%),linear-gradient(135deg,var(--paper),#f9f4eb 55%,#e9ddca);min-height:100vh}.wrap{width:min(1240px,calc(100% - 30px));margin:auto;padding:26px 0 70px}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:20px}.brand{font:700 20px Georgia,"Microsoft YaHei";text-decoration:none;color:var(--ink)}.brand small{display:block;font:10px "Microsoft YaHei";letter-spacing:.14em;color:var(--muted);margin-top:3px}.back{border:1px solid var(--line);background:rgba(255,250,241,.78);color:#665a4f;padding:9px 14px;border-radius:12px;text-decoration:none;font-size:13px}.hero,.panel{border:1px solid rgba(182,156,120,.45);background:rgba(255,250,241,.91);box-shadow:var(--shadow);border-radius:22px}.hero{display:grid;grid-template-columns:240px minmax(0,1fr);gap:28px;padding:28px;margin-bottom:16px}.monogram{min-height:280px;border:1px solid #d3b990;border-radius:18px;background:linear-gradient(145deg,#eadcc7,#f8f1e7);display:grid;place-items:center;text-align:center;color:#9b846d;font:700 64px Georgia}.monogram small{display:block;font:11px "Microsoft YaHei";letter-spacing:.12em;margin-top:9px}.eyebrow{font-size:10px;font-weight:800;letter-spacing:.17em;color:var(--copper);margin:0 0 9px}.hero h1{font:700 clamp(34px,5vw,62px)/1.08 Georgia,"Microsoft YaHei";margin:0 0 8px}.title{font-size:17px;color:var(--sage);font-weight:700}.summary{color:#5f554b;max-width:820px;margin:17px 0}.chips,.relations{display:flex;gap:8px;flex-wrap:wrap}.chip{border:1px solid var(--line);border-radius:999px;background:#f4e8d8;padding:7px 11px;font-size:12px;color:#67594c;text-decoration:none}.chip.link:hover{background:var(--ink);color:white}.panel{padding:28px;margin-top:16px}.panel h2{font:700 24px Georgia,"Microsoft YaHei";margin:0 0 18px}.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.fact{border:1px solid rgba(182,156,120,.38);background:#fbf4e9;border-radius:14px;padding:14px}.fact small{display:block;font-size:10px;letter-spacing:.12em;color:var(--copper);margin-bottom:5px}.fact b{font-size:14px;line-height:1.6}.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}.copy{border-left:3px solid var(--sage);padding:3px 0 3px 16px;color:#5d5349}.copy h3{font-size:14px;margin:0 0 5px}.copy p{font-size:14px;margin:0}.timeline{display:grid;gap:12px}.event{display:grid;grid-template-columns:32px 1fr;gap:13px;align-items:start}.dot{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--sage);color:white;font:700 12px Georgia}.event p{margin:0;border-bottom:1px dashed var(--line);padding:1px 0 14px;color:#5d5349}.relation-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.relation-card{display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:15px;background:#f8efe2;padding:15px;transition:.2s}.relation-card:hover{transform:translateY(-2px);border-color:#b98b58}.relation-card small{display:block;color:var(--copper);font-size:10px;margin-bottom:5px}.relation-card b{font-size:15px}.relation-card p{font-size:12px;line-height:1.65;color:var(--muted);margin:7px 0 0}.empty{text-align:center;padding:70px 20px}.empty h1{font:700 38px Georgia;margin:0 0 10px}
+    @media(max-width:900px){.hero{grid-template-columns:180px 1fr}.facts{grid-template-columns:repeat(2,1fr)}.relation-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:650px){.wrap{width:min(100% - 20px,1240px);padding-top:14px}.hero{grid-template-columns:1fr;padding:18px}.monogram{min-height:180px}.panel{padding:20px}.facts,.cols,.relation-grid{grid-template-columns:1fr}.top{align-items:flex-start}.hero h1{font-size:36px}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="top"><a class="brand" href="world.html#people">双陆世界<small>CHARACTER ARCHIVE</small></a><a class="back" id="back" href="world.html#people">← 返回人物目录</a></div>
+    <div id="content"><section class="panel empty"><h1>正在读取人物档案</h1></section></div>
+  </main>
+  <script src="assets/organizations.js"></script>
+  <script src="assets/world-people.js"></script>
+  <script>
+    const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const href=n=>'world-person.html?name='+encodeURIComponent(n);
+    const pName=new URLSearchParams(location.search).get('name')||'';
+    const person=worldPerson(pName);
+    function affiliationLink(a){const isOrg=ORGANIZATIONS.some(o=>o.name===a),url=isOrg?('world.html?org='+encodeURIComponent(a)+'#orgs'):('world.html?polity='+encodeURIComponent(a)+'#nations');return '<a class="chip link" href="'+url+'">'+esc(a)+'</a>'}
+    function render(){if(!person){document.title='人物档案不存在 · 双陆世界';document.querySelector('#content').innerHTML='<section class="panel empty"><h1>没有找到人物</h1><p>该名字可能已被修订，或链接不完整。</p><a class="back" href="world.html#people">返回人物目录</a></section>';return}
+      document.title=person.name+' · 双陆世界人物档案';const aliases=(person.aliases||[]).length?'<div class="chips" style="margin-top:10px">'+person.aliases.map(x=>'<span class="chip">别名／旧称：'+esc(x)+'</span>').join('')+'</div>':'';
+      const facts=[['年龄',AGE_LABEL(person.age)],['性别',person.gender],['种族',person.race],['等级',person.level+' · '+levelBand(person.level)],['家族／血统',person.house],['继承位置',person.succession],['婚姻状态',person.marriage],['当前状态',person.status]];
+      document.querySelector('#content').innerHTML='<section class="hero"><div class="monogram"><div>'+esc(Q(person.name)[0]||'？')+'<small>画像后续补入</small></div></div><div><p class="eyebrow">CHARACTER RECORD</p><h1>'+esc(person.name)+'</h1><div class="title">'+esc(person.title||person.role)+'</div>'+aliases+'<p class="summary">'+esc(person.summary)+'</p><div class="chips">'+person.affiliations.map(affiliationLink).join('')+(person.traits||[]).map(x=>'<span class="chip">'+esc(x)+'</span>').join('')+'</div></div></section>'+
+      '<section class="panel"><p class="eyebrow">IDENTITY & POWER</p><h2>身份、年龄与实力</h2><div class="facts">'+facts.map(x=>'<article class="fact"><small>'+x[0]+'</small><b>'+esc(x[1])+'</b></article>').join('')+'</div></section>'+
+      '<section class="panel"><p class="eyebrow">CAPABILITY & INFLUENCE</p><h2>能力与政治资源</h2><div class="cols"><div class="copy"><h3>擅长领域</h3><p>'+esc((person.strengths||[]).join('；'))+'</p></div><div class="copy"><h3>可实际调动的资源</h3><p>'+esc(person.resources)+'</p></div></div></section>'+
+      '<section class="panel"><p class="eyebrow">LIFE RECORD</p><h2>经历档案</h2><div class="timeline">'+person.history.map((x,i)=>'<article class="event"><span class="dot">'+(i+1)+'</span><p>'+esc(x)+'</p></article>').join('')+'</div></section>'+
+      '<section class="panel"><p class="eyebrow">RELATION NETWORK</p><h2>人物关系网</h2><div class="relation-grid">'+person.relations.map(r=>'<a class="relation-card" href="'+href(r.name)+'"><small>'+esc(r.type)+'</small><b>'+esc(r.name)+' →</b><p>'+esc(r.note||'打开关联人物档案。')+'</p></a>').join('')+'</div></section>';
+    }render();
+  </script>
+</body>
+</html>
