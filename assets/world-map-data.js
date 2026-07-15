@@ -76,15 +76,20 @@ const WORLD_MAP_DATA=(()=>{
   ];
   const localPlaces=[
     graystone,
-    {name:'东门与外棚区',kind:'district',x:19882.2,y:12910.2,parent:'灰石镇',minScale:2800,note:'商棚、短工、穿越者临时居所和守卫收费点沿东门商道展开；主路必须保持通行。'},
-    {name:'旧木匠院',kind:'landmark',x:19879.35,y:12910.62,parent:'灰石镇',minScale:5200,note:'千叶当前合法承租的核心据点，位于镇墙以内，不在镇外。',link:'index.html#overview'},
-    {name:'中央市场',kind:'landmark',x:19880.0,y:12909.9,parent:'灰石镇',minScale:5200,note:'镇内最密集的粮食、布匹、日用品和零工交易区。'},
-    {name:'冒险者公会',kind:'landmark',x:19880.65,y:12910.35,parent:'灰石镇',minScale:5200,note:'登记、任务、核验与结算中心。旧采石场任务由此发布和交付。'},
-    {name:'霍记布铺',kind:'landmark',x:19880.38,y:12909.72,parent:'灰石镇',minScale:6000,note:'霍夫人经营的布铺和女眷商品渠道。'},
-    {name:'东四十二号废品摊',kind:'landmark',x:19881.25,y:12910.02,parent:'灰石镇',minScale:6000,note:'位于东市接近东门的废品经营点。'},
-    {name:'灰石镇神殿',kind:'landmark',x:19880.76,y:12909.42,parent:'灰石镇',minScale:5200,note:'治疗、救济、宗教登记和获救者安置节点。'},
-    {name:'领主税务厅',kind:'landmark',x:19879.55,y:12909.45,parent:'灰石镇',minScale:6000,note:'处理税契、商路许可、罚金与城门征收账目。'},
+    {name:'东门与外棚区',kind:'district',x:19882.35,y:12910.18,parent:'灰石镇',minScale:2800,note:'商棚、短工、穿越者临时居所和守卫收费点沿东门商道展开；主路必须保持通行。'},
+    {name:'旧木匠院',kind:'landmark',x:19878.55,y:12909.93,parent:'灰石镇',minScale:5200,note:'千叶当前合法承租的核心据点，位于西侧旧工匠区、城墙以内，不在镇外。',link:'index.html#overview'},
+    {name:'中央市场',kind:'landmark',x:19880.08,y:12910.02,parent:'灰石镇',minScale:5200,note:'东西大街与南北主路交会处，镇内最密集的粮食、布匹、日用品和零工交易区。'},
+    {name:'冒险者公会',kind:'landmark',x:19880.72,y:12910.10,parent:'灰石镇',minScale:5200,note:'位于中央市场以东的登记、任务、核验与结算中心。旧采石场任务由此发布和交付。'},
+    {name:'霍记布铺',kind:'landmark',x:19880.38,y:12910.26,parent:'灰石镇',minScale:6000,note:'靠近中央市场南侧的布铺和女眷商品渠道，由霍夫人经营。'},
+    {name:'东四十二号废品摊',kind:'landmark',x:19881.28,y:12910.10,parent:'灰石镇',minScale:6000,note:'位于东市、接近东门主街的废品经营点。'},
+    {name:'灰石镇神殿',kind:'landmark',x:19881.05,y:12910.82,parent:'灰石镇',minScale:5200,note:'东南坊的神殿与庭院群，承担治疗、救济、宗教登记和获救者安置。'},
+    {name:'领主税务厅',kind:'landmark',x:19879.45,y:12910.48,parent:'灰石镇',minScale:6000,note:'中央市场西南侧的官署，处理税契、商路许可、罚金与城门征收账目。'},
     {name:'灰石镇东门',kind:'gate',x:19881.72,y:12910.08,parent:'灰石镇',minScale:4300,note:'通往旧采石场、灰骨岭和北石商道的主要城门。'},
+    {name:'灰石镇西门',kind:'gate',x:19878.28,y:12910.08,parent:'灰石镇',minScale:4300,note:'连接旧帝国石道、旧桥村和鸦堡方向的城门。'},
+    {name:'灰石镇北门',kind:'gate',x:19880.05,y:12908.72,parent:'灰石镇',minScale:4300,note:'通往北田庄、粮仓和北部领地的城门，平时盘查粮车与牲畜。'},
+    {name:'灰石镇南门',kind:'gate',x:19880.08,y:12911.35,parent:'灰石镇',minScale:4300,note:'面向菜圃、石窑村和南部低地的较小城门，雨季道路泥泞。'},
+    {name:'北城守备营',kind:'landmark',x:19880.72,y:12909.18,parent:'灰石镇',minScale:5600,note:'北官署坊内的守卫营房、武库和临时拘押所。'},
+    {name:'南工匠坊',kind:'district',x:19879.25,y:12910.78,parent:'灰石镇',minScale:5000,note:'皮革、染料、金属和廉价陶器作坊密集的城区，气味、污水和火灾风险都很严重。'},
     {name:'旧采石场',kind:'ruin',x:19900.8,y:12927.4,parent:'黑鸦领',minScale:180,note:'位于灰石镇东南约27公里。成熟哥布林巢穴已被千叶清剿，但半塌矿道、深层裂隙和结构危险仍未消失。',status:'已清剿／仍需封锁'},
     {name:'东南荒坡',kind:'wild',x:19908.5,y:12934.2,parent:'黑鸦领',minScale:180,note:'旧采石场更深处的碎石坡与荒地，拖痕和裂隙活动曾从这里延伸。'},
     {name:'灰骨岭东坡',kind:'danger',x:19922.5,y:12875.5,parent:'黑鸦领',minScale:110,note:'距灰石镇直线约55公里，兽群压制任务目标区。山路使实际行程显著长于直线距离。'},
@@ -123,5 +128,22 @@ const WORLD_MAP_DATA=(()=>{
       [[19879.55,12909.45],[19880.0,12909.95],[19880.65,12910.35],[19881.35,12910.7]]
     ]
   };
-  return{bounds,civBox,civShape,land,terrain,waters,rivers,macroLabels,polities,blackRaven,lordships,specialSettlements,localPlaces,localRoads,townGeometry};
+  /* 分级图像底图仍使用同一公里坐标系。以后增加新地区时，按此格式追加即可：
+   * x/y/w/h 控制图像覆盖的真实范围，minScale/maxScale 控制在哪一级缩放出现。
+   */
+  const illustratedMaps=[
+    {
+      id:'black-raven-region-art',name:'黑鸦领及灰石镇周边地貌',kind:'region-art',
+      src:'assets/maps/black-raven-region.webp',x:19688.8,y:12725.6,w:560,h:407.6,
+      minScale:45,maxScale:2100,opacity:.98,mask:'regionFade',
+      note:'约560公里宽的领地级图像层；地貌图像负责视觉，正式地点与距离仍由坐标层控制。'
+    },
+    {
+      id:'graystone-town-art',name:'灰石镇城内街道图',kind:'town-art',
+      src:'assets/maps/graystone-town.webp',x:19877.4,y:12907.75,w:6,h:4.5,
+      minScale:1500,maxScale:Infinity,opacity:1,mask:'townFade',
+      note:'约6×4.5公里的城镇级图像层，包含城墙内完整街道、建筑群与东门外棚区。'
+    }
+  ];
+  return{bounds,civBox,civShape,land,terrain,waters,rivers,macroLabels,polities,blackRaven,lordships,specialSettlements,localPlaces,localRoads,townGeometry,illustratedMaps};
 })();
