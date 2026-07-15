@@ -176,7 +176,6 @@
       <section class="view" id="timelineView"><div class="page-title"><div><p class="eyebrow">CANON TIMELINE</p><h2>正史时间线</h2><p>按事件读取完整历史，支持关键词筛选。</p></div></div><div class="filters" id="timelineFilters"></div><div class="timeline" id="timelineList"></div></section>
       <section class="view" id="charactersView"><div class="page-title"><div><p class="eyebrow">PEOPLE & RELATIONS</p><h2>人物与关系</h2><p>身份、立场、利益与当前职责；不擅自补造未展示属性。</p></div></div><div class="filters" id="characterFilters"></div><div class="character-grid" id="characterGrid"></div></section>
       <section class="view" id="statusView"><div class="page-title"><div><p class="eyebrow">PLAYER STATUS</p><h2>千叶状态栏</h2><p>数值、资金、装备、技能与商城记录均来自唯一当前版。</p></div></div><div class="archive-grid" id="statusGrid"></div></section>
-      <section class="view" id="mapView"><div class="page-title"><div><p class="eyebrow">INTERACTIVE GRAYSTONE MAP</p><h2>灰石镇地图</h2><p>镇内与周边两层游戏地图；拖拽移动、滚轮缩放，点击地点读取正史事件。</p></div></div><div class="map-shell"><div class="map-viewport" id="mapViewport" role="img" aria-label="灰石镇及周边区域交互地图"><div class="map-canvas" id="mapCanvas"><img class="map-image" id="mapImage" src="assets/graystone-town-map.webp" alt="灰石镇镇内地图" draggable="false"><div class="map-nodes" id="mapNodes"></div></div><div class="map-tools" aria-label="地图控制"><button type="button" id="mapTown" class="active">镇内</button><button type="button" id="mapRegion">周边</button><span class="layer-sep" aria-hidden="true"></span><button type="button" id="mapZoomOut" aria-label="缩小地图">－ 缩小</button><span class="map-scale" id="mapScale">100%</span><button type="button" id="mapZoomIn" aria-label="放大地图">＋ 放大</button><button type="button" id="mapReset">复位</button><button type="button" id="mapFullscreen">全屏</button></div><div class="map-hint">拖拽移动 · 滚轮缩放 · 点击地点</div></div><article class="panel map-note"><div><p class="eyebrow">地点档案</p><h3 id="mapTitle">灰石镇</h3><p id="mapText"></p><div class="map-meta" id="mapMeta"></div></div><div><p class="eyebrow">关联正史事件</p><div class="map-events" id="mapEvents"></div><div class="placeholder">底图依正史地点关系构建，方位服务于剧情理解，不宣称精确里程与比例。</div></div></article></div></section>
       <section class="view" id="archiveView"><div class="page-title"><div><p class="eyebrow">SOURCE ARCHIVE</p><h2>原始档案</h2><p>网站展示由以下三份唯一当前文件实时解析。</p></div></div><article class="panel"><div class="download-row"><button data-download="timeline">下载《时间线.txt》</button><button data-download="characters">下载《人物与关系.txt》</button><button data-download="status">下载《千叶状态栏.txt》</button></div></article></section>
     </main>
   </div>
@@ -202,8 +201,9 @@
     function excerpt(body,n=120){return body.replace(/\n+/g,' · ').replace(/^[-·\s]+/,'').slice(0,n)+(body.length>n?'…':'')}
     function portraitUrl(name){const p=PEOPLE[name];return p?`assets/portraits/${p[0]}.webp`:''}
     function profileHref(name){return `person.html?id=${encodeURIComponent(PEOPLE[name]?.[0]||name)}`}
-    function renderNav(){const world=`<a class="world-link" href="world.html"><i>✦</i>世界观</a>`,html=world+NAV.slice(0,5).map(([id,icon,label])=>`<button data-view="${id}" class="${active===id?'active':''}"><i>${icon}</i>${label}</button>`).join('')+`<button data-view="archive" class="${active==='archive'?'active':''}"><i>▤</i>原始档案</button>`;$('#desktopNav').innerHTML=html;$('#mobileNav').innerHTML=`<a href="world.html"><i>✦</i>世界</a>`+NAV.slice(0,5).map(([id,icon,label])=>`<button data-view="${id}" class="${active===id?'active':''}"><i>${icon}</i>${label}</button>`).join('');$$('[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view))}
-    function showView(id){active=id;query='';$('#globalSearch').value='';$$('.view').forEach(v=>v.classList.toggle('active',v.id===id+'View'));$('#crumb').textContent=NAV.find(x=>x[0]===id)?.[2]||'档案';renderNav();renderActive();if(id==='map')requestAnimationFrame(resetMap);scrollTo(0,0)}
+    function navEntry([id,icon,label],mobile=false){return id==='map'?`<a href="map.html"><i>${icon}</i>${label}</a>`:`<button data-view="${id}" class="${active===id?'active':''}"><i>${icon}</i>${label}</button>`}
+    function renderNav(){const world=`<a class="world-link" href="world.html"><i>✦</i>世界观</a>`,html=world+NAV.slice(0,5).map(x=>navEntry(x)).join('')+`<button data-view="archive" class="${active==='archive'?'active':''}"><i>▤</i>原始档案</button>`;$('#desktopNav').innerHTML=html;$('#mobileNav').innerHTML=`<a href="world.html"><i>✦</i>世界</a>`+NAV.slice(0,5).map(x=>navEntry(x,true)).join('');$$('[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view))}
+    function showView(id){active=id;query='';$('#globalSearch').value='';$$('.view').forEach(v=>v.classList.toggle('active',v.id===id+'View'));$('#crumb').textContent=NAV.find(x=>x[0]===id)?.[2]||'档案';renderNav();renderActive();scrollTo(0,0)}
     function renderActive(){if(active==='timeline')renderTimeline();if(active==='characters')renderCharacters();if(active==='status')renderStatus()}
     function detail(x,label){return `<details><summary><b>${esc(x.title)}</b><i>${esc(label)}</i></summary><div class="doc-body">${esc(x.body)}</div></details>`}
     function renderOverview(){
@@ -235,51 +235,14 @@
       }).join('');
     }
     function renderStatus(){let list=DATA.statusSections;if(query)list=list.filter(x=>(x.title+x.body).toLowerCase().includes(query.toLowerCase()));$('#statusGrid').innerHTML=list.map((x,i)=>detail(x,String(i+1).padStart(2,'0'))).join('')}
-    const MAP_LAYERS={
-      town:{
-        image:'assets/graystone-town-map.webp',alt:'灰石镇镇内地图',start:0,
-        locations:[
-          {name:'旧木匠院',x:43,y:68,icon:'院',kind:'home',lx:-58,ly:4,meta:['当前据点','灰石镇内','25人常住'],text:'旧木匠院位于灰石镇城墙以内，是千叶当前合法承租的核心据点。后勤、资金、训练、史莱姆培养和人物关系都在院内汇合，租期至第59日上午。',events:['事件210｜续租与院内扩容','事件225｜剑术训练与院内日常','事件234｜综合考核完成']},
-          {name:'中央市场',x:45,y:44,icon:'市',lx:-55,ly:-34,meta:['商业核心','灰石镇内'],text:'镇内人流与交易最密集的区域。女眷货、补给、价格观察与多条商业关系都在这里交汇。',events:['市场价格与补给调查','女眷货交易线','施粮后的名声扩散']},
-          {name:'冒险者公会',x:60,y:56,icon:'会',lx:68,ly:0,meta:['任务节点','灰石镇内'],text:'千叶完成登记、领取和交付委托的主要机构；低级任务、巢穴清理与灰骨岭任务线均与此有关。',events:['事件008｜新人任务与受伤','事件034｜正式登记冒险者','事件209｜领取灰骨岭任务']},
-          {name:'霍记布铺',x:53,y:39,icon:'布',lx:62,ly:-8,meta:['商业节点','灰石镇内'],text:'霍夫人渠道所在。礼裙、女眷商品、补货与深紫实用礼服询价均在这里形成长期商业线。',events:['事件048｜首次女眷货成交','事件223｜深酒红礼裙成交','事件231｜复购与深紫询价']},
-          {name:'东四十二号废品摊',x:79,y:42,icon:'摊',lx:0,ly:-38,meta:['资金线','灰石镇东市'],text:'千叶出资、方雪参与谈价的特殊回收与处理渠道。位置在东市与东门商棚一带，当前处于恢复经营与寻找新货源阶段。',events:['事件211｜低收获与市场协调','事件232｜公共资金与市场隐线']},
-          {name:'东门与旧外棚',x:86,y:52,icon:'门',lx:0,ly:48,meta:['穿越者聚集','城门外棚区'],text:'早期临时生存、神殿救济与穿越者分流区域；第32日三千个面包施粮使千叶的名声和关系冲突集中爆发。',events:['事件007｜分流区与外棚','事件217｜发放三千面包','事件218—220｜关系冲突与余波']},
-          {name:'神殿',x:67,y:32,icon:'殿',lx:54,ly:-18,meta:['救济节点','灰石镇内'],text:'镇内宗教、治疗与救济的重要节点；获救人员与早期伤病处理都与神殿体系有关。',events:['早期饮水、食物与医疗压力','采石场四名幸存者移交神殿']}
-        ]
-      },
-      region:{
-        image:'assets/graystone-region-map.webp',alt:'灰石镇及周边区域地图',start:0,
-        locations:[
-          {name:'灰石镇',x:38,y:48,icon:'城',kind:'home',lx:0,ly:48,meta:['当前活动中心','大型边境城镇'],text:'灰石镇是边境商业小城与主剧情中心。旧木匠院明确位于城内；穿越者分流、公会登记、市场交易、寄售、救济和多条关系线由此展开。',events:['事件007｜抵达灰石镇外','事件011｜正式进入灰石镇','事件221｜施粮名声扩散']},
-          {name:'东门与外棚区',x:51,y:54,icon:'门',lx:68,ly:4,meta:['城镇东侧','施粮地点'],text:'灰石镇东门外的商棚、临时聚集区与救济活动范围，也是通往外部商路的重要出口。',events:['事件007｜白布棚分流','事件217｜发放三千面包']},
-          {name:'旧采石场',x:84,y:17,icon:'矿',kind:'danger',meta:['高危旧址','哥布林巢穴'],text:'成熟哥布林巢穴、巫医与首领战的核心地点。千叶已完成清除，但深层裂隙和地形危险仍使其成为关键高危坐标。',events:['事件120—155｜采石场侦察与清剿','巫医与首领击杀','深层裂隙仍未等同安全']},
-          {name:'灰骨岭东坡',x:72,y:12,icon:'岭',kind:'danger',lx:-64,ly:5,meta:['当前任务','未知兽群'],text:'《灰骨岭东坡兽群压制》的目标区域，也是高阶单手剑训练后的下一阶段实战检验。任务尚未完成。',events:['事件209｜取得压制任务','事件233｜实战剑术后半段','事件234｜出发前综合考核']},
-          {name:'北石商道',x:76,y:43,icon:'路',kind:'danger',meta:['外部商路','救援事件'],text:'四名幸存者救援与鳞背巨鳄相关事件发生方向，连接灰石镇和更外侧交通线。',events:['北石商道四名幸存者救援','12级鳞背巨鳄击杀','后续名声与公会评价']},
-          {name:'黑颚沟',x:72,y:76,icon:'沟',kind:'danger',meta:['山匪势力','谈判线'],text:'千叶与山匪进行现实谈判的重要地点。这里展示了灰石镇周边秩序、利益交换与武力边界。',events:['黑颚沟山匪谈判','未被写成已彻底清除的安全区']},
-          {name:'黑鸦领边境商道',x:9,y:69,icon:'界',meta:['降临方向','第1日'],text:'千叶与约70名地球人集体降临的方向，经本土商队与旧牌楼路线前往灰石镇。',events:['事件001｜集体穿越','事件002｜边境废弃商道','事件003—007｜随商队抵达灰石镇']}
-        ]
-      }
-    };
-    let mapLayer='town';
-    const MAP_SIZE={w:1536,h:1024};let mapState={x:0,y:0,scale:1,min:1,max:3,drag:false,px:0,py:0};
-    function drawMap(){const c=$('#mapCanvas');if(!c)return;c.style.transform=`translate3d(${mapState.x}px,${mapState.y}px,0) scale(${mapState.scale})`;$('#mapScale').textContent=Math.round(mapState.scale/mapState.min*100)+'%'}
-    function constrainMap(){const v=$('#mapViewport'),sw=MAP_SIZE.w*mapState.scale,sh=MAP_SIZE.h*mapState.scale;if(!v)return;mapState.x=sw<=v.clientWidth?(v.clientWidth-sw)/2:Math.min(0,Math.max(v.clientWidth-sw,mapState.x));mapState.y=sh<=v.clientHeight?(v.clientHeight-sh)/2:Math.min(0,Math.max(v.clientHeight-sh,mapState.y))}
-    function resetMap(){const v=$('#mapViewport');if(!v||!v.clientWidth)return;mapState.min=Math.max(v.clientWidth/MAP_SIZE.w,v.clientHeight/MAP_SIZE.h);mapState.max=mapState.min*3.4;mapState.scale=mapState.min;mapState.x=(v.clientWidth-MAP_SIZE.w*mapState.scale)/2;mapState.y=(v.clientHeight-MAP_SIZE.h*mapState.scale)/2;drawMap()}
-    function zoomMap(factor,cx,cy){const v=$('#mapViewport');if(!v)return;cx=cx??v.clientWidth/2;cy=cy??v.clientHeight/2;const old=mapState.scale,next=Math.min(mapState.max,Math.max(mapState.min,old*factor));if(next===old)return;mapState.x=cx-(cx-mapState.x)*(next/old);mapState.y=cy-(cy-mapState.y)*(next/old);mapState.scale=next;constrainMap();drawMap()}
-    function currentLocations(){return MAP_LAYERS[mapLayer].locations}
-    function selectLocation(i){const list=currentLocations(),l=list[i]||list[0];if(!l)return;$('#mapTitle').textContent=l.name;$('#mapText').textContent=l.text;$('#mapMeta').innerHTML=l.meta.map(x=>`<span>${esc(x)}</span>`).join('');$('#mapEvents').innerHTML=l.events.map(x=>`<span class="event-ref">${esc(x)}</span>`).join('');$$('[data-loc]').forEach((b,n)=>{b.classList.toggle('active',n===i);b.setAttribute('aria-pressed',n===i?'true':'false')})}
-    function drawLocationNodes(){const list=currentLocations(),nodes=$('#mapNodes');nodes.innerHTML=list.map((l,i)=>`<button type="button" class="node ${l.kind||''}" style="left:${l.x}%;top:${l.y}%;--lx:${l.lx||0}px;--ly:${l.ly??47}px" data-loc="${i}" aria-label="查看${esc(l.name)}" aria-pressed="false"><i>${l.icon}</i><b>${esc(l.name)}</b></button>`).join('');$$('[data-loc]').forEach(b=>b.onclick=e=>{e.stopPropagation();selectLocation(+b.dataset.loc)});selectLocation(MAP_LAYERS[mapLayer].start||0)}
-    function setMapLayer(layer){if(!MAP_LAYERS[layer])return;mapLayer=layer;const cfg=MAP_LAYERS[layer],img=$('#mapImage');img.src=cfg.image;img.alt=cfg.alt;$('#mapTown').classList.toggle('active',layer==='town');$('#mapRegion').classList.toggle('active',layer==='region');drawLocationNodes();requestAnimationFrame(resetMap)}
-    function renderMap(){const v=$('#mapViewport');drawLocationNodes();v.onwheel=e=>{e.preventDefault();const r=v.getBoundingClientRect();zoomMap(e.deltaY<0?1.16:.86,e.clientX-r.left,e.clientY-r.top)};v.onpointerdown=e=>{if(e.target.closest('.node,.map-tools'))return;mapState.drag=true;mapState.px=e.clientX;mapState.py=e.clientY;v.classList.add('dragging');v.setPointerCapture(e.pointerId)};v.onpointermove=e=>{if(!mapState.drag)return;mapState.x+=e.clientX-mapState.px;mapState.y+=e.clientY-mapState.py;mapState.px=e.clientX;mapState.py=e.clientY;constrainMap();drawMap()};const stop=e=>{mapState.drag=false;v.classList.remove('dragging');if(v.hasPointerCapture?.(e.pointerId))v.releasePointerCapture(e.pointerId)};v.onpointerup=stop;v.onpointercancel=stop;v.ondblclick=e=>{if(e.target.closest('.node,.map-tools'))return;const r=v.getBoundingClientRect();zoomMap(1.35,e.clientX-r.left,e.clientY-r.top)};$('#mapTown').onclick=()=>setMapLayer('town');$('#mapRegion').onclick=()=>setMapLayer('region');$('#mapZoomIn').onclick=()=>zoomMap(1.28);$('#mapZoomOut').onclick=()=>zoomMap(.78);$('#mapReset').onclick=resetMap;$('#mapFullscreen').onclick=async()=>{if(!document.fullscreenElement)await v.requestFullscreen?.();else await document.exitFullscreen?.();setTimeout(resetMap,80)};document.addEventListener('fullscreenchange',()=>setTimeout(resetMap,80));window.addEventListener('resize',resetMap);requestAnimationFrame(resetMap)}
     function downloads(){$$('[data-download]').forEach(b=>b.onclick=()=>{const key=b.dataset.download,n={timeline:'时间线.txt',characters:'人物与关系.txt',status:'千叶状态栏.txt'}[key],a=document.createElement('a');a.href=URL.createObjectURL(new Blob([DATA[key]],{type:'text/plain;charset=utf-8'}));a.download=n;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)})}
     async function init(){
       try{
         [DATA.timeline,DATA.characters,DATA.status]=await Promise.all([gunzip(FILES.timeline),gunzip(FILES.characters),gunzip(FILES.status)]);
         DATA.events=events(DATA.timeline);DATA.charSections=sections(DATA.characters);DATA.statusSections=sections(DATA.status);
-        renderNav();renderOverview();renderTimeline();renderCharacters();renderStatus();renderMap();downloads();
+        renderNav();renderOverview();renderTimeline();renderCharacters();renderStatus();downloads();
         $('#globalSearch').oninput=e=>{query=e.target.value;renderActive()};
-        const initial=location.hash.slice(1);if(NAV.some(x=>x[0]===initial))showView(initial);
+        const initial=location.hash.slice(1);if(initial==='map')location.replace('map.html');else if(NAV.some(x=>x[0]===initial))showView(initial);
         $('#loading').classList.add('hide');
       }catch(e){$('.loader').innerHTML='<b>档案载入失败</b>'+esc(e.message)}
     }
