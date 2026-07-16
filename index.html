@@ -196,6 +196,7 @@
     const esc=s=>(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     async function gunzip(url){const r=await fetch(url);if(!r.ok)throw Error(url+' '+r.status);const ds=new DecompressionStream('gzip');return await new Response(r.body.pipeThrough(ds)).text()}
     function field(text,label){const m=text.match(new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'：\\s*\\n([^\\n]+)'));return m?m[1].trim().replace(/。$/,''):'—'}
+    function numberField(text,label){const direct=Number.parseFloat(field(text,label));if(Number.isFinite(direct))return direct;const safe=label.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),m=text.match(new RegExp('(?:^|\\n)\\s*-\\s*'+safe+'\\s*([+-]?\\d+(?:\\.\\d+)?)','m'));return m?Number(m[1]):0}
     function sections(text){const clean=text.replace(/\r/g,'');const re=/\n={20,}\n([^\n]+)\n={20,}\n/g;const hits=[...clean.matchAll(re)],out=[];hits.forEach((m,i)=>out.push({title:m[1].trim(),body:clean.slice(m.index+m[0].length,i+1<hits.length?hits[i+1].index:clean.length).trim()}));return out}
     function cleanSectionTitle(title){return title.replace(/^[一二三四五六七八九十]+、/,'').trim()}
     function namedRecords(body,names){const escaped=names.map(n=>n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|'),re=new RegExp('(?:^|\\n)(?:\\d+\\.\\s*)?('+escaped+')(?:：)?\\s*\\n','g'),hits=[...body.matchAll(re)];return hits.map((m,i)=>({title:m[1],body:body.slice(m.index+m[0].length,i+1<hits.length?hits[i+1].index:body.length).replace(/\n-{10,}\n（[一二三四五六七八九十]+）[\s\S]*$/,'').trim()}))}
@@ -215,7 +216,7 @@
       $('#currentLead').textContent=`${time}，${place}。千叶刚经鸦堡返抵灰石镇，史莱姆公主在箱内喊出“家！”。旧木匠院原租期已经届满，住处与24名成员的现状必须返场确认。`;
       $('#heroChips').innerHTML=['返抵灰石镇','租期处理待核验','史莱姆公主：家','王都寄售进行中'].map(x=>`<span class="chip">${x}</span>`).join('');
       $('#miniLevel').textContent=level;$('#miniExp').textContent='经验 '+exp;$('#miniCash').textContent=cash;$('#miniPoints').textContent=points;
-      const attrs=['力量','敏捷','体质','精神','魔力','感知'].map(k=>[k,+field(s,k)]),max=Math.max(...attrs.map(x=>x[1]),40);
+      const attrs=['力量','敏捷','体质','精神','魔力','感知'].map(k=>[k,numberField(s,k)]),max=Math.max(...attrs.map(x=>x[1]),40);
       $('#attributeBars').innerHTML=attrs.map(([k,v])=>`<div class="bar-row"><span>${k}</span><div class="bar"><i style="width:${v/max*100}%"></i></div><b>${v}</b></div>`).join('');
       $('#taskList').innerHTML=['返回旧木匠院，现场确认租约处理和24名成员实际位置','与陈苗重新核对公共伙食金、废品摊周转金及住房支出','检查黑鬃马、普通清水胶、院内装备与灰石镇留存药物','等待第60日20:00六枚西地那非报价结果','跟进第64日玄黯长剑拍卖，并筹备赤砾荒原任务'].map(x=>`<li>${x}</li>`).join('');
       const portraits=['千叶','方雪','沈鸢','陈苗','许清禾','史莱姆公主'];
