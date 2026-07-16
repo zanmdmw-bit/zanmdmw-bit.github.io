@@ -64,10 +64,10 @@ const WORLD_MAP_DATA=(()=>{
     {name:'赤松侯领',x:19390,y:12830,w:280,h:460,parent:'莱萨恩王国'},
     {name:'石门军管地',x:20180,y:12480,w:360,h:250,parent:'莱萨恩王国'}
   ];
-  const graystone={id:'settlement-graystone',name:'灰石镇',kind:'city',rank:'大型边境城镇',x:19880,y:12910,parent:'黑鸦领',population:'城墙内约3.8万人；外街、东门棚区和邻近庄园另约1.2万人',note:'黑鸦领最大的征税、商贸和冒险者结算中心。旧木匠院明确位于城墙以内，东门外形成穿越者、短工、商贩和守卫共同组成的外棚生态。',zoomWidth:9,link:'index.html#overview'};
+  const graystone={id:'settlement-graystone',name:'灰石镇',kind:'city',rank:'大型边境城镇',x:19880,y:12910,parent:'黑鸦领',population:'城墙内约3.8万人；外街、东门棚区和邻近庄园另约1.2万人',note:'黑鸦领最大的征税、商贸和冒险者结算中心。设有通往鸦堡的地方公共传送阵与小型空行船停泊塔；旧木匠院位于城墙以内，东门外形成穿越者、短工、商贩和守卫共同组成的外棚生态。',zoomWidth:9,link:'index.html#overview'};
   const specialSettlements=[
     graystone,
-    {name:'鸦堡',kind:'city',rank:'领主城堡与行政镇',x:19710,y:12740,parent:'黑鸦领',population:'约1.6万人',note:'黑鸦领领主的主要驻地、税粮仓库和骑兵集结点。'},
+    {name:'鸦堡',kind:'city',rank:'领主城堡与行政镇',x:19710,y:12740,parent:'黑鸦领',population:'约1.6万人',note:'黑鸦领领主的主要驻地、税粮仓库和骑兵集结点。区域级传送院连接赛尔维克、王国内主要城市与部分边境军镇，空港承担王都方向客货航线。'},
     {name:'白渡镇',kind:'town',rank:'渡口镇',x:19835,y:12630,parent:'白渡伯领',population:'约7200人',note:'控制黑羽河上游渡口和北向盐粮运输。'},
     {name:'铜脊镇',kind:'town',rank:'矿镇',x:20120,y:12835,parent:'铜岭子爵领',population:'约9400人',note:'开采低品位铜矿与青石，商路守备严密。'},
     {name:'芦环镇',kind:'town',rank:'湿地集镇',x:19830,y:13115,parent:'苇泽伯领',population:'约6100人',note:'向灰石镇供应芦苇、鱼干、药草和廉价船材。'},
