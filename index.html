@@ -152,7 +152,7 @@
         <div class="hero">
           <article class="hero-main">
             <p class="eyebrow">当前续写坐标 · CURRENT CANON</p>
-            <h2>灰石镇<br>旧木匠院</h2>
+            <h2>灰石镇<br>传送点</h2>
             <p class="lead" id="currentLead">正在读取当前世界状态……</p>
             <div class="chips" id="heroChips"></div>
             <a class="world-cta" href="world.html">浏览世界、国家与力量体系 →</a>
@@ -165,9 +165,9 @@
         </div>
         <div class="grid">
           <article class="panel span-5"><div class="panel-head"><h3>六维属性</h3><span>即时面板</span></div><div class="bars" id="attributeBars"></div></article>
-          <article class="panel span-7"><div class="panel-head"><h3>当前任务与推进线</h3><span>第45日</span></div><ul class="task-list" id="taskList"></ul></article>
+          <article class="panel span-7"><div class="panel-head"><h3>当前任务与推进线</h3><span>第60日</span></div><ul class="task-list" id="taskList"></ul></article>
           <article class="panel span-8"><div class="panel-head"><h3>核心人物</h3><span>进入独立人物页</span></div><div class="portrait-row" id="portraitRow"></div></article>
-          <article class="panel span-4"><div class="panel-head"><h3>共同结构</h3><span>旧木匠院</span></div><div class="stats" id="homeStats"></div></article>
+          <article class="panel span-4"><div class="panel-head"><h3>最后确认结构</h3><span>返场待核验</span></div><div class="stats" id="homeStats"></div></article>
           <article class="panel span-6"><div class="panel-head"><h3>高优先级风险</h3><span>现实逻辑</span></div><ul class="risk-list" id="riskList"></ul></article>
           <article class="panel span-6"><div class="panel-head"><h3>档案完整度</h3><span>来源文件</span></div><div class="stats"><div class="stat"><b id="eventCount">—</b><small>正史事件</small></div><div class="stat"><b id="charCount">—</b><small>人物档案</small></div><div class="stat"><b>3</b><small>唯一当前文件</small></div></div></article>
         </div>
@@ -197,6 +197,9 @@
     async function gunzip(url){const r=await fetch(url);if(!r.ok)throw Error(url+' '+r.status);const ds=new DecompressionStream('gzip');return await new Response(r.body.pipeThrough(ds)).text()}
     function field(text,label){const m=text.match(new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'：\\s*\\n([^\\n]+)'));return m?m[1].trim().replace(/。$/,''):'—'}
     function sections(text){const clean=text.replace(/\r/g,'');const re=/\n={20,}\n([^\n]+)\n={20,}\n/g;const hits=[...clean.matchAll(re)],out=[];hits.forEach((m,i)=>out.push({title:m[1].trim(),body:clean.slice(m.index+m[0].length,i+1<hits.length?hits[i+1].index:clean.length).trim()}));return out}
+    function cleanSectionTitle(title){return title.replace(/^[一二三四五六七八九十]+、/,'').trim()}
+    function namedRecords(body,names){const escaped=names.map(n=>n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|'),re=new RegExp('(?:^|\\n)(?:\\d+\\.\\s*)?('+escaped+')(?:：)?\\s*\\n','g'),hits=[...body.matchAll(re)];return hits.map((m,i)=>({title:m[1],body:body.slice(m.index+m[0].length,i+1<hits.length?hits[i+1].index:body.length).replace(/\n-{10,}\n（[一二三四五六七八九十]+）[\s\S]*$/,'').trim()}))}
+    function characterRecords(text){const base=sections(text),out=[],used=new Set(),find=t=>base.find(x=>cleanSectionTitle(x.title)===t),direct=['千叶','史莱姆公主'];direct.forEach(name=>{const x=find(name);if(x){out.push({title:name,body:x.body});used.add(x.title)}});const adults=base.find(x=>/17名成年自由地球女性/.test(x.title)),locals=base.find(x=>/艾琳与诺拉/.test(x.title));if(adults){out.push(...namedRecords(adults.body,[...CORE.slice(1),...NEW]));used.add(adults.title)}if(locals){out.push(...namedRecords(locals.body,LOCAL));used.add(locals.title)}base.filter(x=>!used.has(x.title)&&x.title!=='【读取规则】').forEach(x=>out.push({title:cleanSectionTitle(x.title),body:x.body}));return out}
     function events(text){const clean=text.replace(/\r/g,'');const re=/【事件(\d+)】([^\n]*)\n/g;const hits=[...clean.matchAll(re)],out=[];hits.forEach((m,i)=>out.push({id:+m[1],title:m[2].trim().replace(/^\s*[｜|]/,''),body:clean.slice(m.index+m[0].length,i+1<hits.length?hits[i+1].index:clean.length).replace(/^={20,}\s*/,'').trim()}));return out}
     function excerpt(body,n=120){return body.replace(/\n+/g,' · ').replace(/^[-·\s]+/,'').slice(0,n)+(body.length>n?'…':'')}
     function portraitUrl(name){const p=PEOPLE[name];return p?`assets/portraits/${p[0]}.webp`:''}
@@ -207,18 +210,18 @@
     function renderActive(){if(active==='timeline')renderTimeline();if(active==='characters')renderCharacters();if(active==='status')renderStatus()}
     function detail(x,label){return `<details><summary><b>${esc(x.title)}</b><i>${esc(label)}</i></summary><div class="doc-body">${esc(x.body)}</div></details>`}
     function renderOverview(){
-      const s=DATA.status,level=field(s,'等级'),exp=field(s,'经验'),cash=field(s,'千叶个人现金'),points=field(s,'当前生存点'),time=field(s,'覆盖时间'),place=field(s,'当前位置');
+      const s=DATA.status,level=field(s,'等级'),exp=field(s,'经验'),cash=field(s,'当前个人现金'),points=field(s,'当前生存点'),time=field(s,'覆盖时间'),place=field(s,'当前位置');
       $('#asideTime').textContent=time;
-      $('#currentLead').textContent=`${time}，${place}。高阶单手剑综合考核已经完成，灰骨岭任务仍是下一阶段升级与实战检验的重要目标。`;
-      $('#heroChips').innerHTML=['25人共同生活','灰骨岭任务','史莱姆公主','废品摊与女眷货'].map(x=>`<span class="chip">${x}</span>`).join('');
+      $('#currentLead').textContent=`${time}，${place}。千叶刚经鸦堡返抵灰石镇，史莱姆公主在箱内喊出“家！”。旧木匠院原租期已经届满，住处与24名成员的现状必须返场确认。`;
+      $('#heroChips').innerHTML=['返抵灰石镇','租期处理待核验','史莱姆公主：家','王都寄售进行中'].map(x=>`<span class="chip">${x}</span>`).join('');
       $('#miniLevel').textContent=level;$('#miniExp').textContent='经验 '+exp;$('#miniCash').textContent=cash;$('#miniPoints').textContent=points;
       const attrs=['力量','敏捷','体质','精神','魔力','感知'].map(k=>[k,+field(s,k)]),max=Math.max(...attrs.map(x=>x[1]),40);
       $('#attributeBars').innerHTML=attrs.map(([k,v])=>`<div class="bar-row"><span>${k}</span><div class="bar"><i style="width:${v/max*100}%"></i></div><b>${v}</b></div>`).join('');
-      $('#taskList').innerHTML=['完成《灰骨岭东坡兽群压制》并检验高阶剑术','继续史莱姆公主的语言、辨认、塑形与行动训练','恢复东四十二号废品摊并寻找新货源','推进深紫实用礼服询价与霍夫人商品线','组织17名成年女性继续学习魔法、治疗、弓箭和近战'].map(x=>`<li>${x}</li>`).join('');
+      $('#taskList').innerHTML=['返回旧木匠院，现场确认租约处理和24名成员实际位置','与陈苗重新核对公共伙食金、废品摊周转金及住房支出','检查黑鬃马、普通清水胶、院内装备与灰石镇留存药物','等待第60日20:00六枚西地那非报价结果','跟进第64日玄黯长剑拍卖，并筹备赤砾荒原任务'].map(x=>`<li>${x}</li>`).join('');
       const portraits=['千叶','方雪','沈鸢','陈苗','许清禾','史莱姆公主'];
       $('#portraitRow').innerHTML=portraits.map(n=>`<a class="portrait" href="${profileHref(n)}"><div class="avatar"><img src="${portraitUrl(n)}" alt="${esc(n)}真人风肖像"></div><b>${n}</b><small>查看完整档案</small></a>`).join('');
-      $('#homeStats').innerHTML=[['25','常住人数'],['17','成年地球女性'],['2','本土女性奴隶'],['5','未成年女孩']].map(x=>`<div class="stat"><b>${x[0]}</b><small>${x[1]}</small></div>`).join('');
-      $('#riskList').innerHTML=['系统秘密与实体教学书暴露','财富、货源和升级能力引来盯梢与试探','院内拥挤、资源分配与关系竞争','灰骨岭任务中的未知兽群与地形风险','外部家庭关系和灰石镇势力的现实牵制'].map(x=>`<li>${x}</li>`).join('');
+      $('#homeStats').innerHTML=[['25','第56日前最后确认人数'],['24','当前尚未见到的成员'],['第59日','旧租期届满'],['待核验','续租／搬迁结果']].map(x=>`<div class="stat"><b>${x[0]}</b><small>${x[1]}</small></div>`).join('');
+      $('#riskList').innerHTML=['旧木匠院租期届满，住处与成员位置仍未核验','公共伙食金和废品摊周转金已不是第48日旧账面值','高价值武器与药物寄售可能带来关注和交易风险','白曜金枝尚未进行真正出鞘实战测试','系统秘密、货源与异常成长能力仍需严格保密'].map(x=>`<li>${x}</li>`).join('');
       $('#eventCount').textContent=DATA.events.length;$('#charCount').textContent=DATA.charSections.filter(x=>[...CORE,...NEW,...LOCAL,'史莱姆公主'].includes(x.title)).length;
     }
     function renderTimeline(){const modes=[['recent','最近事件'],['all','全部正史'],['battle','战斗'],['trade','商业'],['slime','史莱姆']];$('#timelineFilters').innerHTML=modes.map(x=>`<button data-tmode="${x[0]}" class="${timelineMode===x[0]?'on':''}">${x[1]}</button>`).join('')+`<span class="chip">${DATA.events.length}件事件</span>`;$$('[data-tmode]').forEach(b=>b.onclick=()=>{timelineMode=b.dataset.tmode;renderTimeline()});let list=DATA.events;if(timelineMode==='recent')list=list.slice(-24);if(timelineMode==='battle')list=list.filter(x=>/战|击杀|巢穴|任务|剑术|野兽|山匪/.test(x.title+x.body));if(timelineMode==='trade')list=list.filter(x=>/货|钱|金币|商|寄售|订单|废品|成交|面包/.test(x.title+x.body));if(timelineMode==='slime')list=list.filter(x=>/史莱姆|恒辉胶|智慧分支/.test(x.title+x.body));if(query)list=list.filter(x=>(x.title+x.body+String(x.id)).toLowerCase().includes(query.toLowerCase()));$('#timelineList').innerHTML=list.length?list.map(x=>detail(x,'事件 '+String(x.id).padStart(3,'0'))).join(''):'<article class="panel">没有匹配事件。</article>'}
@@ -239,7 +242,7 @@
     async function init(){
       try{
         [DATA.timeline,DATA.characters,DATA.status]=await Promise.all([gunzip(FILES.timeline),gunzip(FILES.characters),gunzip(FILES.status)]);
-        DATA.events=events(DATA.timeline);DATA.charSections=sections(DATA.characters);DATA.statusSections=sections(DATA.status);
+        DATA.events=events(DATA.timeline);DATA.charSections=characterRecords(DATA.characters);DATA.statusSections=sections(DATA.status);
         renderNav();renderOverview();renderTimeline();renderCharacters();renderStatus();downloads();
         $('#globalSearch').oninput=e=>{query=e.target.value;renderActive()};
         const initial=location.hash.slice(1);if(initial==='map')location.replace('map.html');else if(NAV.some(x=>x[0]===initial))showView(initial);

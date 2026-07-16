@@ -45,6 +45,9 @@
     const $=s=>document.querySelector(s),esc=s=>(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     async function gunzip(url){const r=await fetch(url);if(!r.ok)throw Error(url+' '+r.status);const ds=new DecompressionStream('gzip');return await new Response(r.body.pipeThrough(ds)).text()}
     function allSections(text){const clean=text.replace(/\r/g,''),re=/\n={20,}\n([^\n]+)\n={20,}\n/g,h=[...clean.matchAll(re)];return h.map((m,i)=>({title:m[1].trim(),body:clean.slice(m.index+m[0].length,i+1<h.length?h[i+1].index:clean.length).trim()}))}
+    function cleanSectionTitle(title){return title.replace(/^[一二三四五六七八九十]+、/,'').trim()}
+    function namedRecords(body,names){const escaped=names.map(n=>n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|'),re=new RegExp('(?:^|\\n)(?:\\d+\\.\\s*)?('+escaped+')(?:：)?\\s*\\n','g'),hits=[...body.matchAll(re)];return hits.map((m,i)=>({title:m[1],body:body.slice(m.index+m[0].length,i+1<hits.length?hits[i+1].index:body.length).replace(/\n-{10,}\n（[一二三四五六七八九十]+）[\s\S]*$/,'').trim()}))}
+    function characterRecords(text){const base=allSections(text),out=[],used=new Set(),find=t=>base.find(x=>cleanSectionTitle(x.title)===t);['千叶','史莱姆公主'].forEach(name=>{const x=find(name);if(x){out.push({title:name,body:x.body});used.add(x.title)}});const adults=base.find(x=>/17名成年自由地球女性/.test(x.title)),locals=base.find(x=>/艾琳与诺拉/.test(x.title));if(adults){out.push(...namedRecords(adults.body,[...CORE.slice(1),...NEW]));used.add(adults.title)}if(locals){out.push(...namedRecords(locals.body,LOCAL));used.add(locals.title)}base.filter(x=>!used.has(x.title)&&x.title!=='【读取规则】').forEach(x=>out.push({title:cleanSectionTitle(x.title),body:x.body}));return out}
     function field(body,label){const m=body.match(new RegExp('(?:^|\\n)'+label+'：\\s*\\n([^\\n]+)'));return m?m[1].trim().replace(/。$/,''):'档案未明确记录'}
     function blocks(body){const re=/(?:^|\n)([^\n：]{1,32})：\s*\n/g,h=[...body.matchAll(re)];if(!h.length)return[{title:'完整记录',body}];const out=[];if(h[0].index>0&&body.slice(0,h[0].index).trim())out.push({title:'补充记录',body:body.slice(0,h[0].index).trim()});h.forEach((m,i)=>out.push({title:m[1].trim(),body:body.slice(m.index+m[0].length,i+1<h.length?h[i+1].index:body.length).trim()}));return out.filter(x=>x.body)}
     function group(name){if(CORE.includes(name))return'核心成员';if(NEW.includes(name))return'后加入成员';if(LOCAL.includes(name))return'本土成员';if(name==='史莱姆公主')return'特殊伙伴';return'结构与外部节点'}
@@ -52,7 +55,7 @@
     function href(name){return `person.html?id=${encodeURIComponent(PEOPLE[name]?.[0]||name)}`}
     async function init(){
       try{
-        const text=await gunzip('assets/characters.txt.gz'),records=allSections(text),id=new URLSearchParams(location.search).get('id')||'qianye',name=resolve(id,records),record=records.find(x=>x.title===name);
+        const text=await gunzip('assets/characters.txt.gz'),records=characterRecords(text),id=new URLSearchParams(location.search).get('id')||'qianye',name=resolve(id,records),record=records.find(x=>x.title===name);
         if(!record)throw Error('未找到该人物档案');
         const profile=PEOPLE[name],role=profile?.[1]||group(name),items=blocks(record.body);
         document.title=`${name} · 人物档案 · 双陆世界`;$('#name').textContent=name;$('#role').textContent=role;$('#group').textContent=`${group(name)} · PERSON ARCHIVE`;
