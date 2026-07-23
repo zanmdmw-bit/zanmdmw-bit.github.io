@@ -97,6 +97,7 @@
     summary b{font:700 15px Georgia,"Microsoft YaHei"}
     summary i{font-style:normal;margin-left:auto;font-size:10px;color:var(--muted);order:3}
     .doc-body{border-top:1px dashed var(--line);padding:18px 20px 23px;white-space:pre-wrap;color:#5f564d;font-size:13px;line-height:1.8;max-height:520px;overflow:auto}
+    .story-list{display:grid;gap:12px}.story-list details{scroll-margin-top:20px}.story-list summary{align-items:flex-start}.story-heading{display:grid;gap:5px}.story-heading b{font-size:17px}.story-heading small{color:var(--muted);font-size:11px;line-height:1.55;font-weight:400}.story-situation{padding:15px 20px;background:#f3e7d5;border-top:1px dashed var(--line);color:#685a4d;font-size:12px;line-height:1.75}.story-situation b{color:var(--copper);margin-right:7px}.story-list .doc-body{max-height:70vh}.source-stats{grid-template-columns:repeat(4,1fr)}
     .timeline{position:relative;display:grid;gap:12px;padding-left:28px}
     .timeline:before{content:"";position:absolute;left:8px;top:10px;bottom:10px;width:1px;background:var(--line)}
     .timeline details{position:relative}
@@ -130,7 +131,7 @@
     .loading.hide{opacity:0;visibility:hidden}.loader{text-align:center;color:var(--muted)}.loader b{display:block;font:700 30px Georgia;color:var(--ink);margin-bottom:12px}
     .mobile-nav{display:none}
     @media(max-width:1050px){.app{grid-template-columns:205px 1fr}.hero{grid-template-columns:1fr}.hero-side{grid-template-columns:repeat(3,1fr)}.character-grid{grid-template-columns:repeat(2,1fr)}.span-4,.span-5,.span-7,.span-8{grid-column:span 6}.map-note{grid-template-columns:1fr}}
-    @media(max-width:760px){.app{display:block}aside{display:none}main{padding:20px 15px 90px}.topbar{align-items:flex-start;flex-direction:column}.search{min-width:100%;width:100%}.hero-main{min-height:280px}.hero-side{grid-template-columns:1fr}.hero h2{font-size:39px}.grid{display:block}.panel{margin-bottom:14px}.stats{grid-template-columns:repeat(2,1fr)}.archive-grid,.character-grid{grid-template-columns:1fr}.page-title{display:block}.map-viewport{height:580px;border-radius:18px}.map-tools{left:10px;top:10px;right:10px;flex-wrap:wrap}.map-tools button{padding:7px 9px}.map-hint{left:10px;bottom:10px}.map-note{padding:20px;gap:18px}.mobile-nav{position:fixed;display:grid;grid-template-columns:repeat(6,1fr);left:10px;right:10px;bottom:10px;z-index:40;background:rgba(47,41,35,.94);border-radius:17px;padding:7px;box-shadow:0 12px 35px rgba(0,0,0,.22)}.mobile-nav button,.mobile-nav a{border:0;background:transparent;color:#d9ccba;border-radius:10px;padding:8px 3px;font-size:9px;text-align:center;text-decoration:none}.mobile-nav button.active{background:#fff8ec;color:var(--ink)}.mobile-nav i{display:block;font-style:normal;font-size:16px;margin:0 auto 2px}}
+    @media(max-width:760px){.app{display:block}aside{display:none}main{padding:20px 15px 90px}.topbar{align-items:flex-start;flex-direction:column}.search{min-width:100%;width:100%}.hero-main{min-height:280px}.hero-side{grid-template-columns:1fr}.hero h2{font-size:39px}.grid{display:block}.panel{margin-bottom:14px}.stats{grid-template-columns:repeat(2,1fr)}.archive-grid,.character-grid{grid-template-columns:1fr}.page-title{display:block}.map-viewport{height:580px;border-radius:18px}.map-tools{left:10px;top:10px;right:10px;flex-wrap:wrap}.map-tools button{padding:7px 9px}.map-hint{left:10px;bottom:10px}.map-note{padding:20px;gap:18px}.story-list .doc-body{max-height:64vh}.mobile-nav{position:fixed;display:grid;grid-template-columns:repeat(7,1fr);left:7px;right:7px;bottom:8px;z-index:40;background:rgba(47,41,35,.94);border-radius:17px;padding:6px;box-shadow:0 12px 35px rgba(0,0,0,.22)}.mobile-nav button,.mobile-nav a{border:0;background:transparent;color:#d9ccba;border-radius:10px;padding:8px 1px;font-size:8px;text-align:center;text-decoration:none}.mobile-nav button.active{background:#fff8ec;color:var(--ink)}.mobile-nav i{display:block;font-style:normal;font-size:15px;margin:0 auto 2px}}
   </style>
 </head>
 <body>
@@ -145,14 +146,14 @@
     <main>
       <div class="topbar">
         <div class="crumb">RP ARCHIVE / <b id="crumb">总览</b></div>
-        <label class="search"><span>⌕</span><input id="globalSearch" placeholder="搜索事件、人物或关键词"></label>
+        <label class="search"><span>⌕</span><input id="globalSearch" placeholder="搜索正文、事件、人物或关键词"></label>
       </div>
 
       <section class="view active" id="overviewView">
         <div class="hero">
           <article class="hero-main">
             <p class="eyebrow">当前续写坐标 · CURRENT CANON</p>
-            <h2>灰石镇<br>传送点</h2>
+            <h2 id="currentPlaceTitle">正在读取<br>当前地点</h2>
             <p class="lead" id="currentLead">正在读取当前世界状态……</p>
             <div class="chips" id="heroChips"></div>
             <a class="world-cta" href="world.html">浏览世界、国家与力量体系 →</a>
@@ -165,70 +166,111 @@
         </div>
         <div class="grid">
           <article class="panel span-5"><div class="panel-head"><h3>六维属性</h3><span>即时面板</span></div><div class="bars" id="attributeBars"></div></article>
-          <article class="panel span-7"><div class="panel-head"><h3>当前任务与推进线</h3><span>第60日</span></div><ul class="task-list" id="taskList"></ul></article>
+          <article class="panel span-7"><div class="panel-head"><h3>当前任务与推进线</h3><span>第92日</span></div><ul class="task-list" id="taskList"></ul></article>
           <article class="panel span-8"><div class="panel-head"><h3>核心人物</h3><span>进入独立人物页</span></div><div class="portrait-row" id="portraitRow"></div></article>
-          <article class="panel span-4"><div class="panel-head"><h3>最后确认结构</h3><span>返场待核验</span></div><div class="stats" id="homeStats"></div></article>
+          <article class="panel span-4"><div class="panel-head"><h3>当前人员与任务</h3><span>三地分流</span></div><div class="stats" id="homeStats"></div></article>
           <article class="panel span-6"><div class="panel-head"><h3>高优先级风险</h3><span>现实逻辑</span></div><ul class="risk-list" id="riskList"></ul></article>
-          <article class="panel span-6"><div class="panel-head"><h3>档案完整度</h3><span>来源文件</span></div><div class="stats"><div class="stat"><b id="eventCount">—</b><small>正史事件</small></div><div class="stat"><b id="charCount">—</b><small>人物档案</small></div><div class="stat"><b>3</b><small>唯一当前文件</small></div></div></article>
+          <article class="panel span-6"><div class="panel-head"><h3>档案完整度</h3><span>当前正史资料</span></div><div class="stats source-stats"><div class="stat"><b id="storyCount">—</b><small>正文历史</small></div><div class="stat"><b id="eventCount">—</b><small>正史事件</small></div><div class="stat"><b id="charCount">—</b><small>人物档案</small></div><div class="stat"><b>4</b><small>资料类别</small></div></div></article>
         </div>
       </section>
 
+      <section class="view" id="storyView"><div class="page-title"><div><p class="eyebrow">CANON STORY HISTORY</p><h2>正文历史</h2><p>收录《双陆世界正文272—490》共219篇，保留完整场景、对话、时间、地点与当前局势。</p></div></div><div class="filters" id="storyFilters"></div><div class="story-list" id="storyList"></div></section>
       <section class="view" id="timelineView"><div class="page-title"><div><p class="eyebrow">CANON TIMELINE</p><h2>正史时间线</h2><p>按事件读取完整历史，支持关键词筛选。</p></div></div><div class="filters" id="timelineFilters"></div><div class="timeline" id="timelineList"></div></section>
       <section class="view" id="charactersView"><div class="page-title"><div><p class="eyebrow">PEOPLE & RELATIONS</p><h2>人物与关系</h2><p>身份、立场、利益与当前职责；不擅自补造未展示属性。</p></div></div><div class="filters" id="characterFilters"></div><div class="character-grid" id="characterGrid"></div></section>
       <section class="view" id="statusView"><div class="page-title"><div><p class="eyebrow">PLAYER STATUS</p><h2>千叶状态栏</h2><p>数值、资金、装备、技能与商城记录均来自唯一当前版。</p></div></div><div class="archive-grid" id="statusGrid"></div></section>
-      <section class="view" id="archiveView"><div class="page-title"><div><p class="eyebrow">SOURCE ARCHIVE</p><h2>原始档案</h2><p>网站展示由以下三份唯一当前文件实时解析。</p></div></div><article class="panel"><div class="download-row"><button data-download="timeline">下载《时间线.txt》</button><button data-download="characters">下载《人物与关系.txt》</button><button data-download="status">下载《千叶状态栏.txt》</button></div></article></section>
+      <section class="view" id="archiveView"><div class="page-title"><div><p class="eyebrow">SOURCE ARCHIVE</p><h2>原始档案</h2><p>网站展示由正文历史、时间线、人物与关系、千叶状态栏四类当前正史资料生成。</p></div></div><article class="panel"><div class="download-row"><button data-download="story">下载《正文历史272—490.txt》</button><button data-download="timeline">下载《时间线.txt》</button><button data-download="characters">下载《人物与关系.txt》</button><button data-download="status">下载《千叶状态栏.txt》</button></div></article></section>
     </main>
   </div>
   <nav class="mobile-nav" id="mobileNav"></nav>
   <script>
-    const FILES={timeline:'assets/timeline.txt.gz',characters:'assets/characters.txt.gz',status:'assets/status.txt.gz'};
+    const FILES={
+      timeline:'assets/timeline-current.txt',
+      characters:'assets/characters-current.txt',
+      status:'assets/status-current.txt',
+      stories:[
+        'assets/story-272-299.json','assets/story-300-324.json','assets/story-325-349.json',
+        'assets/story-350-374.json','assets/story-375-399.json','assets/story-400-424.json',
+        'assets/story-425-449.json','assets/story-450-474.json','assets/story-475-490.json'
+      ]
+    };
     const DATA={};
-    const NAV=[['overview','⌂','总览'],['timeline','⌁','时间线'],['characters','◉','人物'],['status','◇','状态'],['map','⌖','地图'],['archive','▤','原档']];
+    const NAV=[['overview','⌂','总览'],['story','☷','正文历史'],['timeline','⌁','时间线'],['characters','◉','人物'],['status','◇','状态'],['map','⌖','地图'],['archive','▤','原档']];
     const CORE=['千叶','方雪','沈鸢','陈苗','许清禾','林雁','孟晓雨','周小曼','江澜','唐梨'];
     const NEW=['杜晴','夏芸','顾岚','秦蓉','周曼宁','罗芳','陆婉','秦瑶'];
     const LOCAL=['艾琳','诺拉'];
+    const SLAVES=['艾琳','诺拉','巧克力','香子兰','阿芙拉'];
+    const SHOP=['梁舒岚','沈砚秋','赵妍','许静','芙蕾妲'];
     const PEOPLE={
-      '千叶':['qianye','资源核心 · 单手剑冒险者'],'方雪':['fangxue','商业谈判 · 现实执行'],'沈鸢':['shenyuan','视觉顾问 · 远程魔法'],'陈苗':['chenmiao','总账 · 风险记录'],'许清禾':['xuqinghe','医疗卫生 · 治疗魔法'],'林雁':['linyan','警戒防务 · 近战训练'],'孟晓雨':['mengxiaoyu','后勤辅助 · 基础魔法'],'周小曼':['zhouxiaoman','短弓 · 快速反应'],'江澜':['jianglan','后排观察 · 高生存'],'唐梨':['tangli','妆发服装 · 精细魔法'],
-      '杜晴':['duqing','治疗学习 · 生活辅助'],'夏芸':['xiayun','治疗防守 · 家庭照护'],'顾岚':['gulan','远程魔法 · 精细控制'],'秦蓉':['qinrong','长矛护卫 · 前排防守'],'周曼宁':['zhoumanning','治疗清洁 · 照护辅助'],'罗芳':['luofang','短矛防守 · 女儿保护'],'陆婉':['luwan','弓箭观察 · 生活魔法'],'秦瑶':['qinyao','机动远程 · 短弓魔法'],'艾琳':['ailin','本地礼仪 · 家务管理'],'诺拉':['nuola','家务学习 · 恢复适应'],'史莱姆公主':['slime-princess','智慧恒辉胶 · 特殊伙伴']
+      '千叶':['qianye','资源核心 · 21级魔剑士'],'方雪':['fangxue','商业谈判 · 现实执行'],'沈鸢':['shenyuan','视觉顾问 · 远程魔法'],'陈苗':['chenmiao','总账 · 风险记录'],'许清禾':['xuqinghe','医疗卫生 · 治疗魔法'],'林雁':['linyan','警戒防务 · 近战训练'],'孟晓雨':['mengxiaoyu','后勤辅助 · 基础魔法'],'周小曼':['zhouxiaoman','短弓 · 快速反应'],'江澜':['jianglan','后排观察 · 高生存'],'唐梨':['tangli','妆发服装 · 精细魔法'],
+      '杜晴':['duqing','治疗学习 · 生活辅助'],'夏芸':['xiayun','治疗防守 · 家庭照护'],'顾岚':['gulan','远程魔法 · 精细控制'],'秦蓉':['qinrong','长矛护卫 · 前排防守'],'周曼宁':['zhoumanning','治疗清洁 · 照护辅助'],'罗芳':['luofang','短矛防守 · 女儿保护'],'陆婉':['luwan','弓箭观察 · 生活魔法'],'秦瑶':['qinyao','机动远程 · 短弓魔法'],'艾琳':['ailin','本地礼仪 · 家务管理'],'诺拉':['nuola','家务学习 · 恢复适应'],
+      '巧克力':['','成熟魅魔 · 荒原同行'],'香子兰':['','猫人侍从 · 新货栈留守'],'阿芙拉':['','雪豹人 · 附属战斗人员'],
+      '梁舒岚':['','王都回收铺 · 账房与钥匙管理'],'沈砚秋':['','王都回收铺 · 现金与总账协作'],'赵妍':['','王都回收铺 · 柜台与接待'],'许静':['','王都回收铺 · 采购与店务'],'芙蕾妲':['','王都回收铺 · 本地文书'],
+      '史莱姆公主':['slime-princess','16级智慧恒辉胶 · 特殊伙伴']
     };
-    let active='overview',query='',timelineMode='recent',characterMode='核心成员';
+    let active='overview',query='',storyMode='recent',timelineMode='recent',characterMode='核心成员';
     const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
     const esc=s=>(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     async function gunzip(url){const r=await fetch(url);if(!r.ok)throw Error(url+' '+r.status);const ds=new DecompressionStream('gzip');return await new Response(r.body.pipeThrough(ds)).text()}
-    function field(text,label){const m=text.match(new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'：\\s*\\n([^\\n]+)'));return m?m[1].trim().replace(/。$/,''):'—'}
+    async function textFile(url){const r=await fetch(url);if(!r.ok)throw Error(url+' '+r.status);return r.text()}
+    async function jsonFile(url){return JSON.parse(await textFile(url))}
+    function field(text,label){const safe=label.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),m=text.match(new RegExp(safe+'：(?:[ \\t]*\\n\\s*|[ \\t]*)([^\\n]+)'));return m?m[1].trim().replace(/。$/,''):'—'}
     function numberField(text,label){const direct=Number.parseFloat(field(text,label));if(Number.isFinite(direct))return direct;const safe=label.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),m=text.match(new RegExp('(?:^|\\n)\\s*-\\s*'+safe+'\\s*([+-]?\\d+(?:\\.\\d+)?)','m'));return m?Number(m[1]):0}
     function sections(text){const clean=text.replace(/\r/g,'');const re=/\n={20,}\n([^\n]+)\n={20,}\n/g;const hits=[...clean.matchAll(re)],out=[];hits.forEach((m,i)=>out.push({title:m[1].trim(),body:clean.slice(m.index+m[0].length,i+1<hits.length?hits[i+1].index:clean.length).trim()}));return out}
     function cleanSectionTitle(title){return title.replace(/^[一二三四五六七八九十]+、/,'').trim()}
     function namedRecords(body,names){const escaped=names.map(n=>n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|'),re=new RegExp('(?:^|\\n)(?:\\d+\\.\\s*)?('+escaped+')(?:：)?\\s*\\n','g'),hits=[...body.matchAll(re)];return hits.map((m,i)=>({title:m[1],body:body.slice(m.index+m[0].length,i+1<hits.length?hits[i+1].index:body.length).replace(/\n-{10,}\n（[一二三四五六七八九十]+）[\s\S]*$/,'').trim()}))}
-    function characterRecords(text){const base=sections(text),out=[],used=new Set(),find=t=>base.find(x=>cleanSectionTitle(x.title)===t),direct=['千叶','史莱姆公主'];direct.forEach(name=>{const x=find(name);if(x){out.push({title:name,body:x.body});used.add(x.title)}});const adults=base.find(x=>/17名成年自由地球女性/.test(x.title)),locals=base.find(x=>/艾琳与诺拉/.test(x.title));if(adults){out.push(...namedRecords(adults.body,[...CORE.slice(1),...NEW]));used.add(adults.title)}if(locals){out.push(...namedRecords(locals.body,LOCAL));used.add(locals.title)}base.filter(x=>!used.has(x.title)&&x.title!=='【读取规则】').forEach(x=>out.push({title:cleanSectionTitle(x.title),body:x.body}));return out}
+    function mappedRecords(body,map){const names=Object.keys(map),escaped=names.map(n=>n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|'),re=new RegExp('(?:^|\\n)('+escaped+')(?:：)?\\s*\\n','g'),hits=[...body.matchAll(re)];return hits.map((m,i)=>({title:map[m[1]],body:body.slice(m.index+m[0].length,i+1<hits.length?hits[i+1].index:body.length).trim()}))}
+    function characterRecords(text){
+      const base=sections(text),out=[],used=new Set(),find=t=>base.find(x=>cleanSectionTitle(x.title)===t),direct=['千叶','史莱姆公主'];
+      direct.forEach(name=>{const x=find(name);if(x){out.push({title:name,body:x.body});used.add(x.title)}});
+      const adults=base.find(x=>/17名成年自由地球女性/.test(x.title));
+      const slaves=base.find(x=>/五名合法登记女奴/.test(x.title));
+      const shop=base.find(x=>/王都新增人物与机构/.test(x.title));
+      if(adults){out.push(...namedRecords(adults.body,[...CORE.slice(1),...NEW]));used.add(adults.title)}
+      if(slaves){out.push(...mappedRecords(slaves.body,{'艾琳':'艾琳','诺拉':'诺拉','弥娅瑟｜昵称：巧克力':'巧克力','瑟芙拉｜昵称：香子兰':'香子兰','阿芙拉｜千叶昵称：芝士雪豹':'阿芙拉'}));used.add(slaves.title)}
+      if(shop){out.push(...mappedRecords(shop.body,{'梁舒岚':'梁舒岚','沈砚秋':'沈砚秋','赵妍':'赵妍','许静':'许静','芙蕾妲':'芙蕾妲'}));used.add(shop.title)}
+      base.filter(x=>!used.has(x.title)&&x.title!=='【读取规则】').forEach(x=>out.push({title:cleanSectionTitle(x.title),body:x.body}));
+      return out;
+    }
     function events(text){const clean=text.replace(/\r/g,'');const re=/【事件(\d+)】([^\n]*)\n/g;const hits=[...clean.matchAll(re)],out=[];hits.forEach((m,i)=>out.push({id:+m[1],title:m[2].trim().replace(/^\s*[｜|]/,''),body:clean.slice(m.index+m[0].length,i+1<hits.length?hits[i+1].index:clean.length).replace(/^={20,}\s*/,'').trim()}));return out}
     function excerpt(body,n=120){return body.replace(/\n+/g,' · ').replace(/^[-·\s]+/,'').slice(0,n)+(body.length>n?'…':'')}
-    function portraitUrl(name){const p=PEOPLE[name];return p?`assets/portraits/${p[0]}.webp`:''}
+    function portraitUrl(name){const p=PEOPLE[name];return p?.[0]?`assets/portraits/${p[0]}.webp`:''}
     function profileHref(name){return `person.html?id=${encodeURIComponent(PEOPLE[name]?.[0]||name)}`}
     function navEntry([id,icon,label],mobile=false){return id==='map'?`<a href="map.html"><i>${icon}</i>${label}</a>`:`<button data-view="${id}" class="${active===id?'active':''}"><i>${icon}</i>${label}</button>`}
-    function renderNav(){const world=`<a class="world-link" href="world.html"><i>✦</i>世界观</a>`,html=world+NAV.slice(0,5).map(x=>navEntry(x)).join('')+`<button data-view="archive" class="${active==='archive'?'active':''}"><i>▤</i>原始档案</button>`;$('#desktopNav').innerHTML=html;$('#mobileNav').innerHTML=`<a href="world.html"><i>✦</i>世界</a>`+NAV.slice(0,5).map(x=>navEntry(x,true)).join('');$$('[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view))}
+    function renderNav(){const world=`<a class="world-link" href="world.html"><i>✦</i>世界观</a>`,primary=NAV.filter(x=>x[0]!=='archive'),html=world+primary.map(x=>navEntry(x)).join('')+`<button data-view="archive" class="${active==='archive'?'active':''}"><i>▤</i>原始档案</button>`;$('#desktopNav').innerHTML=html;$('#mobileNav').innerHTML=`<a href="world.html"><i>✦</i>世界</a>`+primary.map(x=>navEntry(x,true)).join('');$$('[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view))}
     function showView(id){active=id;query='';$('#globalSearch').value='';$$('.view').forEach(v=>v.classList.toggle('active',v.id===id+'View'));$('#crumb').textContent=NAV.find(x=>x[0]===id)?.[2]||'档案';renderNav();renderActive();scrollTo(0,0)}
-    function renderActive(){if(active==='timeline')renderTimeline();if(active==='characters')renderCharacters();if(active==='status')renderStatus()}
+    function renderActive(){if(active==='story')renderStory();if(active==='timeline')renderTimeline();if(active==='characters')renderCharacters();if(active==='status')renderStatus()}
     function detail(x,label){return `<details><summary><b>${esc(x.title)}</b><i>${esc(label)}</i></summary><div class="doc-body">${esc(x.body)}</div></details>`}
     function renderOverview(){
       const s=DATA.status,level=field(s,'等级'),exp=field(s,'经验'),cash=field(s,'当前个人现金'),points=field(s,'当前生存点'),time=field(s,'覆盖时间'),place=field(s,'当前位置');
       $('#asideTime').textContent=time;
-      $('#currentLead').textContent=`${time}，${place}。千叶刚经鸦堡返抵灰石镇，史莱姆公主在箱内喊出“家！”。旧木匠院原租期已经届满，住处与24名成员的现状必须返场确认。`;
-      $('#heroChips').innerHTML=['返抵灰石镇','租期处理待核验','史莱姆公主：家','王都寄售进行中'].map(x=>`<span class="chip">${x}</span>`).join('');
+      $('#currentPlaceTitle').innerHTML='赤砾荒原北缘<br>红岩临时营地';
+      $('#currentLead').textContent=`${time}，${place}。千叶、巧克力与史莱姆公主仍在荒原营地；千叶已升至21级并积累277份任务证明，但尚未返城结算。巧克力刚追问完美返祖承诺与白曜金枝升级的优先级，千叶尚未作答。`;
+      $('#heroChips').innerHTML=['21级超凡阶','92341生存点','277份证明未结算','黄金王权仅解锁训练'].map(x=>`<span class="chip">${x}</span>`).join('');
       $('#miniLevel').textContent=level;$('#miniExp').textContent='经验 '+exp;$('#miniCash').textContent=cash;$('#miniPoints').textContent=points;
       const attrs=['力量','敏捷','体质','精神','魔力','感知'].map(k=>[k,numberField(s,k)]),max=Math.max(...attrs.map(x=>x[1]),40);
       $('#attributeBars').innerHTML=attrs.map(([k,v])=>`<div class="bar-row"><span>${k}</span><div class="bar"><i style="width:${v/max*100}%"></i></div><b>${v}</b></div>`).join('');
-      $('#taskList').innerHTML=['返回旧木匠院，现场确认租约处理和24名成员实际位置','与陈苗重新核对公共伙食金、废品摊周转金及住房支出','检查黑鬃马、普通清水胶、院内装备与灰石镇留存药物','等待第60日20:00六枚西地那非报价结果','跟进第64日玄黯长剑拍卖，并筹备赤砾荒原任务'].map(x=>`<li>${x}</li>`).join('');
-      const portraits=['千叶','方雪','沈鸢','陈苗','许清禾','史莱姆公主'];
-      $('#portraitRow').innerHTML=portraits.map(n=>`<a class="portrait" href="${profileHref(n)}"><div class="avatar"><img src="${portraitUrl(n)}" alt="${esc(n)}真人风肖像"></div><b>${n}</b><small>查看完整档案</small></a>`).join('');
-      $('#homeStats').innerHTML=[['25','第56日前最后确认人数'],['24','当前尚未见到的成员'],['第59日','旧租期届满'],['待核验','续租／搬迁结果']].map(x=>`<div class="stat"><b>${x[0]}</b><small>${x[1]}</small></div>`).join('');
-      $('#riskList').innerHTML=['旧木匠院租期届满，住处与成员位置仍未核验','公共伙食金和废品摊周转金已不是第48日旧账面值','高价值武器与药物寄售可能带来关注和交易风险','白曜金枝尚未进行真正出鞘实战测试','系统秘密、货源与异常成长能力仍需严格保密'].map(x=>`<li>${x}</li>`).join('');
-      $('#eventCount').textContent=DATA.events.length;$('#charCount').textContent=DATA.charSections.filter(x=>[...CORE,...NEW,...LOCAL,'史莱姆公主'].includes(x.title)).length;
+      $('#taskList').innerHTML=['决定如何回应巧克力：优先兑现186000点完美返祖剂，还是先升级白曜金枝','《圣剑解放·黄金王权》九项训练模块均未完成，尚未掌握基础形态','277份任务证明尚未返城提交与结算，不得预加金币','白曜金枝第一王冠完整成长尚差75659点，当前只完成查询','灰石镇第二批霍记补货仍在新货栈，尚未交付或结算'].map(x=>`<li>${x}</li>`).join('');
+      const portraits=['千叶','巧克力','史莱姆公主','阿芙拉','香子兰','方雪'];
+      $('#portraitRow').innerHTML=portraits.map(n=>{const img=portraitUrl(n),visual=img?`<img src="${img}" alt="${esc(n)}真人风肖像">`:esc(n[0]||'？');return `<a class="portrait" href="${profileHref(n)}"><div class="avatar">${visual}</div><b>${n}</b><small>查看完整档案</small></a>`}).join('');
+      $('#homeStats').innerHTML=[['28','同行团人类'],['5','王都店员'],['277','任务证明'],['30/30','公主培养']].map(x=>`<div class="stat"><b>${x[0]}</b><small>${x[1]}</small></div>`).join('');
+      $('#riskList').innerHTML=['荒原三人与灰石镇、王都两处人员没有即时通信，三地情报不得自动同步','黄金王权只解除训练锁定，未训练前不能按成熟形态投入实战','返祖剂与圣剑完整成长都超出当前余额，资源优先级会直接影响巧克力关系','车辆虽已更换受损右前轮且仍可行驶，长期碎石路与燃料余量仍是现实约束','系统、商城、生存点与训练界面仍未公开；“茉莉安”只是对巧克力和公主的掩饰说法'].map(x=>`<li>${x}</li>`).join('');
+      $('#storyCount').textContent=DATA.stories.length;$('#eventCount').textContent=DATA.events.length;$('#charCount').textContent=DATA.charSections.filter(x=>PEOPLE[x.title]).length;
+    }
+    function storyDetail(x){return `<details><summary><span class="story-heading"><b>正文 ${x.id}</b><small>${esc(x.time)} · ${esc(x.location)}</small></span><i>${String(x.id).padStart(3,'0')}</i></summary><div class="story-situation"><b>当前局势</b>${esc(x.situation)}</div><div class="doc-body">${esc(x.body)}</div></details>`}
+    function renderStory(){
+      const modes=[['recent','最近20篇'],['all','全部正文'],['272-319','272—319'],['320-369','320—369'],['370-419','370—419'],['420-469','420—469'],['470-490','470—490']];
+      $('#storyFilters').innerHTML=modes.map(x=>`<button data-smode="${x[0]}" class="${storyMode===x[0]?'on':''}">${x[1]}</button>`).join('')+`<span class="chip">${DATA.stories.length}篇正文</span>`;
+      $$('[data-smode]').forEach(b=>b.onclick=()=>{storyMode=b.dataset.smode;renderStory()});
+      let list=[...DATA.stories].reverse();
+      if(storyMode==='recent'&&!query)list=list.slice(0,20);
+      if(/^\d+-\d+$/.test(storyMode)){const [a,b]=storyMode.split('-').map(Number);list=list.filter(x=>x.id>=a&&x.id<=b)}
+      if(query)list=list.filter(x=>(x.id+' '+x.time+' '+x.location+' '+x.situation+' '+x.body).toLowerCase().includes(query.toLowerCase()));
+      $('#storyList').innerHTML=list.length?list.map(storyDetail).join(''):'<article class="panel">没有匹配正文。</article>';
     }
     function renderTimeline(){const modes=[['recent','最近事件'],['all','全部正史'],['battle','战斗'],['trade','商业'],['slime','史莱姆']];$('#timelineFilters').innerHTML=modes.map(x=>`<button data-tmode="${x[0]}" class="${timelineMode===x[0]?'on':''}">${x[1]}</button>`).join('')+`<span class="chip">${DATA.events.length}件事件</span>`;$$('[data-tmode]').forEach(b=>b.onclick=()=>{timelineMode=b.dataset.tmode;renderTimeline()});let list=DATA.events;if(timelineMode==='recent')list=list.slice(-24);if(timelineMode==='battle')list=list.filter(x=>/战|击杀|巢穴|任务|剑术|野兽|山匪/.test(x.title+x.body));if(timelineMode==='trade')list=list.filter(x=>/货|钱|金币|商|寄售|订单|废品|成交|面包/.test(x.title+x.body));if(timelineMode==='slime')list=list.filter(x=>/史莱姆|恒辉胶|智慧分支/.test(x.title+x.body));if(query)list=list.filter(x=>(x.title+x.body+String(x.id)).toLowerCase().includes(query.toLowerCase()));$('#timelineList').innerHTML=list.length?list.map(x=>detail(x,'事件 '+String(x.id).padStart(3,'0'))).join(''):'<article class="panel">没有匹配事件。</article>'}
-    function groupFor(title){if(CORE.includes(title))return '核心成员';if(NEW.includes(title))return '后加入成员';if(LOCAL.includes(title))return '本土成员';if(title==='史莱姆公主')return '特殊伙伴';return '结构与外部节点'}
+    function groupFor(title){if(CORE.includes(title))return '核心成员';if(NEW.includes(title))return '后加入成员';if(SLAVES.includes(title))return '合法登记女奴';if(SHOP.includes(title))return '王都回收铺';if(title==='史莱姆公主')return '特殊伙伴';return '结构与外部节点'}
     function renderCharacters(){
-      const modes=['核心成员','后加入成员','本土成员','特殊伙伴','结构与外部节点','全部'];
+      const modes=['核心成员','后加入成员','合法登记女奴','王都回收铺','特殊伙伴','结构与外部节点','全部'];
       $('#characterFilters').innerHTML=modes.map(x=>`<button data-cmode="${x}" class="${characterMode===x?'on':''}">${x}</button>`).join('');
       $$('[data-cmode]').forEach(b=>b.onclick=()=>{characterMode=b.dataset.cmode;renderCharacters()});
       let list=DATA.charSections.filter(x=>x.title!=='【读取规则】'&&(characterMode==='全部'||groupFor(x.title)===characterMode));
@@ -239,12 +281,13 @@
       }).join('');
     }
     function renderStatus(){let list=DATA.statusSections;if(query)list=list.filter(x=>(x.title+x.body).toLowerCase().includes(query.toLowerCase()));$('#statusGrid').innerHTML=list.map((x,i)=>detail(x,String(i+1).padStart(2,'0'))).join('')}
-    function downloads(){$$('[data-download]').forEach(b=>b.onclick=()=>{const key=b.dataset.download,n={timeline:'时间线.txt',characters:'人物与关系.txt',status:'千叶状态栏.txt'}[key],a=document.createElement('a');a.href=URL.createObjectURL(new Blob([DATA[key]],{type:'text/plain;charset=utf-8'}));a.download=n;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)})}
+    function downloads(){$$('[data-download]').forEach(b=>b.onclick=()=>{const key=b.dataset.download,n={story:'正文历史272—490.txt',timeline:'时间线.txt',characters:'人物与关系.txt',status:'千叶状态栏.txt'}[key],content=key==='story'?DATA.stories.map(x=>`${'='.repeat(70)}\n《双陆世界正文${x.id}.txt》\n${'='.repeat(70)}\n\n${x.body}`).join('\n\n'):DATA[key],a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type:'text/plain;charset=utf-8'}));a.download=n;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)})}
     async function init(){
       try{
-        [DATA.timeline,DATA.characters,DATA.status]=await Promise.all([gunzip(FILES.timeline),gunzip(FILES.characters),gunzip(FILES.status)]);
+        const [timeline,characters,status,storyParts]=await Promise.all([textFile(FILES.timeline),textFile(FILES.characters),textFile(FILES.status),Promise.all(FILES.stories.map(jsonFile))]);
+        DATA.timeline=timeline;DATA.characters=characters;DATA.status=status;DATA.stories=storyParts.flat().sort((a,b)=>a.id-b.id);
         DATA.events=events(DATA.timeline);DATA.charSections=characterRecords(DATA.characters);DATA.statusSections=sections(DATA.status);
-        renderNav();renderOverview();renderTimeline();renderCharacters();renderStatus();downloads();
+        renderNav();renderOverview();renderStory();renderTimeline();renderCharacters();renderStatus();downloads();
         $('#globalSearch').oninput=e=>{query=e.target.value;renderActive()};
         const initial=location.hash.slice(1);if(initial==='map')location.replace('map.html');else if(NAV.some(x=>x[0]===initial))showView(initial);
         $('#loading').classList.add('hide');
