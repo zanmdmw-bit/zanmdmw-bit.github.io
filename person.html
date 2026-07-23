@@ -38,24 +38,39 @@
   </main>
   <script>
     const PEOPLE={
-      '千叶':['qianye','资源核心 · 单手剑冒险者'],'方雪':['fangxue','商业谈判 · 现实执行'],'沈鸢':['shenyuan','视觉顾问 · 远程魔法'],'陈苗':['chenmiao','总账 · 风险记录'],'许清禾':['xuqinghe','医疗卫生 · 治疗魔法'],'林雁':['linyan','警戒防务 · 近战训练'],'孟晓雨':['mengxiaoyu','后勤辅助 · 基础魔法'],'周小曼':['zhouxiaoman','短弓 · 快速反应'],'江澜':['jianglan','后排观察 · 高生存'],'唐梨':['tangli','妆发服装 · 精细魔法'],
-      '杜晴':['duqing','治疗学习 · 生活辅助'],'夏芸':['xiayun','治疗防守 · 家庭照护'],'顾岚':['gulan','远程魔法 · 精细控制'],'秦蓉':['qinrong','长矛护卫 · 前排防守'],'周曼宁':['zhoumanning','治疗清洁 · 照护辅助'],'罗芳':['luofang','短矛防守 · 女儿保护'],'陆婉':['luwan','弓箭观察 · 生活魔法'],'秦瑶':['qinyao','机动远程 · 短弓魔法'],'艾琳':['ailin','本地礼仪 · 家务管理'],'诺拉':['nuola','家务学习 · 恢复适应'],'史莱姆公主':['slime-princess','智慧恒辉胶 · 特殊伙伴']
+      '千叶':['qianye','资源核心 · 21级魔剑士'],'方雪':['fangxue','商业谈判 · 现实执行'],'沈鸢':['shenyuan','视觉顾问 · 远程魔法'],'陈苗':['chenmiao','总账 · 风险记录'],'许清禾':['xuqinghe','医疗卫生 · 治疗魔法'],'林雁':['linyan','警戒防务 · 近战训练'],'孟晓雨':['mengxiaoyu','后勤辅助 · 基础魔法'],'周小曼':['zhouxiaoman','短弓 · 快速反应'],'江澜':['jianglan','后排观察 · 高生存'],'唐梨':['tangli','妆发服装 · 精细魔法'],
+      '杜晴':['duqing','治疗学习 · 生活辅助'],'夏芸':['xiayun','治疗防守 · 家庭照护'],'顾岚':['gulan','远程魔法 · 精细控制'],'秦蓉':['qinrong','长矛护卫 · 前排防守'],'周曼宁':['zhoumanning','治疗清洁 · 照护辅助'],'罗芳':['luofang','短矛防守 · 女儿保护'],'陆婉':['luwan','弓箭观察 · 生活魔法'],'秦瑶':['qinyao','机动远程 · 短弓魔法'],'艾琳':['ailin','本地礼仪 · 家务管理'],'诺拉':['nuola','家务学习 · 恢复适应'],
+      '巧克力':['','成熟魅魔 · 荒原同行'],'香子兰':['','猫人侍从 · 新货栈留守'],'阿芙拉':['','雪豹人 · 附属战斗人员'],
+      '梁舒岚':['','王都回收铺 · 账房与钥匙管理'],'沈砚秋':['','王都回收铺 · 现金与总账协作'],'赵妍':['','王都回收铺 · 柜台与接待'],'许静':['','王都回收铺 · 采购与店务'],'芙蕾妲':['','王都回收铺 · 本地文书'],
+      '史莱姆公主':['slime-princess','16级智慧恒辉胶 · 特殊伙伴']
     };
-    const ORDER=Object.keys(PEOPLE),CORE=ORDER.slice(0,10),NEW=ORDER.slice(10,18),LOCAL=['艾琳','诺拉'];
+    const ORDER=Object.keys(PEOPLE),CORE=ORDER.slice(0,10),NEW=ORDER.slice(10,18),SLAVES=['艾琳','诺拉','巧克力','香子兰','阿芙拉'],SHOP=['梁舒岚','沈砚秋','赵妍','许静','芙蕾妲'];
     const $=s=>document.querySelector(s),esc=s=>(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    async function gunzip(url){const r=await fetch(url);if(!r.ok)throw Error(url+' '+r.status);const ds=new DecompressionStream('gzip');return await new Response(r.body.pipeThrough(ds)).text()}
+    async function textFile(url){const r=await fetch(url);if(!r.ok)throw Error(url+' '+r.status);return r.text()}
     function allSections(text){const clean=text.replace(/\r/g,''),re=/\n={20,}\n([^\n]+)\n={20,}\n/g,h=[...clean.matchAll(re)];return h.map((m,i)=>({title:m[1].trim(),body:clean.slice(m.index+m[0].length,i+1<h.length?h[i+1].index:clean.length).trim()}))}
     function cleanSectionTitle(title){return title.replace(/^[一二三四五六七八九十]+、/,'').trim()}
     function namedRecords(body,names){const escaped=names.map(n=>n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|'),re=new RegExp('(?:^|\\n)(?:\\d+\\.\\s*)?('+escaped+')(?:：)?\\s*\\n','g'),hits=[...body.matchAll(re)];return hits.map((m,i)=>({title:m[1],body:body.slice(m.index+m[0].length,i+1<hits.length?hits[i+1].index:body.length).replace(/\n-{10,}\n（[一二三四五六七八九十]+）[\s\S]*$/,'').trim()}))}
-    function characterRecords(text){const base=allSections(text),out=[],used=new Set(),find=t=>base.find(x=>cleanSectionTitle(x.title)===t);['千叶','史莱姆公主'].forEach(name=>{const x=find(name);if(x){out.push({title:name,body:x.body});used.add(x.title)}});const adults=base.find(x=>/17名成年自由地球女性/.test(x.title)),locals=base.find(x=>/艾琳与诺拉/.test(x.title));if(adults){out.push(...namedRecords(adults.body,[...CORE.slice(1),...NEW]));used.add(adults.title)}if(locals){out.push(...namedRecords(locals.body,LOCAL));used.add(locals.title)}base.filter(x=>!used.has(x.title)&&x.title!=='【读取规则】').forEach(x=>out.push({title:cleanSectionTitle(x.title),body:x.body}));return out}
+    function mappedRecords(body,map){const names=Object.keys(map),escaped=names.map(n=>n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|'),re=new RegExp('(?:^|\\n)('+escaped+')(?:：)?\\s*\\n','g'),hits=[...body.matchAll(re)];return hits.map((m,i)=>({title:map[m[1]],body:body.slice(m.index+m[0].length,i+1<hits.length?hits[i+1].index:body.length).trim()}))}
+    function characterRecords(text){
+      const base=allSections(text),out=[],used=new Set(),find=t=>base.find(x=>cleanSectionTitle(x.title)===t);
+      ['千叶','史莱姆公主'].forEach(name=>{const x=find(name);if(x){out.push({title:name,body:x.body});used.add(x.title)}});
+      const adults=base.find(x=>/17名成年自由地球女性/.test(x.title));
+      const slaves=base.find(x=>/五名合法登记女奴/.test(x.title));
+      const shop=base.find(x=>/王都新增人物与机构/.test(x.title));
+      if(adults){out.push(...namedRecords(adults.body,[...CORE.slice(1),...NEW]));used.add(adults.title)}
+      if(slaves){out.push(...mappedRecords(slaves.body,{'艾琳':'艾琳','诺拉':'诺拉','弥娅瑟｜昵称：巧克力':'巧克力','瑟芙拉｜昵称：香子兰':'香子兰','阿芙拉｜千叶昵称：芝士雪豹':'阿芙拉'}));used.add(slaves.title)}
+      if(shop){out.push(...mappedRecords(shop.body,{'梁舒岚':'梁舒岚','沈砚秋':'沈砚秋','赵妍':'赵妍','许静':'许静','芙蕾妲':'芙蕾妲'}));used.add(shop.title)}
+      base.filter(x=>!used.has(x.title)&&x.title!=='【读取规则】').forEach(x=>out.push({title:cleanSectionTitle(x.title),body:x.body}));
+      return out;
+    }
     function field(body,label){const m=body.match(new RegExp('(?:^|\\n)'+label+'：\\s*\\n([^\\n]+)'));return m?m[1].trim().replace(/。$/,''):'档案未明确记录'}
     function blocks(body){const re=/(?:^|\n)([^\n：]{1,32})：\s*\n/g,h=[...body.matchAll(re)];if(!h.length)return[{title:'完整记录',body}];const out=[];if(h[0].index>0&&body.slice(0,h[0].index).trim())out.push({title:'补充记录',body:body.slice(0,h[0].index).trim()});h.forEach((m,i)=>out.push({title:m[1].trim(),body:body.slice(m.index+m[0].length,i+1<h.length?h[i+1].index:body.length).trim()}));return out.filter(x=>x.body)}
-    function group(name){if(CORE.includes(name))return'核心成员';if(NEW.includes(name))return'后加入成员';if(LOCAL.includes(name))return'本土成员';if(name==='史莱姆公主')return'特殊伙伴';return'结构与外部节点'}
+    function group(name){if(CORE.includes(name))return'核心成员';if(NEW.includes(name))return'后加入成员';if(SLAVES.includes(name))return'合法登记女奴';if(SHOP.includes(name))return'王都回收铺';if(name==='史莱姆公主')return'特殊伙伴';return'结构与外部节点'}
     function resolve(id,sections){const bySlug=ORDER.find(n=>PEOPLE[n][0]===id);return bySlug||sections.find(x=>x.title===id)?.title||'千叶'}
     function href(name){return `person.html?id=${encodeURIComponent(PEOPLE[name]?.[0]||name)}`}
     async function init(){
       try{
-        const text=await gunzip('assets/characters.txt.gz'),records=characterRecords(text),id=new URLSearchParams(location.search).get('id')||'qianye',name=resolve(id,records),record=records.find(x=>x.title===name);
+        const text=await textFile('assets/characters-current.txt'),records=characterRecords(text),id=new URLSearchParams(location.search).get('id')||'qianye',name=resolve(id,records),record=records.find(x=>x.title===name);
         if(!record)throw Error('未找到该人物档案');
         const profile=PEOPLE[name],role=profile?.[1]||group(name),items=blocks(record.body);
         document.title=`${name} · 人物档案 · 双陆世界`;$('#name').textContent=name;$('#role').textContent=role;$('#group').textContent=`${group(name)} · PERSON ARCHIVE`;
@@ -64,7 +79,7 @@
         $('#chips').innerHTML=[group(name),role,field(record.body,'与千叶')].filter(x=>x&&x!=='档案未明确记录').map(x=>`<span class="chip">${esc(x)}</span>`).join('');
         $('#facts').innerHTML=[['年龄',age],['前职业 / 出身',origin],['等级',level]].map(x=>`<div class="fact"><small>${x[0]}</small><b>${esc(x[1])}</b></div>`).join('');
         $('#sections').innerHTML=items.map((x,i)=>`<section class="section ${x.body.length>700?'wide':''}"><h2>${esc(x.title)}</h2><div class="body">${esc(x.body)}</div></section>`).join('');
-        const portrait=profile?`assets/portraits/${profile[0]}.webp`:'';$('#portrait').innerHTML=portrait?`<img src="${portrait}" alt="${esc(name)}真人风角色肖像"><div class="concept">真人风视觉提案 · 依据人物职责与性格生成；未在正史中明确的外貌细节不作为世界观定稿。</div>`:`<div class="fallback">${esc(name[0]||'？')}</div><div class="concept">该节点暂无人物肖像；完整文字仍来自唯一当前档案。</div>`;
+        const portrait=profile?.[0]?`assets/portraits/${profile[0]}.webp`:'';$('#portrait').innerHTML=portrait?`<img src="${portrait}" alt="${esc(name)}真人风角色肖像"><div class="concept">真人风视觉提案 · 依据人物职责与性格生成；未在正史中明确的外貌细节不作为世界观定稿。</div>`:`<div class="fallback">${esc(name[0]||'？')}</div><div class="concept">该节点暂无人物肖像；完整文字仍来自唯一当前档案。</div>`;
         const idx=ORDER.indexOf(name);if(idx>=0){const prev=ORDER[(idx-1+ORDER.length)%ORDER.length],next=ORDER[(idx+1)%ORDER.length];$('#pager').innerHTML=`<a href="${href(prev)}"><small>上一位</small>${esc(prev)}</a><a href="${href(next)}"><small>下一位</small>${esc(next)}</a>`}
         $('#loading').classList.add('hide');
       }catch(e){$('#loading').innerHTML=`<div><b>档案载入失败</b>${esc(e.message)}</div>`}
