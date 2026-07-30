@@ -2,8 +2,10 @@ import * as maplibregl from "https://unpkg.com/maplibre-gl@6.0.0/dist/maplibre-g
 
 window.maplibregl = maplibregl;
 
-await import("./wall-config.js");
-await import("./wall-geometry.js");
-await import("./map.js");
-await import("./wall-renderer.js");
-await import("./wall-editor.js");
+const moduleVersion = "wall3d-20260730";
+
+await import(`./wall-config.js?v=${moduleVersion}`);
+await import(`./wall-geometry.js?v=${moduleVersion}`);
+await import(`./map.js?v=${moduleVersion}`);
+await import(`./wall-renderer.js?v=${moduleVersion}`);
+await import(`./wall-editor.js?v=${moduleVersion}`);
