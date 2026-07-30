@@ -1,12 +1,13 @@
-// 当前部署的 Esri World Imagery 公共瓦片端点不需要 API Key。
-// 如果以后切换到需要密钥的正规地图服务，可复制本文件为 config.js，
-// 填写真实密钥，并在 index.html 中于 map.js 之前加载 config.js。
-// 不要把真实密钥提交到公开仓库。
+// 当前文件直接作为公开的运行时配置加载。
+// 当前 Esri World Imagery 公共瓦片端点不需要 API Key。
+// 如果以后改用需要密钥的服务，不要把具备私有或付费权限的密钥提交到公开仓库。
 window.SHELTER_MAP_CONFIG = {
   tileUrl:
-    "https://YOUR_OFFICIAL_TILE_SERVICE.example.com/tiles/{z}/{y}/{x}",
-  apiKey: "YOUR_MAP_API_KEY",
-  apiKeyQueryParam: "key",
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+  apiKey: "",
+  apiKeyQueryParam: "token",
+  attribution:
+    'Powered by <a href="https://www.esri.com/" target="_blank" rel="noopener noreferrer">Esri</a> | Sources: Esri, Maxar, Earthstar Geographics, and the GIS User Community',
 
   // 以下坐标均为 WGS-84，经 Leaflet 投影为 Web Mercator 显示。
   center: [23.1304739, 113.3618998],
@@ -22,6 +23,18 @@ window.SHELTER_MAP_CONFIG = {
   maxZoom: 19,
   initialMaxZoom: 16,
 
-  // 必须按新服务的许可条款填写完整署名，不得留空或移除。
-  attribution: "YOUR_REQUIRED_MAP_ATTRIBUTION"
+  // 围墙配置：只需修改这三项即可调整中心、真实边长和顺时针旋转角。
+  wallCenter: [23.1304739, 113.3618998],
+  wallSideMeters: 300,
+  wallBearing: 0,
+
+  wallStyle: {
+    color: "#7f1d1d",
+    weight: 4,
+    opacity: 0.98,
+    fillColor: "#b91c1c",
+    fillOpacity: 0.11,
+    lineCap: "square",
+    lineJoin: "miter"
+  }
 };
