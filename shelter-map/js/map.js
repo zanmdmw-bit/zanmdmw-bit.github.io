@@ -14,6 +14,7 @@
     minZoom: 14,
     maxZoom: 19,
     initialMaxZoom: 16,
+    maxPitch: 65,
     tileUrl:
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     apiKey: "",
@@ -38,51 +39,138 @@
       )}=${encodeURIComponent(config.apiKey)}`
     : config.tileUrl;
 
-  const map = L.map("map", {
-    center: config.center,
+  if (!window.maplibregl?.supported()) {
+    throw new Error("当前浏览器不支持地图所需的 WebGL");
+  }
+
+  const map = new maplibregl.Map({
+    container: "map",
+    style: {
+      version: 8,
+      id: "tianhe-park-satellite",
+      sources: {
+        "satellite-imagery": {
+          type: "raster",
+          tiles: [tileUrl],
+          tileSize: 256,
+          minzoom: config.minZoom,
+          maxzoom: config.maxZoom,
+          attribution: config.attribution
+        }
+      },
+      layers: [
+        {
+          id: "satellite-imagery",
+          type: "raster",
+          source: "satellite-imagery",
+          paint: {
+            "raster-fade-duration": 0
+          }
+        }
+      ],
+      light: {
+        anchor: "viewport",
+        color: "#f3f0e7",
+        intensity: 0.48,
+        position: [1.15, 210, 38]
+      }
+    },
+    center: [config.center[1], config.center[0]],
     zoom: config.minZoom,
     minZoom: config.minZoom,
     maxZoom: config.maxZoom,
-    maxBounds: config.maxBounds,
-    maxBoundsViscosity: 1,
-    zoomControl: false,
-    attributionControl: true,
-    dragging: true,
-    touchZoom: true,
-    scrollWheelZoom: true,
+    maxBounds: [
+      [config.maxBounds[0][1], config.maxBounds[0][0]],
+      [config.maxBounds[1][1], config.maxBounds[1][0]]
+    ],
+    maxPitch: config.maxPitch,
+    pitch: 0,
+    bearing: 0,
+    canvasContextAttributes: {
+      antialias: true,
+      powerPreference: "high-performance"
+    },
+    renderWorldCopies: false,
+    attributionControl: false,
+    dragPan: true,
+    dragRotate: true,
+    scrollZoom: true,
     doubleClickZoom: true,
-    boxZoom: true,
+    touchZoomRotate: true,
+    touchPitch: true,
+    pitchWithRotate: true,
     keyboard: true,
-    bounceAtZoomLimits: false,
-    worldCopyJump: false,
-    preferCanvas: true
+    fadeDuration: 0
   });
 
-  const imageryLayer = L.tileLayer(tileUrl, {
-    minZoom: config.minZoom,
-    maxZoom: config.maxZoom,
-    maxNativeZoom: config.maxZoom,
-    tileSize: 256,
-    noWrap: true,
-    crossOrigin: true,
-    updateWhenIdle: false,
-    updateWhenZooming: false,
-    keepBuffer: 4,
-    attribution: config.attribution
-  }).addTo(map);
+  map.addControl(
+    new maplibregl.NavigationControl({
+      showCompass: true,
+      showZoom: true,
+      visualizePitch: true
+    }),
+    "top-left"
+  );
+  map.addControl(
+    new maplibregl.AttributionControl({ compact: true }),
+    "bottom-right"
+  );
 
-  L.control.zoom({ position: "topleft" }).addTo(map);
+  class ViewControl {
+    onAdd(controlledMap) {
+      this.map = controlledMap;
+      this.container = document.createElement("div");
+      this.container.className =
+        "maplibregl-ctrl maplibregl-ctrl-group shelter-view-control";
 
-  map.fitBounds(config.parkBounds, {
-    padding: [24, 24],
-    maxZoom: config.initialMaxZoom,
-    animate: false
+      const perspectiveButton = document.createElement("button");
+      perspectiveButton.type = "button";
+      perspectiveButton.textContent = "3D";
+      perspectiveButton.title = "倾斜查看立体围墙";
+      perspectiveButton.setAttribute("aria-label", "倾斜查看立体围墙");
+      perspectiveButton.addEventListener("click", () => {
+        this.map.easeTo({ pitch: 55, bearing: -20, duration: 600 });
+      });
+
+      const topButton = document.createElement("button");
+      topButton.type = "button";
+      topButton.textContent = "俯";
+      topButton.title = "恢复北向俯视";
+      topButton.setAttribute("aria-label", "恢复北向俯视");
+      topButton.addEventListener("click", () => {
+        this.map.easeTo({ pitch: 0, bearing: 0, duration: 600 });
+      });
+
+      this.container.append(perspectiveButton, topButton);
+      return this.container;
+    }
+
+    onRemove() {
+      this.container.remove();
+      this.map = undefined;
+    }
+  }
+
+  map.addControl(new ViewControl(), "top-left");
+
+  map.once("load", () => {
+    map.fitBounds(
+      [
+        [config.parkBounds[0][1], config.parkBounds[0][0]],
+        [config.parkBounds[1][1], config.parkBounds[1][0]]
+      ],
+      {
+        padding: 24,
+        maxZoom: config.initialMaxZoom,
+        duration: 0
+      }
+    );
   });
 
-  let resizeFrame = 0;
+  let resizeFrame;
   const refreshMapSize = () => {
     cancelAnimationFrame(resizeFrame);
-    resizeFrame = requestAnimationFrame(() => map.invalidateSize({ pan: false }));
+    resizeFrame = requestAnimationFrame(() => map.resize());
   };
 
   window.addEventListener("resize", refreshMapSize, { passive: true });
@@ -90,7 +178,6 @@
 
   window.ShelterMap = Object.freeze({
     map,
-    imageryLayer,
     config: Object.freeze({ ...config })
   });
 })();

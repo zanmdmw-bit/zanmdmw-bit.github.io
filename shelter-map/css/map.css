@@ -20,15 +20,14 @@ body {
   inset: 0;
 }
 
-.leaflet-container {
+.maplibregl-map {
   background: #101820;
   font-family: Arial, "Microsoft YaHei", sans-serif;
 }
 
-.leaflet-control-attribution {
+.maplibregl-ctrl-attrib {
   box-sizing: border-box;
   max-width: calc(100vw - 12px);
-  padding: 2px 6px;
   color: #323232;
   background: rgba(255, 255, 255, 0.78);
   font-size: 12px;
@@ -36,14 +35,117 @@ body {
   white-space: normal;
 }
 
-.leaflet-control-attribution a {
+.maplibregl-ctrl-attrib a {
   color: #145a8d;
 }
 
+.shelter-view-control button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  color: #273238;
+  font: 700 11px/30px Arial, "Microsoft YaHei", sans-serif;
+  text-align: center;
+}
+
+.wall-editor-panel {
+  position: fixed;
+  z-index: 10;
+  left: max(10px, env(safe-area-inset-left));
+  bottom: max(30px, calc(env(safe-area-inset-bottom) + 22px));
+  display: grid;
+  width: min(310px, calc(100vw - 20px));
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  color: #f4f4f0;
+  background: rgba(24, 29, 31, 0.9);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
+  font: 13px/1.4 Arial, "Microsoft YaHei", sans-serif;
+  gap: 8px;
+}
+
+.wall-editor-panel[hidden] {
+  display: none;
+}
+
+.wall-editor-title {
+  margin: 0;
+  font-size: 14px;
+}
+
+.wall-editor-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.wall-editor-actions button {
+  min-height: 34px;
+  border: 1px solid #9ca6a6;
+  border-radius: 4px;
+  color: #f7f7f2;
+  background: #3a4548;
+  cursor: pointer;
+}
+
+.wall-editor-actions button:hover,
+.wall-editor-actions button:focus-visible {
+  background: #4a595d;
+}
+
+.wall-editor-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.wall-editor-output {
+  width: 100%;
+  min-height: 92px;
+  box-sizing: border-box;
+  resize: vertical;
+  border: 1px solid #798386;
+  border-radius: 4px;
+  color: #eff2ee;
+  background: #111719;
+  font: 11px/1.35 Consolas, Monaco, monospace;
+}
+
+.wall-editor-status {
+  min-height: 18px;
+  color: #d5ddda;
+}
+
+.wall-node {
+  width: 17px;
+  height: 17px;
+  box-sizing: border-box;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #e84524;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);
+  cursor: grab;
+}
+
+.wall-node:active {
+  cursor: grabbing;
+}
+
+.wall-node.is-selected {
+  border-color: #ffec70;
+  background: #b42016;
+  transform: scale(1.25);
+}
+
 @media (max-width: 640px) {
-  .leaflet-control-attribution {
+  .maplibregl-ctrl-attrib {
     max-width: calc(100vw - 8px);
     margin-right: 4px;
     margin-bottom: 4px;
+  }
+
+  .wall-editor-panel {
+    bottom: max(44px, calc(env(safe-area-inset-bottom) + 36px));
   }
 }
