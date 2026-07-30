@@ -39,8 +39,8 @@
       )}=${encodeURIComponent(config.apiKey)}`
     : config.tileUrl;
 
-  if (!window.maplibregl?.supported()) {
-    throw new Error("当前浏览器不支持地图所需的 WebGL");
+  if (!window.maplibregl?.Map) {
+    throw new Error("MapLibre GL JS 未正确加载");
   }
 
   const map = new maplibregl.Map({
