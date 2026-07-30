@@ -4,7 +4,7 @@
 
 ## 地图与三维技术
 
-- 地图库：MapLibre GL JS 6.0.0。
+- 地图库：MapLibre GL JS 5.21.1，保留 WebGL 1 回退以兼容更多手机和受限浏览器环境。
 - 三维渲染：MapLibre WebGL `fill-extrusion`，高度和基础高度均以米为单位。
 - 卫星底图：Esri World Imagery 栅格瓦片。
 - 瓦片端点：`https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}`。
