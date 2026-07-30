@@ -40,7 +40,7 @@ window.SHELTER_MAP_CONFIG = {
   wallHeightMeters: 6.5,
   topWalkwayWidthMeters: 1.2,
   topGuardHeightMeters: 1.1,
-  foundationWidthMeters: 2.4,
+  foundationWidthMeters: 3.2,
   foundationHeightMeters: 0.35,
   cornerPlatformWidthMeters: 4.2,
 

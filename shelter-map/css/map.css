@@ -54,7 +54,9 @@ body {
   left: max(10px, env(safe-area-inset-left));
   bottom: max(30px, calc(env(safe-area-inset-bottom) + 22px));
   display: grid;
-  width: min(310px, calc(100vw - 20px));
+  width: min(372px, calc(100vw - 20px));
+  max-height: min(760px, calc(100vh - 48px));
+  overflow: auto;
   box-sizing: border-box;
   padding: 10px;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -88,6 +90,64 @@ body {
   color: #f7f7f2;
   background: #3a4548;
   cursor: pointer;
+}
+
+.environment-editor {
+  display: grid;
+  margin: 0;
+  padding: 8px;
+  border: 1px solid rgba(222, 230, 225, 0.38);
+  border-radius: 4px;
+  gap: 7px;
+}
+
+.environment-editor legend {
+  padding: 0 5px;
+  color: #dfe7e2;
+  font-weight: 700;
+}
+
+.environment-editor > label {
+  display: grid;
+  grid-template-columns: minmax(94px, 0.9fr) minmax(0, 1.45fr);
+  align-items: center;
+  gap: 7px;
+}
+
+.environment-editor select,
+.environment-editor input[type="number"] {
+  width: 100%;
+  min-height: 30px;
+  box-sizing: border-box;
+  border: 1px solid #7f8989;
+  border-radius: 3px;
+  color: #f3f5f2;
+  background: #20282a;
+}
+
+.environment-editor-checks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px 8px;
+}
+
+.environment-editor-checks label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.environment-editor > button {
+  min-height: 32px;
+  border: 1px solid #a5aeaa;
+  border-radius: 4px;
+  color: #f7f7f2;
+  background: #465450;
+  cursor: pointer;
+}
+
+.wall-editor-export-actions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .wall-editor-actions button:hover,
@@ -147,5 +207,6 @@ body {
 
   .wall-editor-panel {
     bottom: max(44px, calc(env(safe-area-inset-bottom) + 36px));
+    max-height: calc(100vh - 62px);
   }
 }
