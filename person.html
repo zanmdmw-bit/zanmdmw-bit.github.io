@@ -64,6 +64,7 @@
       return out;
     }
     function field(body,label){const m=body.match(new RegExp('(?:^|\\n)'+label+'：\\s*\\n([^\\n]+)'));return m?m[1].trim().replace(/。$/,''):'档案未明确记录'}
+    function personLevel(body,role){const direct=field(body,'等级');if(direct!=='档案未明确记录')return direct;const current=field(body,'当前等级');if(current!=='档案未明确记录')return current;const roleMatch=String(role||'').match(/(?:约)?\d+级/);if(roleMatch)return roleMatch[0];const bodyMatch=body.match(/(?:当前(?:已升至|为)?|达到)(?:约)?\s*(\d+)级/);return bodyMatch?bodyMatch[1]+'级':'档案未明确记录'}
     function levelStage(level){const n=+(String(level).match(/\d+/)||[0])[0];if(!n)return'档案未明确记录';if(n<=20)return'凡人阶（Lv.1—20）';if(n<=40)return'超凡阶（Lv.21—40）';if(n<=60)return'英雄阶（Lv.41—60）';if(n<=80)return'传奇阶（Lv.61—80）';if(n<=89)return'神话阶（Lv.81—89）';if(n<=99)return'神祇阶（Lv.90—99；须神格或等价神性核心）';if(n===100)return'主神阶（Lv.100；须完整主神级神格与核心权柄）';return'超过当前暂定上限'}
     function blocks(body){const re=/(?:^|\n)([^\n：]{1,32})：\s*\n/g,h=[...body.matchAll(re)];if(!h.length)return[{title:'完整记录',body}];const out=[];if(h[0].index>0&&body.slice(0,h[0].index).trim())out.push({title:'补充记录',body:body.slice(0,h[0].index).trim()});h.forEach((m,i)=>out.push({title:m[1].trim(),body:body.slice(m.index+m[0].length,i+1<h.length?h[i+1].index:body.length).trim()}));return out.filter(x=>x.body)}
     function group(name){if(CORE.includes(name))return'核心成员';if(NEW.includes(name))return'后加入成员';if(SLAVES.includes(name))return'合法登记女奴';if(SHOP.includes(name))return'王都回收铺';if(name==='史莱姆公主')return'特殊伙伴';return'结构与外部节点'}
@@ -75,7 +76,7 @@
         if(!record)throw Error('未找到该人物档案');
         const profile=PEOPLE[name],role=profile?.[1]||group(name),items=blocks(record.body);
         document.title=`${name} · 人物档案 · 双陆世界`;$('#name').textContent=name;$('#role').textContent=role;$('#group').textContent=`${group(name)} · PERSON ARCHIVE`;
-        const age=field(record.body,'年龄'),origin=field(record.body,'出身')!=='档案未明确记录'?field(record.body,'出身'):field(record.body,'背景'),level=field(record.body,'等级');
+        const age=field(record.body,'年龄'),origin=field(record.body,'出身')!=='档案未明确记录'?field(record.body,'出身'):field(record.body,'背景'),level=personLevel(record.body,role);
         $('#lead').textContent=(items.find(x=>/性格|当前心理|定位|背景/.test(x.title))?.body||record.body).replace(/\n+/g,' · ').slice(0,280);
         $('#chips').innerHTML=[group(name),role,field(record.body,'与千叶')].filter(x=>x&&x!=='档案未明确记录').map(x=>`<span class="chip">${esc(x)}</span>`).join('');
         $('#facts').innerHTML=[['年龄',age],['前职业 / 出身',origin],['等级',level],['等级阶段',levelStage(level)]].map(x=>`<div class="fact"><small>${x[0]}</small><b>${esc(x[1])}</b></div>`).join('');
