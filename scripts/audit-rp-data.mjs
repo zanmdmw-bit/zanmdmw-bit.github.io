@@ -34,7 +34,7 @@ check(/第60日10:17—第92日19:11/.test(timeline), '时间线覆盖至第92�
 check(/当前最终生存点为92341\.00/.test(timeline), '时间线当前生存点为92341.00');
 check(/第92日19:11/.test(characters) && /巧克力刚问他/.test(characters), '人物关系覆盖当前续写点');
 check(/尚未掌握黄金王权基础形态/.test(characters), '人物关系未把训练解锁写成技能掌握');
-check(/等级：21级/.test(status) && /经验：430\/44100/.test(status), '状态栏等级与经验正确');
+check(/等级：21级/.test(status) && /经验：430\/88200/.test(status), '状态栏等级与分段经验上限正确');
 check(/当前唯一有效余额为92341\.00/.test(status), '状态栏唯一当前生存点正确');
 check(/正文历史/.test(index) && /storyView/.test(index), 'RP总览包含正文历史导航与视图');
 check(/巧克力/.test(index) && /巧克力/.test(person), '巧克力可进入独立人物档案');
