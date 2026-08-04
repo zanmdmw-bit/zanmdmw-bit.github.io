@@ -46,7 +46,8 @@ function siblingLabel(viewer,target){
   if(target.gender==='女')return older===true?'姐姐':older===false?'妹妹':'姐妹';
   return'手足';
 }
-function levelBand(level){const n=+(String(level).match(/\d+/)||[0])[0];if(!n)return'未公开';if(n<=20)return'凡人阶';if(n<=40)return'超凡阶';if(n<=60)return'英雄阶';if(n<=80)return'传奇阶';if(n<=89)return'神话阶';if(n<=99)return'神祇阶';return'主神阶'}
+function levelBand(level){const n=+(String(level).match(/\d+/)||[0])[0];if(!n)return'未公开';if(n<=20)return'凡人阶';if(n<=40)return'超凡阶';if(n<=60)return'英雄阶';if(n<=80)return'传奇阶';if(n<=89)return'神话阶';if(n<=99)return'神祇阶';if(n===100)return'主神阶';return'超过当前上限'}
+function levelStageRule(level){const n=+(String(level).match(/\d+/)||[0])[0];if(!n)return'等级未公开，无法判定阶段';if(n<=20)return'Lv.1—20 · 凡人阶';if(n<=40)return'Lv.21—40 · 超凡阶';if(n<=60)return'Lv.41—60 · 英雄阶';if(n<=80)return'Lv.61—80 · 传奇阶';if(n<=89)return'Lv.81—89 · 神话阶';if(n<=99)return'Lv.90—99 · 神祇阶；89→90须残破神格、神格雏形或等价神性核心';if(n===100)return'Lv.100 · 主神阶；99→100须完整主神级神格与核心权柄';return'超过当前暂定100级上限，需单独核验'}
 function politicalHistory(p,house){
   const base=p.history?.length?p.history:[];
   if(base.length)return base;
