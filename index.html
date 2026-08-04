@@ -200,12 +200,18 @@
     const NAV=[['overview','⌂','总览'],['story','☷','正文历史'],['timeline','⌁','时间线'],['characters','◉','人物'],['status','◇','状态'],['map','⌖','地图'],['archive','▤','原档']];
     const CORE=['千叶','方雪','沈鸢','陈苗','许清禾','林雁','孟晓雨','周小曼','江澜','唐梨'];
     const NEW=['杜晴','夏芸','顾岚','秦蓉','周曼宁','罗芳','陆婉','秦瑶'];
+    const LATE=['乔雨彤','齐妍','唐知遥','温溪','徐真','韩若薇','何晴','罗绮','谢铮','月岛梨奈'];
+    const MANOR=['赫妲','露琪娅','玛塔','黛娜'];
+    const ASSOCIATES=['程芮'];
     const LOCAL=['艾琳','诺拉'];
     const SLAVES=['艾琳','诺拉','巧克力','香子兰','阿芙拉'];
     const SHOP=['梁舒岚','沈砚秋','赵妍','许静','芙蕾妲'];
+    const CAPITAL=['薇尔娜','伊蕾娜','米蕾娅·赫斯廷','银发学院评议员（姓名未锁定）','程芮','南门招募线','乔雨彤','第114日新增自由成年女性组','齐妍','唐知遥','温溪','徐真','韩若薇','何晴','罗绮','谢铮','月岛梨奈','未命名私人飞机乘务员自称者','未命名“正妻气质”自认者','贝芙拉','赫妲','露琪娅','玛塔','黛娜','其余24名未命名庄园人员','白榆河渠庄园','赫恩·维萨尔','奥托·哈恩','萨维安主祭','伊芙琳·莱萨恩','梁舒岚','沈砚秋','赵妍','许静','芙蕾妲','千叶旧法具回收铺当前共同状态','涅芮雅','伊芙琳·瑟兰','银孔雀高等衣装会馆','绯金宫','韩峥','德里克','缺耳老佣兵','女裁判','白发女性法师','九塔联合拍卖行','王冠密室交易所','王都中央会馆'];
     const PEOPLE={
       '千叶':['qianye','资源核心 · 21级魔剑士'],'方雪':['fangxue','商业谈判 · 现实执行'],'沈鸢':['shenyuan','视觉顾问 · 远程魔法'],'陈苗':['chenmiao','总账 · 风险记录'],'许清禾':['xuqinghe','医疗卫生 · 治疗魔法'],'林雁':['linyan','警戒防务 · 近战训练'],'孟晓雨':['mengxiaoyu','后勤辅助 · 基础魔法'],'周小曼':['zhouxiaoman','短弓 · 快速反应'],'江澜':['jianglan','后排观察 · 高生存'],'唐梨':['tangli','妆发服装 · 精细魔法'],
       '杜晴':['duqing','治疗学习 · 生活辅助'],'夏芸':['xiayun','治疗防守 · 家庭照护'],'顾岚':['gulan','远程魔法 · 精细控制'],'秦蓉':['qinrong','长矛护卫 · 前排防守'],'周曼宁':['zhoumanning','治疗清洁 · 照护辅助'],'罗芳':['luofang','短矛防守 · 女儿保护'],'陆婉':['luwan','弓箭观察 · 生活魔法'],'秦瑶':['qinyao','机动远程 · 短弓魔法'],'艾琳':['ailin','本地礼仪 · 家务管理'],'诺拉':['nuola','家务学习 · 恢复适应'],
+      '乔雨彤':['','镜头资料核验 · 自由新成员'],'齐妍':['','空乘经历 · 自由新成员'],'唐知遥':['','异宠兽医 · 自由新成员'],'温溪':['','珠宝鉴定 · 自由新成员'],'徐真':['','舞台特技 · 自由新成员'],'韩若薇':['','外景主持 · 自由新成员'],'何晴':['','健身格斗 · 自由新成员'],'罗绮':['','纹身师 · 自由新成员'],'谢铮':['','现场音响 · 自由新成员'],'月岛梨奈':['','在役演员 · 自由新成员'],
+      '程芮':['','临时招募代理'],'赫妲':['','白榆河渠庄园 · 女总管'],'露琪娅':['','白榆河渠庄园 · 副管家'],'玛塔':['','白榆河渠庄园 · 主厨'],'黛娜':['','白榆河渠庄园 · 女护卫领班'],
       '巧克力':['','始祖魅魔 · 血肉重塑中'],'香子兰':['','猫人侍从 · 王都同行'],'阿芙拉':['','雪豹人 · 王都同行'],
       '梁舒岚':['','王都回收铺 · 账房与钥匙管理'],'沈砚秋':['','王都回收铺 · 现金与总账协作'],'赵妍':['','王都回收铺 · 柜台与接待'],'许静':['','王都回收铺 · 采购与店务'],'芙蕾妲':['','王都回收铺 · 本地文书'],
       '史莱姆公主':['slime-princess','18级智慧恒辉胶 · 特殊伙伴']
@@ -230,7 +236,7 @@
       const shop=base.find(x=>/王都新增人物与机构/.test(x.title));
       if(adults){out.push(...namedRecords(adults.body,[...CORE.slice(1),...NEW]));used.add(adults.title)}
       if(slaves){out.push(...mappedRecords(slaves.body,{'艾琳':'艾琳','诺拉':'诺拉','弥娅瑟｜昵称：巧克力':'巧克力','瑟芙拉｜昵称：香子兰':'香子兰','阿芙拉｜千叶昵称：芝士雪豹':'阿芙拉'}));used.add(slaves.title)}
-      if(shop){out.push(...mappedRecords(shop.body,{'梁舒岚':'梁舒岚','沈砚秋':'沈砚秋','赵妍':'赵妍','许静':'许静','芙蕾妲':'芙蕾妲'}));used.add(shop.title)}
+      if(shop){out.push(...namedRecords(shop.body,CAPITAL));used.add(shop.title)}
       base.filter(x=>!used.has(x.title)&&x.title!=='【读取规则】').forEach(x=>out.push({title:cleanSectionTitle(x.title),body:x.body}));
       return out;
     }
@@ -275,12 +281,12 @@
       $('#storyList').innerHTML=list.length?list.map(storyDetail).join(''):'<article class="panel">没有匹配正文。</article>';
     }
     function renderTimeline(){const modes=[['recent','最近事件'],['all','全部正史'],['battle','战斗'],['trade','商业'],['slime','史莱姆']];$('#timelineFilters').innerHTML=modes.map(x=>`<button data-tmode="${x[0]}" class="${timelineMode===x[0]?'on':''}">${x[1]}</button>`).join('')+`<span class="chip">${DATA.events.length}件事件</span>`;$$('[data-tmode]').forEach(b=>b.onclick=()=>{timelineMode=b.dataset.tmode;renderTimeline()});let list=DATA.events;if(timelineMode==='recent')list=list.slice(-24);if(timelineMode==='battle')list=list.filter(x=>/战|击杀|巢穴|任务|剑术|野兽|山匪/.test(x.title+x.body));if(timelineMode==='trade')list=list.filter(x=>/货|钱|金币|商|寄售|订单|废品|成交|面包/.test(x.title+x.body));if(timelineMode==='slime')list=list.filter(x=>/史莱姆|恒辉胶|智慧分支/.test(x.title+x.body));if(query)list=list.filter(x=>(x.title+x.body+String(x.id)).toLowerCase().includes(query.toLowerCase()));$('#timelineList').innerHTML=list.length?list.map(x=>detail(x,'事件 '+String(x.id).padStart(3,'0'))).join(''):'<article class="panel">没有匹配事件。</article>'}
-    function groupFor(title){if(CORE.includes(title))return '核心成员';if(NEW.includes(title))return '后加入成员';if(SLAVES.includes(title))return '合法登记女奴';if(SHOP.includes(title))return '王都回收铺';if(title==='史莱姆公主')return '特殊伙伴';return '结构与外部节点'}
+    function groupFor(title){if(CORE.includes(title))return '核心成员';if(NEW.includes(title)||LATE.includes(title)||title==='第114日新增自由成年女性组')return '后加入成员';if(SLAVES.includes(title))return '合法登记女奴';if(SHOP.includes(title))return '王都回收铺';if(MANOR.includes(title)||ASSOCIATES.includes(title)||['南门招募线','其余24名未命名庄园人员','白榆河渠庄园'].includes(title))return '庄园与协作';if(title==='史莱姆公主')return '特殊伙伴';return '结构与外部节点'}
     function renderCharacters(){
-      const modes=['核心成员','后加入成员','合法登记女奴','王都回收铺','特殊伙伴','结构与外部节点','全部'];
+      const modes=['核心成员','后加入成员','合法登记女奴','王都回收铺','庄园与协作','特殊伙伴','结构与外部节点','全部'];
       $('#characterFilters').innerHTML=modes.map(x=>`<button data-cmode="${x}" class="${characterMode===x?'on':''}">${x}</button>`).join('');
       $$('[data-cmode]').forEach(b=>b.onclick=()=>{characterMode=b.dataset.cmode;renderCharacters()});
-      let list=DATA.charSections.filter(x=>x.title!=='【读取规则】'&&(characterMode==='全部'||groupFor(x.title)===characterMode));
+      let list=DATA.charSections.filter(x=>x.title!=='【读取规则】'&&(query||characterMode==='全部'||groupFor(x.title)===characterMode));
       if(query)list=list.filter(x=>(x.title+x.body).toLowerCase().includes(query.toLowerCase()));
       $('#characterGrid').innerHTML=list.map(x=>{
         const img=portraitUrl(x.title),visual=img?`<img src="${img}" alt="${esc(x.title)}真人风肖像" loading="lazy">`:`<div class="avatar">${esc(x.title[0]||'？')}</div>`;

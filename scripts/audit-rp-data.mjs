@@ -99,6 +99,9 @@ check(/第114日加入的11名自由成年女性/.test(characters) && /两名未
 check(/白榆河渠庄园28名成年女性人员/.test(characters) && /王都回收铺五名工作人员/.test(characters), '人物与关系包含庄园与王都店铺人员体系');
 check(['闻溪／温溪', '许蓁／徐真', '何青／何晴', '谢筝／谢铮', '月岛莉奈／月岛梨奈', '沈媛、唐莉、赫达、白玉庄园'].every(value => characters.includes(value)), '姓名与地点统一规则完整保留');
 check(status.includes('白榆河渠庄园') && status.includes('巧克力在楼上宿舍继续接受高阶血肉重塑'), '状态栏包含庄园与巧克力当前血肉重塑状态');
+check(requiredPeople.every(name => index.includes(`'${name}'`) && person.includes(`'${name}'`)), '人物入口与详情页登记当前新增人物及庄园管理人员');
+check([index, person].every(source => source.includes('namedRecords(shop.body,CAPITAL)') && source.includes('未命名私人飞机乘务员自称者') && source.includes('未命名“正妻气质”自认者')), '人物解析保留两名未命名新成员及王都新增档案');
+check(/query\|\|characterMode==='全部'/.test(index), '人物全局搜索不受旧分类筛选限制');
 
 const storyListBlock = index.match(/stories:\s*\[([\s\S]*?)\]\s*\n\s*\};/)?.[1] || '';
 const entryStoryRefs = [...storyListBlock.matchAll(/['"](assets\/story-\d+-\d+\.json)['"]/g)].map(match => match[1]);
