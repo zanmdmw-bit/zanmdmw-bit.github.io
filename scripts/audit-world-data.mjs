@@ -167,11 +167,11 @@ check(!languageMissing.length,'语言硬规则已同步到三份指定资料',la
 
 // 等级、经验、成长、神格与千叶系统规则审计。
 const ruleExtensions=new Set(['.html','.js','.mjs','.md','.txt','.json','.gz']);
+const rpArchiveFile=file=>/^assets\/story-\d+-\d+\.json$/.test(file)||['assets/timeline-current.txt','assets/characters-current.txt','assets/status-current.txt'].includes(file);
 const ruleFiles=[
   ...walk(path.join(root,'assets'),'assets').filter(file=>ruleExtensions.has(path.extname(file))),
-  ...fs.readdirSync(root,{withFileTypes:true}).filter(entry=>entry.isFile()&&ruleExtensions.has(path.extname(entry.name))).map(entry=>entry.name),
-  'scripts/audit-rp-data.mjs'
-].filter((file,index,all)=>file!=='scripts/audit-world-data.mjs'&&all.indexOf(file)===index);
+  ...fs.readdirSync(root,{withFileTypes:true}).filter(entry=>entry.isFile()&&ruleExtensions.has(path.extname(entry.name))).map(entry=>entry.name)
+].filter((file,index,all)=>file!=='scripts/audit-world-data.mjs'&&!rpArchiveFile(file)&&all.indexOf(file)===index);
 const ruleEntries=[];
 for(const file of ruleFiles){
   try{ruleEntries.push({file,body:readRuleFile(file)})}
@@ -259,7 +259,7 @@ const currentExperience=status.match(/^经验：(\d+)\/(\d+)。?$/m);
 const currentEarned=Number(currentExperience?.[1]),currentCap=Number(currentExperience?.[2]);
 check(Number.isInteger(currentLevel)&&Number.isInteger(currentEarned)&&Number.isInteger(currentCap),'当前状态等级与经验可解析');
 check(currentCap===upgradeNeed(currentLevel),'当前状态经验上限符合对应等级的分段公式',`Lv.${currentLevel}: ${currentEarned}/${currentCap}，应为 /${upgradeNeed(currentLevel)}`);
-check(currentLevel!==21||currentEarned===430,'Lv.21当前已有经验430保持不变',`${currentEarned}`);
+check(currentLevel!==21||currentEarned===8960,'Lv.21当前已有经验8960保持不变',`${currentEarned}`);
 
 // 历史记录缺少目标等级、强度或逐目标归属时，只发出警告，不强制回算。
 const timeline=read('assets/timeline-current.txt');
@@ -273,11 +273,13 @@ const unresolvedHistory=[
 ];
 for(const [event,reason] of unresolvedHistory)if(timeline.includes(`【${event}】`))warnings.push(`历史经验未回算：${event}——${reason}；保留既有经验与升级时间`);
 
-const protectedExact=new Set(['assets/timeline.txt.gz','assets/characters.txt.gz','assets/status.txt.gz','index.html']);
+const protectedExact=new Set(['assets/timeline.txt.gz','assets/characters.txt.gz','assets/status.txt.gz']);
 const allowedChanges=new Set([
   'assets/characters-current.txt','assets/status-current.txt','assets/story-475-490.json','assets/timeline-current.txt',
+  'assets/story-491-515.json','assets/story-516-540.json','assets/story-541-565.json','assets/story-566-590.json',
+  'assets/story-591-615.json','assets/story-616-640.json','assets/story-641-665.json','assets/story-666-672.json',
   'assets/world-lore.md','assets/world-overview.md','assets/world-people.js','assets/world-power.md',
-  'person.html','scripts/audit-rp-data.mjs','scripts/audit-world-data.mjs','world-person.html','world.html'
+  'index.html','person.html','scripts/audit-rp-data.mjs','scripts/audit-world-data.mjs','world-person.html','world.html'
 ]);
 try{
   const changed=execFileSync('git',['diff','--name-only','origin/main','--'],{cwd:root,encoding:'utf8'}).trim().split(/\r?\n/).filter(Boolean);

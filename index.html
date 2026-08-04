@@ -166,7 +166,7 @@
         </div>
         <div class="grid">
           <article class="panel span-5"><div class="panel-head"><h3>六维属性</h3><span>即时面板</span></div><div class="bars" id="attributeBars"></div></article>
-          <article class="panel span-7"><div class="panel-head"><h3>当前任务与推进线</h3><span>第92日</span></div><ul class="task-list" id="taskList"></ul></article>
+          <article class="panel span-7"><div class="panel-head"><h3>当前任务与推进线</h3><span>第114日</span></div><ul class="task-list" id="taskList"></ul></article>
           <article class="panel span-8"><div class="panel-head"><h3>核心人物</h3><span>进入独立人物页</span></div><div class="portrait-row" id="portraitRow"></div></article>
           <article class="panel span-4"><div class="panel-head"><h3>当前人员与任务</h3><span>三地分流</span></div><div class="stats" id="homeStats"></div></article>
           <article class="panel span-6"><div class="panel-head"><h3>高优先级风险</h3><span>现实逻辑</span></div><ul class="risk-list" id="riskList"></ul></article>
@@ -174,11 +174,11 @@
         </div>
       </section>
 
-      <section class="view" id="storyView"><div class="page-title"><div><p class="eyebrow">CANON STORY HISTORY</p><h2>正文历史</h2><p>收录《双陆世界正文272—490》共219篇，保留完整场景、对话、时间、地点与当前局势。</p></div></div><div class="filters" id="storyFilters"></div><div class="story-list" id="storyList"></div></section>
+      <section class="view" id="storyView"><div class="page-title"><div><p class="eyebrow">CANON STORY HISTORY</p><h2>正文历史</h2><p>收录《双陆世界正文272—672》共401篇，保留完整场景、对话、时间、地点与当前局势。</p></div></div><div class="filters" id="storyFilters"></div><div class="story-list" id="storyList"></div></section>
       <section class="view" id="timelineView"><div class="page-title"><div><p class="eyebrow">CANON TIMELINE</p><h2>正史时间线</h2><p>按事件读取完整历史，支持关键词筛选。</p></div></div><div class="filters" id="timelineFilters"></div><div class="timeline" id="timelineList"></div></section>
       <section class="view" id="charactersView"><div class="page-title"><div><p class="eyebrow">PEOPLE & RELATIONS</p><h2>人物与关系</h2><p>身份、立场、利益与当前职责；不擅自补造未展示属性。</p></div></div><div class="filters" id="characterFilters"></div><div class="character-grid" id="characterGrid"></div></section>
       <section class="view" id="statusView"><div class="page-title"><div><p class="eyebrow">PLAYER STATUS</p><h2>千叶状态栏</h2><p>数值、资金、装备、技能与商城记录均来自唯一当前版。</p></div></div><div class="archive-grid" id="statusGrid"></div></section>
-      <section class="view" id="archiveView"><div class="page-title"><div><p class="eyebrow">SOURCE ARCHIVE</p><h2>原始档案</h2><p>网站展示由正文历史、时间线、人物与关系、千叶状态栏四类当前正史资料生成。</p></div></div><article class="panel"><div class="download-row"><button data-download="story">下载《正文历史272—490.txt》</button><button data-download="timeline">下载《时间线.txt》</button><button data-download="characters">下载《人物与关系.txt》</button><button data-download="status">下载《千叶状态栏.txt》</button></div></article></section>
+      <section class="view" id="archiveView"><div class="page-title"><div><p class="eyebrow">SOURCE ARCHIVE</p><h2>原始档案</h2><p>网站展示由正文历史、时间线、人物与关系、千叶状态栏四类当前正史资料生成。</p></div></div><article class="panel"><div class="download-row"><button data-download="story">下载《正文历史272—672.txt》</button><button data-download="timeline">下载《时间线.txt》</button><button data-download="characters">下载《人物与关系.txt》</button><button data-download="status">下载《千叶状态栏.txt》</button></div></article></section>
     </main>
   </div>
   <nav class="mobile-nav" id="mobileNav"></nav>
@@ -190,7 +190,10 @@
       stories:[
         'assets/story-272-299.json','assets/story-300-324.json','assets/story-325-349.json',
         'assets/story-350-374.json','assets/story-375-399.json','assets/story-400-424.json',
-        'assets/story-425-449.json','assets/story-450-474.json','assets/story-475-490.json'
+        'assets/story-425-449.json','assets/story-450-474.json','assets/story-475-490.json',
+        'assets/story-491-515.json','assets/story-516-540.json','assets/story-541-565.json',
+        'assets/story-566-590.json','assets/story-591-615.json','assets/story-616-640.json',
+        'assets/story-641-665.json','assets/story-666-672.json'
       ]
     };
     const DATA={};
@@ -203,9 +206,9 @@
     const PEOPLE={
       '千叶':['qianye','资源核心 · 21级魔剑士'],'方雪':['fangxue','商业谈判 · 现实执行'],'沈鸢':['shenyuan','视觉顾问 · 远程魔法'],'陈苗':['chenmiao','总账 · 风险记录'],'许清禾':['xuqinghe','医疗卫生 · 治疗魔法'],'林雁':['linyan','警戒防务 · 近战训练'],'孟晓雨':['mengxiaoyu','后勤辅助 · 基础魔法'],'周小曼':['zhouxiaoman','短弓 · 快速反应'],'江澜':['jianglan','后排观察 · 高生存'],'唐梨':['tangli','妆发服装 · 精细魔法'],
       '杜晴':['duqing','治疗学习 · 生活辅助'],'夏芸':['xiayun','治疗防守 · 家庭照护'],'顾岚':['gulan','远程魔法 · 精细控制'],'秦蓉':['qinrong','长矛护卫 · 前排防守'],'周曼宁':['zhoumanning','治疗清洁 · 照护辅助'],'罗芳':['luofang','短矛防守 · 女儿保护'],'陆婉':['luwan','弓箭观察 · 生活魔法'],'秦瑶':['qinyao','机动远程 · 短弓魔法'],'艾琳':['ailin','本地礼仪 · 家务管理'],'诺拉':['nuola','家务学习 · 恢复适应'],
-      '巧克力':['','成熟魅魔 · 荒原同行'],'香子兰':['','猫人侍从 · 新货栈留守'],'阿芙拉':['','雪豹人 · 附属战斗人员'],
+      '巧克力':['','始祖魅魔 · 血肉重塑中'],'香子兰':['','猫人侍从 · 王都同行'],'阿芙拉':['','雪豹人 · 王都同行'],
       '梁舒岚':['','王都回收铺 · 账房与钥匙管理'],'沈砚秋':['','王都回收铺 · 现金与总账协作'],'赵妍':['','王都回收铺 · 柜台与接待'],'许静':['','王都回收铺 · 采购与店务'],'芙蕾妲':['','王都回收铺 · 本地文书'],
-      '史莱姆公主':['slime-princess','16级智慧恒辉胶 · 特殊伙伴']
+      '史莱姆公主':['slime-princess','18级智慧恒辉胶 · 特殊伙伴']
     };
     let active='overview',query='',storyMode='recent',timelineMode='recent',characterMode='核心成员';
     const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
@@ -241,24 +244,28 @@
     function renderActive(){if(active==='story')renderStory();if(active==='timeline')renderTimeline();if(active==='characters')renderCharacters();if(active==='status')renderStatus()}
     function detail(x,label){return `<details><summary><b>${esc(x.title)}</b><i>${esc(label)}</i></summary><div class="doc-body">${esc(x.body)}</div></details>`}
     function renderOverview(){
-      const s=DATA.status,level=field(s,'等级'),exp=field(s,'经验'),cash=field(s,'当前个人现金'),points=field(s,'当前生存点'),time=field(s,'覆盖时间'),place=field(s,'当前位置');
+      const s=DATA.status,level=field(s,'等级'),exp=field(s,'经验'),cash=field(s,'当前个人实体现金'),points=field(s,'当前生存点'),time=field(s,'覆盖时间'),place=field(s,'当前位置');
+      const currentScene=s.match(/当前场景：[ \t]*\n(?:[ \t]*\n)?-\s*([^\n]+)/)?.[1]?.replace(/；$/,'。')||'当前场景以状态栏记录为准。';
+      const issueSection=DATA.statusSections.find(x=>/当前现实问题与唯一续写点/.test(x.title));
+      const issues=(issueSection?.body.match(/^\d+\.\s+.+$/gm)||[]).map(x=>x.replace(/^\d+\.\s+/,''));
+      const proof=s.match(/当前任务证明(\d+)份/)?.[1]||'—';
       $('#asideTime').textContent=time;
-      $('#currentPlaceTitle').innerHTML='赤砾荒原北缘<br>红岩临时营地';
-      $('#currentLead').textContent=`${time}，${place}。千叶、巧克力与史莱姆公主仍在荒原营地；千叶已升至21级并积累277份任务证明，但尚未返城结算。巧克力刚追问完美返祖承诺与白曜金枝升级的优先级，千叶尚未作答。`;
-      $('#heroChips').innerHTML=['21级超凡阶','92341生存点','277份证明未结算','黄金王权仅解锁训练'].map(x=>`<span class="chip">${x}</span>`).join('');
+      $('#currentPlaceTitle').textContent=place;
+      $('#currentLead').textContent=`${time}，${place}。${currentScene}`;
+      $('#heroChips').innerHTML=[`${level}·超凡阶`,`经验 ${exp}`,`${points}生存点`,`${proof}份任务证明`].map(x=>`<span class="chip">${x}</span>`).join('');
       $('#miniLevel').textContent=level;$('#miniExp').textContent='经验 '+exp;$('#miniCash').textContent=cash;$('#miniPoints').textContent=points;
       const attrs=['力量','敏捷','体质','精神','魔力','感知'].map(k=>[k,numberField(s,k)]),max=Math.max(...attrs.map(x=>x[1]),40);
       $('#attributeBars').innerHTML=attrs.map(([k,v])=>`<div class="bar-row"><span>${k}</span><div class="bar"><i style="width:${v/max*100}%"></i></div><b>${v}</b></div>`).join('');
-      $('#taskList').innerHTML=['决定如何回应巧克力：优先兑现186000点完美返祖剂，还是先升级白曜金枝','《圣剑解放·黄金王权》九项训练模块均未完成，尚未掌握基础形态','277份任务证明尚未返城提交与结算，不得预加金币','白曜金枝第一王冠完整成长尚差75659点，当前只完成查询','灰石镇第二批霍记补货仍在新货栈，尚未交付或结算'].map(x=>`<li>${x}</li>`).join('');
+      $('#taskList').innerHTML=(issues.slice(0,5).length?issues.slice(0,5):[currentScene]).map(x=>`<li>${esc(x)}</li>`).join('');
       const portraits=['千叶','巧克力','史莱姆公主','阿芙拉','香子兰','方雪'];
       $('#portraitRow').innerHTML=portraits.map(n=>{const img=portraitUrl(n),visual=img?`<img src="${img}" alt="${esc(n)}真人风肖像">`:esc(n[0]||'？');return `<a class="portrait" href="${profileHref(n)}"><div class="avatar">${visual}</div><b>${n}</b><small>查看完整档案</small></a>`}).join('');
-      $('#homeStats').innerHTML=[['28','同行团人类'],['5','王都店员'],['277','任务证明'],['30/30','公主培养']].map(x=>`<div class="stat"><b>${x[0]}</b><small>${x[1]}</small></div>`).join('');
-      $('#riskList').innerHTML=['荒原三人与灰石镇、王都两处人员没有即时通信，三地情报不得自动同步','黄金王权只解除训练锁定，未训练前不能按成熟形态投入实战','返祖剂与圣剑完整成长都超出当前余额，资源优先级会直接影响巧克力关系','车辆虽已更换受损右前轮且仍可行驶，长期碎石路与燃料余量仍是现实约束','系统、商城、生存点与训练界面仍未公开；“茉莉安”只是对巧克力和公主的掩饰说法'].map(x=>`<li>${x}</li>`).join('');
+      $('#homeStats').innerHTML=[['28','原同行团人类'],['11','第114日新成员'],['28','庄园成年人员'],[proof,'任务证明']].map(x=>`<div class="stat"><b>${x[0]}</b><small>${x[1]}</small></div>`).join('');
+      $('#riskList').innerHTML=(issues.slice(5,10).length?issues.slice(5,10):[currentScene]).map(x=>`<li>${esc(x)}</li>`).join('');
       $('#storyCount').textContent=DATA.stories.length;$('#eventCount').textContent=DATA.events.length;$('#charCount').textContent=DATA.charSections.filter(x=>PEOPLE[x.title]).length;
     }
     function storyDetail(x){return `<details><summary><span class="story-heading"><b>正文 ${x.id}</b><small>${esc(x.time)} · ${esc(x.location)}</small></span><i>${String(x.id).padStart(3,'0')}</i></summary><div class="story-situation"><b>当前局势</b>${esc(x.situation)}</div><div class="doc-body">${esc(x.body)}</div></details>`}
     function renderStory(){
-      const modes=[['recent','最近20篇'],['all','全部正文'],['272-319','272—319'],['320-369','320—369'],['370-419','370—419'],['420-469','420—469'],['470-490','470—490']];
+      const modes=[['recent','最近20篇'],['all','全部正文'],['272-319','272—319'],['320-369','320—369'],['370-419','370—419'],['420-469','420—469'],['470-519','470—519'],['520-569','520—569'],['570-619','570—619'],['620-672','620—672']];
       $('#storyFilters').innerHTML=modes.map(x=>`<button data-smode="${x[0]}" class="${storyMode===x[0]?'on':''}">${x[1]}</button>`).join('')+`<span class="chip">${DATA.stories.length}篇正文</span>`;
       $$('[data-smode]').forEach(b=>b.onclick=()=>{storyMode=b.dataset.smode;renderStory()});
       let list=[...DATA.stories].reverse();
@@ -281,7 +288,7 @@
       }).join('');
     }
     function renderStatus(){let list=DATA.statusSections;if(query)list=list.filter(x=>(x.title+x.body).toLowerCase().includes(query.toLowerCase()));$('#statusGrid').innerHTML=list.map((x,i)=>detail(x,String(i+1).padStart(2,'0'))).join('')}
-    function downloads(){$$('[data-download]').forEach(b=>b.onclick=()=>{const key=b.dataset.download,n={story:'正文历史272—490.txt',timeline:'时间线.txt',characters:'人物与关系.txt',status:'千叶状态栏.txt'}[key],content=key==='story'?DATA.stories.map(x=>`${'='.repeat(70)}\n《双陆世界正文${x.id}.txt》\n${'='.repeat(70)}\n\n${x.body}`).join('\n\n'):DATA[key],a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type:'text/plain;charset=utf-8'}));a.download=n;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)})}
+    function downloads(){$$('[data-download]').forEach(b=>b.onclick=()=>{const key=b.dataset.download,n={story:'正文历史272—672.txt',timeline:'时间线.txt',characters:'人物与关系.txt',status:'千叶状态栏.txt'}[key],content=key==='story'?DATA.stories.map(x=>`${'='.repeat(70)}\n《双陆世界正文${x.id}.txt》\n${'='.repeat(70)}\n\n${x.body}`).join('\n\n'):DATA[key],a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type:'text/plain;charset=utf-8'}));a.download=n;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)})}
     async function init(){
       try{
         const [timeline,characters,status,storyParts]=await Promise.all([textFile(FILES.timeline),textFile(FILES.characters),textFile(FILES.status),Promise.all(FILES.stories.map(jsonFile))]);
