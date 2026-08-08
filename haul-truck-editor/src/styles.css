@@ -448,7 +448,7 @@ select:focus-visible,
   grid-template-rows: 44px minmax(0, 1fr) 34px;
   min-width: 0;
   min-height: 0;
-  background: #0b0e0e;
+  background: #d7e2e5;
 }
 
 .stage-toolbar {
@@ -505,16 +505,42 @@ select:focus-visible,
   min-height: 0;
   overflow: hidden;
   background:
-    radial-gradient(circle at 50% 32%, rgba(113, 93, 64, 0.13), transparent 34%),
-    linear-gradient(#111615, #090b0b 74%);
+    radial-gradient(circle at 50% 28%, rgba(255, 255, 255, 0.88), transparent 38%),
+    linear-gradient(#dceaf0, #bdcbd0 62%, #b8b8b1 62%);
   touch-action: none;
 }
 
 #sceneCanvas {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  top: 0;
   display: block;
   width: 100%;
   height: 100%;
   outline: none;
+}
+
+.calibration-image {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.calibration-image.active {
+  visibility: visible;
+  opacity: 0.82;
+}
+
+.stage.calibration-mode {
+  background: #091112;
 }
 
 .loading-screen {
@@ -524,7 +550,8 @@ select:focus-visible,
   display: grid;
   place-content: center;
   justify-items: center;
-  background: #0d1110;
+  background: linear-gradient(#dce9ed, #b9c6c8);
+  color: #273130;
   transition: opacity 380ms ease, visibility 380ms ease;
 }
 
@@ -570,7 +597,7 @@ select:focus-visible,
   height: 16px;
   border: 3px solid #c28c43;
   border-radius: 50%;
-  background: #0d1110;
+  background: #c9d6d9;
 }
 
 .loader-model span:nth-child(2) { left: 15px; }
@@ -582,6 +609,7 @@ select:focus-visible,
 
 .stage-tip {
   position: absolute;
+  z-index: 3;
   left: 50%;
   bottom: 14px;
   display: flex;
@@ -607,6 +635,7 @@ select:focus-visible,
 
 .reference-card {
   position: absolute;
+  z-index: 3;
   right: 14px;
   bottom: 14px;
   display: grid;
@@ -664,6 +693,7 @@ select:focus-visible,
 
 .selection-badge {
   position: absolute;
+  z-index: 3;
   top: 14px;
   left: 14px;
   display: grid;

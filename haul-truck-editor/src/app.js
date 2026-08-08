@@ -14,7 +14,7 @@ import {
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
-const STORAGE_KEY = "haul-truck-editor:3d:v2";
+const STORAGE_KEY = "haul-truck-editor:3d:v3";
 const MAX_HISTORY = 40;
 
 const dom = {
@@ -34,6 +34,8 @@ const dom = {
   selectionBadgeName: $("#selectionBadgeName"),
   referenceCard: $("#referenceCard"),
   referenceImage: $("#referenceImage"),
+  calibrationImage: $("#calibrationImage"),
+  calibrationButton: $("#calibrationButton"),
   emptyInspector: $("#emptyInspector"),
   inspectorContent: $("#inspectorContent"),
   objectNumber: $("#objectNumber"),
@@ -100,7 +102,9 @@ const state = {
   transformSnapshot: null,
   pointerStart: null,
   transforming: false,
-  suppressHistory: false
+  suppressHistory: false,
+  calibration: false,
+  environmentRoot: null
 };
 
 const renderer = createRenderer();
@@ -109,11 +113,13 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.08;
+renderer.toneMappingExposure = 1.2;
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x111615);
-scene.fog = new THREE.FogExp2(0x111615, 0.014);
+const daylightBackground = new THREE.Color(0xcfe0e7);
+const daylightFog = new THREE.FogExp2(0xd9e4e6, 0.0065);
+scene.background = daylightBackground;
+scene.fog = daylightFog;
 
 const camera = new THREE.PerspectiveCamera(blueprint.camera.fov, 1, 0.1, 220);
 camera.position.fromArray(blueprint.camera.position);
@@ -150,7 +156,7 @@ const clock = new THREE.Clock();
 
 function createRenderer() {
   const context = dom.canvas.getContext("webgl2", {
-    alpha: false,
+    alpha: true,
     antialias: true,
     preserveDrawingBuffer: true,
     powerPreference: "high-performance"
@@ -161,7 +167,7 @@ function createRenderer() {
       canvas: dom.canvas,
       context,
       antialias: true,
-      alpha: false,
+      alpha: true,
       preserveDrawingBuffer: true,
       powerPreference: "high-performance"
     });
@@ -180,6 +186,7 @@ function createFallbackRenderer() {
       dom.canvas.width = width;
       dom.canvas.height = height;
     },
+    setClearAlpha() {},
     render() {}
   };
 }
@@ -193,6 +200,7 @@ init().catch((error) => {
 
 async function init() {
   dom.referenceImage.src = referenceImageUrl;
+  dom.calibrationImage.src = referenceImageUrl;
   state.model = buildHaulTruck(scene, blueprint);
   createEnvironment();
   populateAnchors();
@@ -212,47 +220,48 @@ async function init() {
 }
 
 function createEnvironment() {
+  const environmentRoot = new THREE.Group();
+  environmentRoot.name = "daylight_industrial_apron";
+  state.environmentRoot = environmentRoot;
+  scene.add(environmentRoot);
+
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(90, 70), state.model.materials.floor);
   floor.rotation.x = -Math.PI / 2;
   floor.receiveShadow = true;
   floor.userData.environment = true;
-  scene.add(floor);
+  environmentRoot.add(floor);
 
-  const grid = new THREE.GridHelper(70, 70, 0x55584f, 0x292f2c);
+  const grid = new THREE.GridHelper(70, 70, 0x919b9d, 0xb6bfc0);
   grid.position.y = 0.012;
   grid.material.transparent = true;
-  grid.material.opacity = 0.22;
+  grid.material.opacity = 0.26;
   grid.userData.environment = true;
-  scene.add(grid);
+  environmentRoot.add(grid);
 
-  const hangar = new THREE.Group();
-  hangar.name = "industrial_hangar";
-  const columnMaterial = new THREE.MeshStandardMaterial({ color: 0x2f3532, roughness: 0.84, metalness: 0.68 });
-  const beamMaterial = new THREE.MeshStandardMaterial({ color: 0x443d31, roughness: 0.8, metalness: 0.72 });
-  for (const x of [-28, -14, 0, 14, 28]) {
-    for (const z of [-22, 22]) {
-      const column = new THREE.Mesh(new THREE.BoxGeometry(0.55, 16, 0.7), columnMaterial);
-      column.position.set(x, 8, z);
-      column.castShadow = true;
-      hangar.add(column);
-    }
-    const beam = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.65, 44), beamMaterial);
-    beam.position.set(x, 15.4, 0);
-    hangar.add(beam);
+  const horizon = new THREE.Group();
+  horizon.name = "distant_mine_structures";
+  const horizonSteel = new THREE.MeshStandardMaterial({ color: 0x8b9899, roughness: 0.86, metalness: 0.5 });
+  const horizonConcrete = new THREE.MeshStandardMaterial({ color: 0xc2c6c3, roughness: 0.95, metalness: 0.02 });
+  for (const [x, z, sx, sy, sz] of [[-22, -27, 13, 4, 4], [4, -29, 18, 6, 5], [27, -26, 9, 3, 5]]) {
+    const building = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz), horizonConcrete);
+    building.position.set(x, sy / 2, z);
+    horizon.add(building);
   }
-  for (const z of [-22, 22]) {
-    const rail = new THREE.Mesh(new THREE.BoxGeometry(57, 0.5, 0.6), beamMaterial);
-    rail.position.set(0, 13.4, z);
-    hangar.add(rail);
+  for (const x of [-24, 0, 24]) {
+    const column = new THREE.Mesh(new THREE.BoxGeometry(0.28, 9, 0.32), horizonSteel);
+    column.position.set(x, 4.5, -23);
+    const beam = new THREE.Mesh(new THREE.BoxGeometry(16, 0.3, 0.36), horizonSteel);
+    beam.position.set(x, 8.8, -23);
+    horizon.add(column, beam);
   }
-  hangar.traverse((child) => { child.userData.environment = true; });
-  scene.add(hangar);
+  horizon.traverse((child) => { child.userData.environment = true; });
+  environmentRoot.add(horizon);
 
-  const hemisphere = new THREE.HemisphereLight(0xcbd7d0, 0x30271d, 1.45);
+  const hemisphere = new THREE.HemisphereLight(0xf5fbff, 0x777067, 2.35);
   scene.add(hemisphere);
 
-  const keyLight = new THREE.DirectionalLight(0xffe0ad, 3.4);
-  keyLight.position.set(-16, 28, 18);
+  const keyLight = new THREE.DirectionalLight(0xfff0ce, 4.25);
+  keyLight.position.set(-20, 32, 22);
   keyLight.castShadow = true;
   keyLight.shadow.mapSize.set(2048, 2048);
   keyLight.shadow.camera.left = -28;
@@ -264,11 +273,11 @@ function createEnvironment() {
   keyLight.shadow.bias = -0.00025;
   scene.add(keyLight);
 
-  const fill = new THREE.DirectionalLight(0x8db4c6, 1.35);
+  const fill = new THREE.DirectionalLight(0xaed8eb, 1.8);
   fill.position.set(18, 12, -20);
   scene.add(fill);
 
-  const front = new THREE.SpotLight(0xffc879, 2.2, 65, Math.PI / 5, 0.72, 1.2);
+  const front = new THREE.SpotLight(0xffe1b1, 1.6, 65, Math.PI / 5, 0.72, 1.2);
   front.position.set(-30, 14, 5);
   front.target.position.set(-3, 4, 0);
   scene.add(front, front.target);
@@ -323,6 +332,7 @@ function bindEvents() {
 
   $$("[data-mode]").forEach((button) => button.addEventListener("click", () => setMode(button.dataset.mode)));
   dom.homeViewButton.addEventListener("click", () => homeView());
+  dom.calibrationButton.addEventListener("click", toggleCalibration);
   dom.focusButton.addEventListener("click", focusSelected);
   dom.wireframeButton.addEventListener("click", toggleWireframe);
   dom.anchorButton.addEventListener("click", toggleAnchors);
@@ -753,9 +763,29 @@ function tweenCamera(destination, target) {
 
 function toggleWireframe() {
   state.wireframe = !state.wireframe;
-  state.model.setWireframe(state.wireframe);
+  state.model.setWireframe(state.calibration || state.wireframe);
   dom.wireframeButton.classList.toggle("active", state.wireframe);
   dom.viewStatus.textContent = state.wireframe ? "透视 · 结构线模式" : "透视 · 实体材质";
+}
+
+function toggleCalibration() {
+  state.calibration = !state.calibration;
+  dom.stage.classList.toggle("calibration-mode", state.calibration);
+  dom.calibrationImage.classList.toggle("active", state.calibration);
+  dom.calibrationButton.classList.toggle("active", state.calibration);
+  state.environmentRoot.visible = !state.calibration;
+  scene.background = state.calibration ? null : daylightBackground;
+  scene.fog = state.calibration ? null : daylightFog;
+  renderer.setClearAlpha(state.calibration ? 0 : 1);
+  state.model.setWireframe(state.calibration || state.wireframe);
+  controls.enableRotate = !state.calibration;
+  if (state.calibration) homeView(false);
+  resize();
+  dom.viewStatus.textContent = state.calibration ? "校准 · 原图轮廓叠加" : "透视 · 日光实体视图";
+  dom.stageMessage.textContent = state.calibration
+    ? "原图叠加只用于核对比例；红色实体仍是独立三维部件"
+    : "明亮日光场景 · 所有主要结构均可独立编辑";
+  toast(state.calibration ? "已进入原图比例校准视图" : "已返回日光三维编辑视图");
 }
 
 function toggleAnchors() {
@@ -1029,9 +1059,30 @@ function handleKeyboard(event) {
 }
 
 function resize() {
-  const width = Math.max(1, dom.stage.clientWidth);
-  const height = Math.max(1, dom.stage.clientHeight);
-  renderer.setSize(width, height, false);
+  const stageWidth = Math.max(1, dom.stage.clientWidth);
+  const stageHeight = Math.max(1, dom.stage.clientHeight);
+  let width = stageWidth;
+  let height = stageHeight;
+  if (state.calibration) {
+    const referenceAspect = 1168 / 380;
+    if (stageWidth / stageHeight > referenceAspect) {
+      height = stageHeight;
+      width = height * referenceAspect;
+    } else {
+      width = stageWidth;
+      height = width / referenceAspect;
+    }
+    dom.canvas.style.left = `${(stageWidth - width) / 2}px`;
+    dom.canvas.style.top = `${(stageHeight - height) / 2}px`;
+    dom.canvas.style.width = `${width}px`;
+    dom.canvas.style.height = `${height}px`;
+  } else {
+    dom.canvas.style.left = "0";
+    dom.canvas.style.top = "0";
+    dom.canvas.style.width = "100%";
+    dom.canvas.style.height = "100%";
+  }
+  renderer.setSize(Math.round(width), Math.round(height), false);
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
 }

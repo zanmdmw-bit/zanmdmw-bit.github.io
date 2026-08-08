@@ -1,17 +1,17 @@
 {
   "projectId": "haul-truck-editor-3d",
-  "version": 2,
+  "version": 3,
   "name": "十轮重型矿山运输车",
-  "description": "参考原图制作的网页实时模块化三维矿卡。可见结构使用独立 Mesh 组合，未见区域按同类重型矿卡结构补全。",
+  "description": "按参考原图轮心、车斗轮廓和双舱位置校准的网页实时模块化三维矿卡。可见结构使用独立 Mesh 组合，未见区域按同类重型矿卡结构补全。",
   "orientation": {
     "front": "negative-x",
     "driverCab": "站在车头面向车辆外侧时的左侧",
     "equipmentRoom": "站在车头面向车辆外侧时的右侧"
   },
   "dimensionsMeters": {
-    "length": 23.8,
-    "width": 9.1,
-    "height": 10.4
+    "length": 25.4,
+    "width": 9.4,
+    "height": 9.2
   },
   "categories": [
     { "id": "structure", "name": "车辆主体", "open": true },
@@ -23,23 +23,25 @@
     { "id": "addons", "name": "附加设施", "open": true }
   ],
   "anchors": [
-    { "id": "front_deck_left", "name": "前维护平台 · 左", "position": [-6.2, 6.08, -2.65], "rotation": [0, 0, 0] },
-    { "id": "front_deck_center", "name": "前维护平台 · 中央", "position": [-6.0, 6.08, 0], "rotation": [0, 0, 0] },
-    { "id": "front_deck_right", "name": "前维护平台 · 右", "position": [-6.2, 6.08, 2.65], "rotation": [0, 0, 0] },
-    { "id": "upper_platform", "name": "上层平台", "position": [-5.7, 8.65, 0], "rotation": [0, 0, 0] },
-    { "id": "dump_front", "name": "车斗前部", "position": [-0.8, 10.05, 0], "rotation": [0, 0, 0] },
-    { "id": "dump_center", "name": "车斗中央", "position": [4.2, 9.35, 0], "rotation": [0, 0, 0] },
-    { "id": "dump_rear", "name": "车斗后部", "position": [8.7, 8.65, 0], "rotation": [0, 0, 0] },
-    { "id": "rear_frame", "name": "车尾框架", "position": [10.0, 4.85, 0], "rotation": [0, 0, 0] }
+    { "id": "front_deck_left", "name": "前维护平台 · 左", "position": [-8.2, 5.55, -2.65], "rotation": [0, 0, 0] },
+    { "id": "front_deck_center", "name": "前维护平台 · 中央", "position": [-8.0, 5.55, 0], "rotation": [0, 0, 0] },
+    { "id": "front_deck_right", "name": "前维护平台 · 右", "position": [-8.2, 5.55, 2.65], "rotation": [0, 0, 0] },
+    { "id": "upper_platform", "name": "上层平台", "position": [-7.9, 8.25, 0], "rotation": [0, 0, 0] },
+    { "id": "dump_front", "name": "车斗前部", "position": [-2.2, 8.25, 0], "rotation": [0, 0, 0] },
+    { "id": "dump_center", "name": "车斗中央", "position": [3.8, 7.35, 0], "rotation": [0, 0, 0] },
+    { "id": "dump_rear", "name": "车斗后部", "position": [8.6, 6.4, 0], "rotation": [0, 0, 0] },
+    { "id": "rear_frame", "name": "车尾框架", "position": [10.0, 3.85, 0], "rotation": [0, 0, 0] }
   ],
   "camera": {
-    "position": [-24, 16, 25],
-    "target": [0, 4.2, 0],
-    "fov": 34
+    "position": [-30.68, 10.845, 25.707],
+    "target": [-3.208, 3.54, 0],
+    "fov": 17.404
   },
   "modelNotes": [
     "驾驶室位于用户指定的左侧，设备室位于右侧。",
-    "十个车轮均为独立对象，每个车轮包含轮胎、胎纹、轮圈、轮毂与螺栓。",
+    "五个可见轮心依据 1168×380 参考原图逐点校准，十个车轮均为独立对象。",
+    "驾驶室与设备室按原图采用前后及高低错层，而不是镜像复制成两个同高方盒。",
+    "车斗底板向车尾下倾，侧板顶线和前部防护平台按原图透视轮廓重建。",
     "拆除车轮后会露出真实建模的轮轴、悬挂和底盘。",
     "车斗与车架互相独立，拆除车斗后底盘结构仍然存在。",
     "原图未展示的车尾、车底与另一侧按同类矿卡进行结构化补全。"

@@ -54,7 +54,10 @@ export function buildHaulTruck(scene, blueprint) {
   registerPart("dump_front_guard", "车斗前保护板", "dump", makeDumpFrontGuard(materials));
   registerPart("dump_hydraulics", "车斗液压举升系统", "dump", makeDumpHydraulics(materials));
 
-  const axlePositions = [-7.55, 0.9, 3.55, 6.25, 8.85];
+  // The five axle centers are equally distributed in model space. With the
+  // calibrated home camera they land on the five visible wheel centers in the
+  // 1168 x 380 source image (the old model had an incorrect 8.45 m first gap).
+  const axlePositions = [-7.5, -3.4, 0.7, 4.8, 8.9];
   const axleIds = ["front", "middle_01", "middle_02", "rear_01", "rear_02"];
   const axleNames = ["前轮轴", "中轮轴 1", "中轮轴 2", "后轮轴 1", "后轮轴 2"];
   axlePositions.forEach((x, index) => {
@@ -62,8 +65,8 @@ export function buildHaulTruck(scene, blueprint) {
   });
 
   const sideDefinitions = [
-    { suffix: "left", label: "左", z: -4.04 },
-    { suffix: "right", label: "右", z: 4.04 }
+    { suffix: "left", label: "左", z: -4.25 },
+    { suffix: "right", label: "右", z: 4.25 }
   ];
   axlePositions.forEach((x, axleIndex) => {
     sideDefinitions.forEach((side) => {
@@ -176,7 +179,7 @@ export function buildHaulTruck(scene, blueprint) {
 function createMaterials() {
   const paintedTexture = createIndustrialTexture("#8d6a37", "#332d24", "#bc8a43");
   const darkPaintTexture = createIndustrialTexture("#343a36", "#171b19", "#5c5647");
-  const floorTexture = createIndustrialTexture("#444541", "#282b29", "#6c6251", 512);
+  const floorTexture = createIndustrialTexture("#b8b7b0", "#777a77", "#e1ddd1", 512);
   floorTexture.repeat.set(8, 8);
 
   return {
@@ -200,14 +203,14 @@ function createMaterials() {
     flameOuter: new THREE.MeshBasicMaterial({ color: 0xff8a24, transparent: true, opacity: 0.72, depthWrite: false }),
     flameInner: new THREE.MeshBasicMaterial({ color: 0xffd36a, transparent: true, opacity: 0.88, depthWrite: false }),
     anchor: new THREE.MeshBasicMaterial({ color: 0xf3b554, transparent: true, opacity: 0.82, depthTest: false }),
-    floor: new THREE.MeshStandardMaterial({ map: floorTexture, color: 0x767570, roughness: 0.93, metalness: 0.12 })
+    floor: new THREE.MeshStandardMaterial({ map: floorTexture, color: 0xd2d0c8, roughness: 0.94, metalness: 0.04 })
   };
 }
 
 function createSharedGeometry() {
   return {
-    wheelTread: new THREE.BoxGeometry(0.43, 0.22, 1.44),
-    bolt: new THREE.CylinderGeometry(0.075, 0.075, 0.12, 8),
+    wheelTread: new THREE.BoxGeometry(0.3, 0.15, 1.18),
+    bolt: new THREE.CylinderGeometry(0.052, 0.052, 0.1, 8),
     rivet: new THREE.SphereGeometry(0.055, 8, 5)
   };
 }
@@ -321,14 +324,14 @@ function addRivetLine(parent, start, end, count, material, radius = 0.055) {
 
 function makeChassis(m) {
   const group = makeGroup("chassis_frame");
-  addBox(group, [21.2, 0.58, 0.72], [0.1, 2.02, -2.45], m.steelDark, [0, 0, 0], 0.08);
-  addBox(group, [21.2, 0.58, 0.72], [0.1, 2.02, 2.45], m.steelDark, [0, 0, 0], 0.08);
-  for (let x = -9.2; x <= 9.2; x += 2.3) addBox(group, [0.38, 0.48, 5.3], [x, 2.02, 0], m.steel);
+  addBox(group, [23.4, 0.58, 0.72], [-0.35, 2.02, -2.45], m.steelDark, [0, 0, 0], 0.08);
+  addBox(group, [23.4, 0.58, 0.72], [-0.35, 2.02, 2.45], m.steelDark, [0, 0, 0], 0.08);
+  for (let x = -11.0; x <= 10.2; x += 2.12) addBox(group, [0.38, 0.48, 5.3], [x, 2.02, 0], m.steel);
   addBox(group, [5.8, 0.4, 7.0], [-6.8, 2.43, 0], m.paintDark, [0, 0, 0], 0.08);
   addBox(group, [12.8, 0.3, 6.15], [3.65, 2.43, 0], m.steelDark);
   addBox(group, [1.0, 1.4, 6.6], [9.9, 2.55, 0], m.steelDark, [0, 0, 0], 0.08);
-  addRivetLine(group, [-10.1, 2.36, -2.83], [10.1, 2.36, -2.83], 28, m.rust, 0.065);
-  addRivetLine(group, [-10.1, 2.36, 2.83], [10.1, 2.36, 2.83], 28, m.rust, 0.065);
+  addRivetLine(group, [-11.6, 2.36, -2.83], [11.0, 2.36, -2.83], 32, m.rust, 0.065);
+  addRivetLine(group, [-11.6, 2.36, 2.83], [11.0, 2.36, 2.83], 32, m.rust, 0.065);
   return group;
 }
 
@@ -351,17 +354,19 @@ function makePowerModule(m) {
 
 function makeFrontDeck(m) {
   const group = makeGroup("front_service_deck");
-  addBox(group, [7.7, 0.34, 8.1], [-6.78, 4.22, 0], m.paint, [0, 0, 0], 0.06);
-  addBox(group, [7.7, 0.16, 8.1], [-6.78, 4.43, 0], m.steelDark);
-  for (let z = -3.6; z <= 3.6; z += 0.42) addBox(group, [7.35, 0.06, 0.07], [-6.7, 4.53, z], m.steel);
-  addBox(group, [1.4, 1.4, 7.4], [-10.1, 3.63, 0], m.paintDark, [0, 0, 0], 0.12);
-  addRivetLine(group, [-10.45, 4.38, -3.72], [-3.1, 4.38, -3.72], 18, m.rust);
-  addRivetLine(group, [-10.45, 4.38, 3.72], [-3.1, 4.38, 3.72], 18, m.rust);
+  group.position.set(-1.8, -0.38, 0);
+  addBox(group, [6.85, 0.34, 7.25], [-6.78, 4.22, 0], m.paint, [0, 0, 0], 0.06);
+  addBox(group, [6.85, 0.16, 7.25], [-6.78, 4.43, 0], m.steelDark);
+  for (let z = -3.18; z <= 3.18; z += 0.39) addBox(group, [6.55, 0.06, 0.07], [-6.7, 4.53, z], m.steel);
+  addBox(group, [1.25, 1.4, 6.65], [-9.95, 3.63, 0], m.paintDark, [0, 0, 0], 0.12);
+  addRivetLine(group, [-10.1, 4.38, -3.32], [-3.45, 4.38, -3.32], 18, m.rust);
+  addRivetLine(group, [-10.1, 4.38, 3.32], [-3.45, 4.38, 3.32], 18, m.rust);
   return group;
 }
 
 function makeDriverCab(m) {
   const group = makeGroup("driver_cab_left");
+  group.position.set(-2.5, -0.78, 0);
   addBox(group, [3.25, 2.55, 3.05], [-7.0, 5.82, -1.93], m.paint, [0, 0, 0], 0.16);
   addBox(group, [3.46, 0.18, 3.28], [-7.0, 7.16, -1.93], m.paintDark, [0, 0, 0], 0.08);
   addBox(group, [0.08, 1.42, 2.28], [-8.66, 6.03, -1.93], m.glassDark, [0, 0, -5 * DEG], 0.03);
@@ -376,6 +381,7 @@ function makeDriverCab(m) {
 
 function makeEquipmentRoom(m) {
   const group = makeGroup("equipment_room_right");
+  group.position.set(-2.0, -0.92, 0);
   addBox(group, [3.25, 2.55, 3.05], [-7.0, 5.82, 1.93], m.paint, [0, 0, 0], 0.16);
   addBox(group, [3.46, 0.18, 3.28], [-7.0, 7.16, 1.93], m.paintDark, [0, 0, 0], 0.08);
   addBox(group, [0.08, 1.7, 2.4], [-8.66, 5.9, 1.93], m.paintDark, [0, 0, -5 * DEG], 0.03);
@@ -389,10 +395,11 @@ function makeEquipmentRoom(m) {
 
 function makeUpperPlatform(m) {
   const group = makeGroup("upper_platform");
-  addBox(group, [6.8, 0.28, 7.2], [-5.55, 7.55, 0], m.paint, [0, 0, 0], 0.05);
-  addBox(group, [7.25, 0.14, 7.65], [-5.55, 7.77, 0], m.steelDark);
-  for (let x = -8.55; x <= -2.55; x += 0.55) addBox(group, [0.08, 0.08, 7.3], [x, 7.88, 0], m.steel);
-  addBox(group, [2.6, 0.58, 5.6], [-2.4, 7.38, 0], m.paintDark, [0, 0, -7 * DEG], 0.09);
+  group.position.set(-2.3, -0.88, 0);
+  addBox(group, [6.35, 0.28, 6.25], [-5.55, 7.55, 0], m.paint, [0, 0, 0], 0.05);
+  addBox(group, [6.75, 0.14, 6.6], [-5.55, 7.77, 0], m.steelDark);
+  for (let x = -8.35; x <= -2.75; x += 0.52) addBox(group, [0.08, 0.08, 6.3], [x, 7.88, 0], m.steel);
+  addBox(group, [2.4, 0.58, 4.85], [-2.6, 7.38, 0], m.paintDark, [0, 0, -7 * DEG], 0.09);
   return group;
 }
 
@@ -427,13 +434,13 @@ function makeLighting(m) {
 
 function makeDumpBed(m) {
   const group = makeGroup("dump_bed");
-  group.position.set(2.45, 5.72, 0);
+  group.position.set(2.45, 2.0, 0);
   const profile = new THREE.Shape();
-  profile.moveTo(-7.6, 0);
+  profile.moveTo(-7.6, 2.8);
   profile.lineTo(7.55, 0);
-  profile.lineTo(7.12, 3.05);
-  profile.lineTo(-6.35, 5.0);
-  profile.lineTo(-8.15, 4.15);
+  profile.lineTo(7.12, 3.55);
+  profile.lineTo(-6.35, 5.5);
+  profile.lineTo(-8.15, 4.65);
   profile.closePath();
   const sideGeometry = new THREE.ExtrudeGeometry(profile, { depth: 0.22, bevelEnabled: true, bevelSize: 0.07, bevelThickness: 0.05, bevelSegments: 2 });
   sideGeometry.translate(0, 0, -0.11);
@@ -442,29 +449,36 @@ function makeDumpBed(m) {
   const rightSide = leftSide.clone();
   rightSide.position.z = 4.0;
   group.add(leftSide, rightSide);
-  addBox(group, [15.35, 0.46, 7.85], [-0.12, 0.05, 0], m.paintDark, [0, 0, 0], 0.06);
-  addBox(group, [14.85, 0.18, 7.4], [-0.05, 0.33, 0], m.steelDark);
-  addBox(group, [0.35, 4.3, 8.0], [-7.45, 2.25, 0], m.paint, [0, 0, -8 * DEG], 0.04);
+  addBox(group, [15.35, 0.46, 7.85], [-0.12, 1.4, 0], m.paintDark, [0, 0, -10.3 * DEG], 0.06);
+  addBox(group, [14.85, 0.18, 7.4], [-0.05, 1.68, 0], m.steelDark, [0, 0, -10.3 * DEG]);
+  addBox(group, [0.35, 4.15, 8.0], [-7.45, 3.72, 0], m.paint, [0, 0, -8 * DEG], 0.04);
   const ribX = [-6.5, -4.8, -3.1, -1.4, 0.3, 2.0, 3.7, 5.4, 6.8];
-  ribX.forEach((x, index) => {
-    const y = x < -5 ? 2.4 + (x + 6.5) * 0.22 : Math.max(1.4, 3.45 - (x + 4.8) * 0.13);
-    for (const z of [-4.18, 4.18]) addBox(group, [0.22, 3.15, 0.26], [x, y, z], m.paintLight, [0, 0, index < 2 ? -6 * DEG : 3 * DEG], 0.035);
+  ribX.forEach((x) => {
+    const floorY = 2.8 - ((x + 7.6) / 15.15) * 2.8;
+    const topY = 5.5 - ((x + 6.35) / 13.47) * 1.95;
+    const height = Math.max(2.2, topY - floorY);
+    for (const z of [-4.18, 4.18]) addBox(group, [0.22, height, 0.26], [x, floorY + height / 2, z], m.paintLight, [0, 0, 3 * DEG], 0.035);
   });
-  for (const z of [-4.22, 4.22]) {
-    cylinderBetween(group, [-7.9, 4.35, z], [-6.25, 5.23, z], 0.12, m.steel, 14);
-    cylinderBetween(group, [-6.25, 5.23, z], [7.28, 3.25, z], 0.12, m.steel, 14);
+  for (const z of [-4.2, 4.2]) {
+    cylinderBetween(group, [-7.3, 3.1, z], [7.05, 0.45, z], 0.09, m.steelDark, 12);
+    cylinderBetween(group, [-7.5, 4.1, z], [7.1, 2.2, z], 0.075, m.steel, 12);
   }
-  addRivetLine(group, [-7.1, 0.34, -4.3], [7.0, 0.34, -4.3], 30, m.rust, 0.07);
-  addRivetLine(group, [-7.1, 0.34, 4.3], [7.0, 0.34, 4.3], 30, m.rust, 0.07);
+  for (const z of [-4.22, 4.22]) {
+    cylinderBetween(group, [-7.9, 4.85, z], [-6.25, 5.73, z], 0.12, m.steel, 14);
+    cylinderBetween(group, [-6.25, 5.73, z], [7.28, 3.75, z], 0.12, m.steel, 14);
+  }
+  addRivetLine(group, [-7.1, 2.9, -4.3], [7.0, 0.28, -4.3], 30, m.rust, 0.07);
+  addRivetLine(group, [-7.1, 2.9, 4.3], [7.0, 0.28, 4.3], 30, m.rust, 0.07);
   return group;
 }
 
 function makeDumpFrontGuard(m) {
   const group = makeGroup("dump_front_guard");
-  addBox(group, [3.7, 0.35, 9.0], [-4.18, 9.32, 0], m.paint, [0, 0, -12 * DEG], 0.06);
-  for (let z = -4.1; z <= 4.1; z += 0.62) addBox(group, [3.4, 0.13, 0.12], [-4.18, 9.12, z], m.steelDark, [0, 0, -12 * DEG]);
-  cylinderBetween(group, [-5.9, 8.6, -4.1], [-2.55, 9.95, -4.1], 0.12, m.steel);
-  cylinderBetween(group, [-5.9, 8.6, 4.1], [-2.55, 9.95, 4.1], 0.12, m.steel);
+  group.position.set(-3.0, -1.1, 0);
+  addBox(group, [3.7, 0.35, 8.0], [-4.18, 9.32, 0], m.paint, [0, 0, -12 * DEG], 0.06);
+  for (let z = -3.6; z <= 3.6; z += 0.56) addBox(group, [3.4, 0.13, 0.12], [-4.18, 9.12, z], m.steelDark, [0, 0, -12 * DEG]);
+  cylinderBetween(group, [-5.9, 8.6, -3.65], [-2.55, 9.95, -3.65], 0.12, m.steel);
+  cylinderBetween(group, [-5.9, 8.6, 3.65], [-2.55, 9.95, 3.65], 0.12, m.steel);
   return group;
 }
 
@@ -481,23 +495,23 @@ function makeDumpHydraulics(m) {
 
 function makeAxle(x, index, m) {
   const group = makeGroup(`axle_${index}`);
-  cylinderBetween(group, [x, 2.18, -4.2], [x, 2.18, 4.2], index === 0 ? 0.38 : 0.46, m.steelDark, 24);
-  addCylinder(group, 0.72, 1.2, [x, 2.18, 0], [Math.PI / 2, 0, 0], m.steelBlack, 24);
+  cylinderBetween(group, [x, 1.5, -4.45], [x, 1.5, 4.45], index === 0 ? 0.3 : 0.36, m.steelDark, 24);
+  addCylinder(group, 0.56, 1.05, [x, 1.5, 0], [Math.PI / 2, 0, 0], m.steelBlack, 24);
   for (const z of [-2.0, 2.0]) {
-    cylinderBetween(group, [x - 0.8, 2.55, z], [x + 0.85, 2.1, z], 0.17, m.steel, 16);
-    cylinderBetween(group, [x - 0.7, 1.85, z], [x + 0.75, 2.52, z], 0.13, m.steelDark, 16);
+    cylinderBetween(group, [x - 0.75, 2.18, z], [x + 0.78, 1.45, z], 0.14, m.steel, 16);
+    cylinderBetween(group, [x - 0.65, 1.28, z], [x + 0.68, 2.12, z], 0.11, m.steelDark, 16);
   }
   if (index > 0) {
-    for (const z of [-2.45, 2.45]) addCylinder(group, 0.34, 1.05, [x, 3.05, z], [0, 0, 0], m.steel, 18);
+    for (const z of [-2.45, 2.45]) addCylinder(group, 0.28, 0.88, [x, 2.45, z], [0, 0, 0], m.steel, 18);
   }
   return group;
 }
 
 function makeWheel(x, z, axleIndex, m, shared) {
   const group = makeGroup("wheel");
-  group.position.set(x, 2.25, z);
-  const width = axleIndex === 0 ? 1.34 : 1.5;
-  const radius = axleIndex === 0 ? 2.28 : 2.35;
+  group.position.set(x, 1.5, z);
+  const width = axleIndex === 0 ? 0.82 : 0.94;
+  const radius = axleIndex === 0 ? 1.42 : 1.38;
   const tire = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, width, 56, 2), m.rubber);
   tire.rotation.x = Math.PI / 2;
   group.add(tire);
@@ -508,7 +522,7 @@ function makeWheel(x, z, axleIndex, m, shared) {
     const angle = (index / treadCount) * Math.PI * 2;
     dummy.position.set(Math.cos(angle) * (radius + 0.1), Math.sin(angle) * (radius + 0.1), 0);
     dummy.rotation.set(0, (index % 2 ? 12 : -12) * DEG, angle + Math.PI / 2);
-    dummy.scale.set(axleIndex === 0 ? 0.92 : 1, 1, width / 1.44 + 0.07);
+    dummy.scale.set(axleIndex === 0 ? 0.96 : 1, 1, width / 1.18 + 0.04);
     dummy.updateMatrix();
     treads.setMatrixAt(index, dummy.matrix);
   }
@@ -519,19 +533,19 @@ function makeWheel(x, z, axleIndex, m, shared) {
     sidewall.position.z = side * (width / 2 + 0.025);
     group.add(sidewall);
   }
-  const rim = new THREE.Mesh(new THREE.CylinderGeometry(1.16, 1.16, width + 0.12, 40), m.paintLight);
+  const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.78, 0.78, width + 0.12, 40), m.paintLight);
   rim.rotation.x = Math.PI / 2;
   group.add(rim);
-  const rimInset = new THREE.Mesh(new THREE.CylinderGeometry(0.88, 1.03, width + 0.2, 32), m.steelDark);
+  const rimInset = new THREE.Mesh(new THREE.CylinderGeometry(0.58, 0.68, width + 0.2, 32), m.steelDark);
   rimInset.rotation.x = Math.PI / 2;
   group.add(rimInset);
-  const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.55, width + 0.33, 24), m.steel);
+  const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.33, 0.38, width + 0.3, 24), m.steel);
   hub.rotation.x = Math.PI / 2;
   group.add(hub);
   const bolts = new THREE.InstancedMesh(shared.bolt, m.steel, 12);
   for (let index = 0; index < 12; index += 1) {
     const angle = (index / 12) * Math.PI * 2;
-    dummy.position.set(Math.cos(angle) * 0.69, Math.sin(angle) * 0.69, z < 0 ? -(width / 2 + 0.16) : width / 2 + 0.16);
+    dummy.position.set(Math.cos(angle) * 0.48, Math.sin(angle) * 0.48, z < 0 ? -(width / 2 + 0.14) : width / 2 + 0.14);
     dummy.rotation.set(Math.PI / 2, 0, 0);
     dummy.updateMatrix();
     bolts.setMatrixAt(index, dummy.matrix);
@@ -554,17 +568,19 @@ function addRailRun(group, points, height, m) {
 
 function makeFrontRailings(m) {
   const group = makeGroup("front_railings");
-  addRailRun(group, [[-10.35, 4.48, -3.72], [-8.9, 4.48, -3.72], [-7.2, 4.48, -3.72], [-5.4, 4.48, -3.72], [-3.25, 4.48, -3.72]], 1.05, m);
-  addRailRun(group, [[-10.35, 4.48, 3.72], [-8.9, 4.48, 3.72], [-7.2, 4.48, 3.72], [-5.4, 4.48, 3.72], [-3.25, 4.48, 3.72]], 1.05, m);
-  addRailRun(group, [[-10.35, 4.48, -3.72], [-10.35, 4.48, -1.2], [-10.35, 4.48, 1.2], [-10.35, 4.48, 3.72]], 1.05, m);
+  group.position.set(-1.8, -0.38, 0);
+  addRailRun(group, [[-10.05, 4.48, -3.32], [-8.7, 4.48, -3.32], [-7.2, 4.48, -3.32], [-5.4, 4.48, -3.32], [-3.5, 4.48, -3.32]], 1.05, m);
+  addRailRun(group, [[-10.05, 4.48, 3.32], [-8.7, 4.48, 3.32], [-7.2, 4.48, 3.32], [-5.4, 4.48, 3.32], [-3.5, 4.48, 3.32]], 1.05, m);
+  addRailRun(group, [[-10.05, 4.48, -3.32], [-10.05, 4.48, -1.1], [-10.05, 4.48, 1.1], [-10.05, 4.48, 3.32]], 1.05, m);
   return group;
 }
 
 function makeUpperRailings(m) {
   const group = makeGroup("upper_railings");
-  addRailRun(group, [[-8.9, 7.9, -3.52], [-7.0, 7.9, -3.52], [-5.0, 7.9, -3.52], [-2.35, 7.9, -3.52]], 0.9, m);
-  addRailRun(group, [[-8.9, 7.9, 3.52], [-7.0, 7.9, 3.52], [-5.0, 7.9, 3.52], [-2.35, 7.9, 3.52]], 0.9, m);
-  addRailRun(group, [[-8.9, 7.9, -3.52], [-8.9, 7.9, -1.1], [-8.9, 7.9, 1.1], [-8.9, 7.9, 3.52]], 0.9, m);
+  group.position.set(-2.3, -0.88, 0);
+  addRailRun(group, [[-8.6, 7.9, -3.02], [-7.0, 7.9, -3.02], [-5.0, 7.9, -3.02], [-2.55, 7.9, -3.02]], 0.9, m);
+  addRailRun(group, [[-8.6, 7.9, 3.02], [-7.0, 7.9, 3.02], [-5.0, 7.9, 3.02], [-2.55, 7.9, 3.02]], 0.9, m);
+  addRailRun(group, [[-8.6, 7.9, -3.02], [-8.6, 7.9, -1.0], [-8.6, 7.9, 1.0], [-8.6, 7.9, 3.02]], 0.9, m);
   return group;
 }
 
@@ -582,13 +598,13 @@ function makeLadderAt(position, rotationY, width, height, steps, m) {
 }
 
 function makeFrontLadder(m) {
-  const group = makeLadderAt([-11.42, 0.36, -2.55], Math.PI / 2, 1.1, 3.8, 9, m);
+  const group = makeLadderAt([-11.42, 0.36, -2.55], Math.PI / 2, 1.1, 3.42, 9, m);
   group.rotation.z = -4 * DEG;
   return group;
 }
 
 function makeSideLadder(m) {
-  const group = makeLadderAt([-4.1, 2.0, -4.28], 0, 0.92, 2.55, 7, m);
+  const group = makeLadderAt([-5.9, 1.72, -4.42], 0, 0.92, 2.45, 7, m);
   group.rotation.z = -10 * DEG;
   return group;
 }
@@ -619,9 +635,10 @@ function makeExhaust(m) {
 
 function makeFenders(m) {
   const group = makeGroup("wheel_fenders");
-  for (const z of [-3.74, 3.74]) {
-    addBox(group, [5.45, 0.22, 0.62], [5.75, 4.75, z], m.paintDark, [0, 0, 0], 0.08);
-    addBox(group, [3.4, 0.18, 0.58], [-7.55, 4.62, z], m.paint, [0, 0, 0], 0.08);
+  for (const z of [-4.0, 4.0]) {
+    for (const [index, x] of [-7.5, -3.4, 0.7, 4.8, 8.9].entries()) {
+      addBox(group, [index === 0 ? 3.35 : 3.2, 0.18, 0.5], [x, 3.28, z], index === 0 ? m.paint : m.paintDark, [0, 0, 0], 0.08);
+    }
   }
   return group;
 }
@@ -638,6 +655,7 @@ function makeToolboxes(m) {
 
 function makeWarningMarkings(m) {
   const group = makeGroup("warning_markings");
+  group.position.set(-1.8, -0.38, 0);
   for (const z of [-4.12, 4.12]) {
     for (let x = -10.0; x <= -3.8; x += 1.1) addBox(group, [0.62, 0.08, 0.05], [x, 4.36, z], m.warning, [0, 0, 18 * DEG]);
   }
