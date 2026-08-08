@@ -1,24 +1,36 @@
-import { cp, mkdir } from "node:fs/promises";
+import { rm } from "node:fs/promises";
+import { resolve } from "node:path";
 import { defineConfig } from "vite";
 
 export default defineConfig({
+  root: "src",
   base: "./",
+  publicDir: false,
   server: {
     host: "0.0.0.0",
-    allowedHosts: ["terminal.local"]
+    allowedHosts: ["terminal.local"],
+    fs: {
+      allow: [resolve(process.cwd())]
+    }
   },
   build: {
-    outDir: "dist",
-    emptyOutDir: true
+    outDir: "..",
+    emptyOutDir: false,
+    assetsDir: "assets/app",
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        entryFileNames: "assets/app/editor-[hash].js",
+        chunkFileNames: "assets/app/chunk-[hash].js",
+        assetFileNames: "assets/app/[name]-[hash][extname]"
+      }
+    }
   },
   plugins: [
     {
-      name: "copy-editor-static-data",
-      async closeBundle() {
-        await mkdir("dist/data", { recursive: true });
-        await mkdir("dist/assets", { recursive: true });
-        await cp("data", "dist/data", { recursive: true });
-        await cp("assets", "dist/assets", { recursive: true });
+      name: "clean-editor-build-assets",
+      async buildStart() {
+        await rm(resolve(process.cwd(), "assets/app"), { recursive: true, force: true });
       }
     }
   ]
