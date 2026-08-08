@@ -1,13 +1,12 @@
 {
-  "name": "haul-truck-editor",
-  "version": "4.0.0",
-  "description": "按正式米制参数建立的八轮独立电驱 680 吨级模块化矿卡三维编辑器",
+  "name": "infinity-nikki-model-viewer",
+  "version": "1.0.0",
+  "description": "无限暖暖完整角色模型网页查看器",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "audit": "node scripts/audit-model.mjs"
+    "build": "vite build"
   },
   "devDependencies": {
     "vite": "^7.1.1"

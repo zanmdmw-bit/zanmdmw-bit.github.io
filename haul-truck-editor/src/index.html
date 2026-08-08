@@ -2,236 +2,82 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#d7e3e7">
-  <meta name="description" content="按 24 米车长、12.4 米车宽、4.9 米轮径建立的八轮独立电驱矿卡三维编辑器">
-  <title>680 吨级矿卡 3D 模块化编辑器</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f4effb">
+  <meta name="description" content="无限暖暖·熠熠舞曲完整角色模型在线3D展示">
+  <title>无限暖暖 3D 模型展示</title>
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <div class="app-shell">
+  <main class="viewer-shell">
     <header class="topbar">
-      <a class="brand" href="./" aria-label="矿卡 3D 模块化编辑器首页">
-        <span class="brand-mark">HT</span>
-        <span class="brand-copy">
-          <small>680T HAUL TRUCK · METRIC 3D</small>
-          <strong>八轮矿卡模块化编辑器</strong>
-        </span>
-      </a>
-
-      <div class="project-status" id="projectStatus" aria-live="polite">
-        <span class="status-light"></span>
-        <span>正在装配三维车辆……</span>
+      <div class="brand-block">
+        <span class="brand-mark" aria-hidden="true">✦</span>
+        <div>
+          <p class="eyebrow">INFINITY NIKKI · 3D ARCHIVE</p>
+          <h1>暖暖 · 熠熠舞曲</h1>
+        </div>
       </div>
-
-      <nav class="top-actions" aria-label="工程操作">
-        <button class="button accent" id="addPartButton" type="button">＋ 添加设施</button>
-        <button class="button" id="undoButton" type="button" disabled>↶ 撤销</button>
-        <button class="button" id="redoButton" type="button" disabled>↷ 重做</button>
-        <button class="button" id="saveButton" type="button">保存</button>
-        <button class="button" id="exportButton" type="button">导出 ▾</button>
-      </nav>
+      <div class="status-pill"><span class="status-dot" id="statusDot"></span><span id="statusText">载入模型 0%</span></div>
     </header>
 
-    <main class="workspace">
-      <aside class="panel layer-panel" aria-label="车辆部件列表">
-        <div class="panel-head">
+    <section class="stage-layout">
+      <div class="model-stage" id="modelStage">
+        <div class="aura aura-one"></div>
+        <div class="aura aura-two"></div>
+        <div class="canvas-mount" id="canvasMount"></div>
+
+        <div class="loading-card" id="loadingCard" role="status">
+          <div class="loading-orbit"><span></span></div>
+          <p id="loadingTitle">正在展开完整模型</p>
+          <div class="progress-track"><i id="progressBar"></i></div>
+          <small id="progressText">0% · 首次载入约 12 MB</small>
+        </div>
+
+        <div class="gesture-hint" aria-hidden="true"><span>拖拽旋转</span><b>·</b><span>滚轮缩放</span><b>·</b><span>点击部件</span></div>
+
+        <nav class="camera-controls" aria-label="模型视角">
+          <button type="button" data-view="full">全身</button>
+          <button type="button" data-view="face">脸部</button>
+          <button type="button" data-view="dress">礼服</button>
+          <button type="button" id="rotateButton" aria-pressed="false">自动旋转</button>
+        </nav>
+      </div>
+
+      <aside class="inspector-panel">
+        <div class="panel-kicker"><span></span> 当前选中</div>
+        <p class="part-category" id="partCategory">完整角色模型</p>
+        <h2 id="partName">暖暖 · 熠熠舞曲</h2>
+        <p class="part-description" id="partDescription">包含暖暖的脸部、身体、眼睛、头发、299 根骨骼与熠熠舞曲套装。点击模型上的部件可以查看说明。</p>
+
+        <div class="divider"></div>
+        <dl class="model-stats">
+          <div><dt>MODEL</dt><dd>完整角色</dd></div>
+          <div><dt>OUTFIT</dt><dd>熠熠舞曲</dd></div>
+          <div><dt>RIG</dt><dd>299 Bones</dd></div>
+          <div><dt>FORMAT</dt><dd>Web GLB</dd></div>
+        </dl>
+
+        <div class="part-guide">
+          <p>可点击区域</p>
           <div>
-            <small>COMPONENT TREE</small>
-            <h1>车辆部件</h1>
-          </div>
-          <button class="icon-button" id="collapseButton" type="button" title="折叠或展开全部">≡</button>
-        </div>
-
-        <label class="search-box">
-          <span>⌕</span>
-          <input id="partSearch" type="search" autocomplete="off" placeholder="搜索轮胎、车斗或驾驶室">
-        </label>
-
-        <div class="summary-strip" id="partSummary">正在读取结构……</div>
-        <div class="part-tree" id="partTree" role="tree" aria-label="三维车辆部件树"></div>
-
-        <div class="orientation-note">
-          <span class="orientation-icon">↗</span>
-          <div>
-            <strong>方向约定</strong>
-            <p>站在车头面向外侧：左边是驾驶室，右边是设备室。</p>
+            <span><i></i>发型<small>S0142H</small></span>
+            <span><i></i>脸部<small>FACE</small></span>
+            <span><i></i>头饰<small>S0142AHC</small></span>
+            <span><i></i>礼服<small>S0142D</small></span>
+            <span><i></i>臂饰<small>S0142G</small></span>
+            <span><i></i>鞋履<small>S0142BB</small></span>
           </div>
         </div>
-      </aside>
 
-      <section class="stage-column" aria-label="三维编辑场景">
-        <div class="stage-toolbar">
-          <div class="tool-segment" role="group" aria-label="编辑工具">
-            <button class="tool active" type="button" data-mode="select" title="选择部件（V）">↖ <span>选择</span></button>
-            <button class="tool" type="button" data-mode="translate" title="移动部件（G）">✥ <span>移动</span></button>
-            <button class="tool" type="button" data-mode="rotate" title="旋转部件（R）">↻ <span>旋转</span></button>
-            <button class="tool" type="button" data-mode="scale" title="缩放部件（S）">⤢ <span>缩放</span></button>
-          </div>
-
-          <div class="tool-segment view-tools" role="group" aria-label="视图工具">
-            <button class="tool" id="homeViewButton" type="button">⌂ <span>工程视角</span></button>
-            <button class="tool active" id="calibrationButton" type="button">▧ <span>尺寸基准</span></button>
-            <button class="tool" id="focusButton" type="button">◎ <span>聚焦部件</span></button>
-            <button class="tool" id="wireframeButton" type="button">◇ <span>结构线</span></button>
-            <button class="tool" id="anchorButton" type="button">⌾ <span>安装点</span></button>
-          </div>
-
-          <div class="scene-stat" id="sceneStat"><b>0</b> 个可编辑对象</div>
-        </div>
-
-        <div class="stage" id="stage" tabindex="0" aria-label="三维矿卡编辑区。左键旋转视角，右键平移，滚轮缩放，点击车辆选择部件。">
-          <canvas id="sceneCanvas"></canvas>
-
-          <div class="loading-screen" id="loadingScreen">
-            <div class="loader-model" aria-hidden="true">
-              <span></span><span></span><span></span>
-            </div>
-            <strong>正在装配八轮 680 吨级矿卡</strong>
-            <small>以 1 单位 = 1 米建立正式比例骨架</small>
-          </div>
-
-          <div class="stage-tip" id="stageTip">
-            <span>鼠标左键旋转视角</span>
-            <i></i>
-            <span>滚轮缩放</span>
-            <i></i>
-            <span>点击部件选择</span>
-          </div>
-
-          <button class="reference-card" id="referenceCard" type="button" aria-label="显示或隐藏参考原图">
-            <img id="referenceImage" alt="矿卡建模参考原图">
-            <span><b>仅作造型参考</b><small>不参与尺寸校准</small></span>
-          </button>
-
-          <div class="selection-badge hidden" id="selectionBadge">
-            <span>当前选择</span>
-            <strong id="selectionBadgeName">—</strong>
-          </div>
-
-          <section class="metric-overlay" id="metricOverlay" aria-label="正式建模基准">
-            <header><b>正式建模基准</b><span>1 UNIT = 1 M</span></header>
-            <div><strong>24.0 m</strong><small>整车长度</small></div>
-            <div><strong>12.4 m</strong><small>暂定总宽</small></div>
-            <div><strong>8.9 m</strong><small>前平台离地</small></div>
-            <div><strong>Ø 4.9 m</strong><small>轮组外径</small></div>
-            <div><strong>8</strong><small>独立电驱轮组</small></div>
-            <div><strong>114.8 m²</strong><small>暂定斗内地板</small></div>
-          </section>
-        </div>
-
-        <footer class="stage-footer">
-          <span><b>视图</b><em id="viewStatus">透视 · 工程视角</em></span>
-          <span><b>选择</b><em id="selectionStatus">未选择部件</em></span>
-          <span class="stage-message" id="stageMessage">原图只决定造型语言，正式数据决定比例</span>
+        <footer>
+          <p>模型版权：叠纸游戏</p>
+          <p>Blender / UE 工程整理：Airsoya</p>
+          <p>仅用于个人研究与模型展示</p>
         </footer>
-      </section>
-
-      <aside class="panel inspector-panel" aria-label="选中部件属性">
-        <div class="panel-head">
-          <div>
-            <small>OBJECT INSPECTOR</small>
-            <h2>部件属性</h2>
-          </div>
-          <span class="object-number" id="objectNumber">—</span>
-        </div>
-
-        <div class="empty-inspector" id="emptyInspector">
-          <div class="empty-orbit">◎</div>
-          <h3>点击车辆选择部件</h3>
-          <p>车轮、车斗、驾驶室、设备室、平台和栏杆都可以独立选择。</p>
-        </div>
-
-        <div class="inspector-content hidden" id="inspectorContent">
-          <div class="selected-object-card">
-            <div class="object-icon" id="objectIcon">▦</div>
-            <div>
-              <span class="object-category" id="objectCategory">车辆主体</span>
-              <h3 id="objectName">部件名称</h3>
-              <code id="objectId">part_id</code>
-            </div>
-          </div>
-
-          <div class="reality-badge">
-            <span>3D MESH</span>
-            <p id="specificationText">这是独立三维对象。隐藏或拆除后，后方结构会真实露出。</p>
-          </div>
-
-          <section class="inspector-section quick-actions">
-            <button id="visibilityButton" type="button"><span>◉</span>隐藏</button>
-            <button id="lockButton" type="button"><span>◇</span>锁定</button>
-            <button id="duplicateButton" type="button"><span>⧉</span>复制</button>
-            <button class="danger" id="removeButton" type="button"><span>×</span>拆除</button>
-          </section>
-
-          <section class="inspector-section">
-            <div class="section-title">
-              <h4>位置</h4>
-              <button id="resetButton" type="button">恢复初始</button>
-            </div>
-            <div class="vector-grid">
-              <label><span>X</span><input id="posX" type="number" step="0.1"></label>
-              <label><span>Y</span><input id="posY" type="number" step="0.1"></label>
-              <label><span>Z</span><input id="posZ" type="number" step="0.1"></label>
-            </div>
-          </section>
-
-          <section class="inspector-section">
-            <div class="section-title"><h4>旋转</h4><span>角度</span></div>
-            <div class="vector-grid">
-              <label><span>X°</span><input id="rotX" type="number" step="1"></label>
-              <label><span>Y°</span><input id="rotY" type="number" step="1"></label>
-              <label><span>Z°</span><input id="rotZ" type="number" step="1"></label>
-            </div>
-          </section>
-
-          <section class="inspector-section">
-            <div class="section-title"><h4>缩放</h4><label class="inline-check"><input id="uniformScale" type="checkbox" checked>等比</label></div>
-            <div class="vector-grid">
-              <label><span>X</span><input id="scaleX" type="number" min="0.05" step="0.05"></label>
-              <label><span>Y</span><input id="scaleY" type="number" min="0.05" step="0.05"></label>
-              <label><span>Z</span><input id="scaleZ" type="number" min="0.05" step="0.05"></label>
-            </div>
-          </section>
-
-          <section class="inspector-section">
-            <div class="section-title"><h4>安装点</h4><span>附加设施</span></div>
-            <select id="anchorSelect" aria-label="选择安装点"></select>
-            <button class="wide-button" id="snapButton" type="button">吸附到所选安装点</button>
-          </section>
-
-          <section class="inspector-section object-info">
-            <div><span>网格数</span><b id="meshCount">0</b></div>
-            <div><span>三角面</span><b id="triangleCount">0</b></div>
-            <div><span>状态</span><b id="objectState">正常</b></div>
-          </section>
-        </div>
       </aside>
-    </main>
-  </div>
-
-  <div class="popover add-popover hidden" id="addPopover" role="dialog" aria-label="添加附加设施">
-    <div class="popover-head"><b>添加独立设施</b><button type="button" data-close="addPopover">×</button></div>
-    <button type="button" data-preset="tent"><span>△</span><b>工业帐篷</b><small>带骨架和篷布</small></button>
-    <button type="button" data-preset="campfire"><span>✦</span><b>篝火炉</b><small>金属火盆、木柴和动态火光</small></button>
-    <button type="button" data-preset="crate"><span>▣</span><b>储物箱</b><small>加固钢制设备箱</small></button>
-    <button type="button" data-preset="shelter"><span>⌂</span><b>铁棚生活区</b><small>钢梁、顶棚和后壁</small></button>
-    <button class="file-option" id="importModelButton" type="button"><span>↑</span><b>导入外部部件</b><small>GLB 三维模型或透明图片</small></button>
-  </div>
-
-  <div class="popover export-popover hidden" id="exportPopover" role="dialog" aria-label="导出工程">
-    <div class="popover-head"><b>导出与工程</b><button type="button" data-close="exportPopover">×</button></div>
-    <button id="exportPngButton" type="button"><b>导出当前画面 PNG</b><small>保存当前三维视角</small></button>
-    <button id="exportGlbButton" type="button"><b>导出车辆 GLB</b><small>保留独立节点的三维模型</small></button>
-    <button id="exportJsonButton" type="button"><b>导出工程 JSON</b><small>保存所有部件的变换和状态</small></button>
-    <button id="importJsonButton" type="button"><b>导入工程 JSON</b><small>恢复之前的编辑状态</small></button>
-    <button class="danger-text" id="resetProjectButton" type="button"><b>重置整个工程</b><small>恢复车辆初始装配</small></button>
-  </div>
-
-  <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
-  <input id="assetInput" type="file" accept=".glb,image/png,image/webp,image/jpeg" hidden>
-  <input id="projectInput" type="file" accept="application/json,.json" hidden>
-
+    </section>
+  </main>
   <script type="module" src="./app.js"></script>
 </body>
 </html>
