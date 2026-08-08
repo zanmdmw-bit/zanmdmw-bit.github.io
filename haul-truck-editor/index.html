@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#151819">
+  <meta name="description" content="矿用自卸车二维模块化改装编辑器">
+  <title>矿卡模块化编辑器</title>
+  <link rel="stylesheet" href="./css/editor.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="brand-mark" aria-hidden="true">HT</div>
+        <div>
+          <p class="eyebrow">HAUL TRUCK WORKBENCH</p>
+          <h1>矿卡模块化编辑器</h1>
+        </div>
+      </div>
+
+      <div class="project-state" aria-live="polite">
+        <span class="state-dot"></span>
+        <span id="projectState">正在载入车辆工程……</span>
+      </div>
+
+      <nav class="top-actions" aria-label="工程操作">
+        <button class="toolbar-button primary" id="addAssetButton" type="button">＋ 添加部件</button>
+        <button class="toolbar-button" id="undoButton" type="button" disabled>↶ 撤销</button>
+        <button class="toolbar-button" id="redoButton" type="button" disabled>↷ 重做</button>
+        <button class="toolbar-button" id="saveButton" type="button">保存</button>
+        <button class="toolbar-button" id="exportMenuButton" type="button">导出 ▾</button>
+      </nav>
+    </header>
+
+    <main class="workspace">
+      <aside class="side-panel layer-panel" aria-label="部件与图层">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">COMPONENT TREE</p>
+            <h2>部件图层</h2>
+          </div>
+          <button class="icon-button" id="collapseAllButton" type="button" title="收起全部分组" aria-label="收起全部分组">−</button>
+        </div>
+
+        <label class="search-box">
+          <span aria-hidden="true">⌕</span>
+          <input id="layerSearch" type="search" placeholder="搜索轮胎、平台或设备" autocomplete="off">
+        </label>
+
+        <div class="layer-summary" id="layerSummary"></div>
+        <div class="layer-tree" id="layerTree" role="tree" aria-label="车辆部件树"></div>
+
+        <div class="panel-note">
+          <strong>诚实分层模式</strong>
+          <p>“待素材”部件仍嵌在参考原图中。只有部件图和拆除补底均齐全后，隐藏与移动功能才会解锁。</p>
+        </div>
+      </aside>
+
+      <section class="stage-column" aria-label="车辆编辑画布">
+        <div class="stage-toolbar">
+          <div class="tool-group" role="group" aria-label="画布工具">
+            <button class="tool-button active" id="selectToolButton" type="button" data-tool="select">↖ 选择</button>
+            <button class="tool-button" id="panToolButton" type="button" data-tool="pan">✥ 平移</button>
+          </div>
+
+          <div class="tool-group" role="group" aria-label="视图控制">
+            <button class="tool-button compact" id="zoomOutButton" type="button" aria-label="缩小">−</button>
+            <button class="zoom-readout" id="zoomReadout" type="button" title="点击适应画布">100%</button>
+            <button class="tool-button compact" id="zoomInButton" type="button" aria-label="放大">＋</button>
+            <button class="tool-button" id="fitButton" type="button">适应</button>
+          </div>
+
+          <div class="tool-group stage-toggles" role="group" aria-label="辅助显示">
+            <label class="toggle-label"><input id="anchorToggle" type="checkbox"><span>安装点</span></label>
+            <label class="toggle-label"><input id="referenceToggle" type="checkbox" checked><span>参考原图</span></label>
+          </div>
+        </div>
+
+        <div class="stage-viewport" id="stageViewport" tabindex="0" aria-label="可缩放车辆编辑区。滚轮缩放，空格拖动画布。">
+          <div class="canvas-stage" id="canvasStage">
+            <canvas id="editorCanvas" width="1168" height="380"></canvas>
+          </div>
+          <div class="stage-loading" id="stageLoading">
+            <div class="loader-ring"></div>
+            <span>正在建立车辆坐标系</span>
+          </div>
+        </div>
+
+        <footer class="stage-status">
+          <div><span class="status-label">画布</span><strong id="canvasSize">1168 × 380 px</strong></div>
+          <div><span class="status-label">选中</span><strong id="selectedStatus">未选择部件</strong></div>
+          <div><span class="status-label">提示</span><strong id="interactionHint">从左侧选择待分层部件，或添加透明素材</strong></div>
+        </footer>
+      </section>
+
+      <aside class="side-panel inspector-panel" aria-label="部件属性">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">INSPECTOR</p>
+            <h2>部件属性</h2>
+          </div>
+          <span class="selection-index" id="selectionIndex">—</span>
+        </div>
+
+        <div class="empty-inspector" id="emptyInspector">
+          <div class="empty-icon" aria-hidden="true">◎</div>
+          <h3>选择一个部件</h3>
+          <p>可编辑素材能够移动、缩放和旋转；待分层部件会显示缺少的素材。</p>
+        </div>
+
+        <div class="inspector-content hidden" id="inspectorContent">
+          <div class="selected-card">
+            <div>
+              <span class="status-chip" id="assetStatusChip">待素材</span>
+              <h3 id="selectedName">部件名称</h3>
+              <code id="selectedId">component_id</code>
+            </div>
+            <button class="icon-button" id="renameButton" type="button" title="重命名" aria-label="重命名部件">✎</button>
+          </div>
+
+          <div class="material-warning" id="materialWarning"></div>
+
+          <section class="inspector-section">
+            <div class="section-title"><h4>素材</h4><span id="materialProgress">0 / 2</span></div>
+            <div class="material-grid">
+              <button class="material-slot" id="partAssetButton" type="button">
+                <span class="material-icon">▧</span>
+                <b>部件透明图</b>
+                <small id="partAssetState">点击导入</small>
+              </button>
+              <button class="material-slot" id="revealAssetButton" type="button">
+                <span class="material-icon">◫</span>
+                <b>拆除补底</b>
+                <small id="revealAssetState">点击导入</small>
+              </button>
+            </div>
+          </section>
+
+          <section class="inspector-section">
+            <div class="section-title"><h4>变换</h4><button id="resetTransformButton" type="button">恢复默认</button></div>
+            <div class="field-grid two-columns">
+              <label><span>X</span><input id="fieldX" type="number" step="1"></label>
+              <label><span>Y</span><input id="fieldY" type="number" step="1"></label>
+              <label><span>宽度</span><input id="fieldWidth" type="number" min="1" step="1"></label>
+              <label><span>高度</span><input id="fieldHeight" type="number" min="1" step="1"></label>
+              <label><span>旋转</span><input id="fieldRotation" type="number" step="1"><em>°</em></label>
+              <label><span>透明度</span><input id="fieldOpacity" type="number" min="0" max="100" step="1"><em>%</em></label>
+            </div>
+            <label class="range-field"><span>倾斜 X</span><input id="fieldSkewX" type="range" min="-45" max="45" step="1"><output id="skewXOutput">0°</output></label>
+            <label class="range-field"><span>倾斜 Y</span><input id="fieldSkewY" type="range" min="-45" max="45" step="1"><output id="skewYOutput">0°</output></label>
+          </section>
+
+          <section class="inspector-section">
+            <div class="section-title"><h4>安装位置</h4></div>
+            <label class="select-field"><span>绑定安装点</span><select id="anchorSelect"></select></label>
+            <button class="wide-button" id="snapAnchorButton" type="button">吸附到安装点</button>
+          </section>
+
+          <section class="inspector-section">
+            <div class="section-title"><h4>图层与状态</h4></div>
+            <div class="action-grid">
+              <button id="toggleVisibilityButton" type="button">隐藏</button>
+              <button id="toggleLockButton" type="button">锁定</button>
+              <button id="bringForwardButton" type="button">上移一层</button>
+              <button id="sendBackwardButton" type="button">下移一层</button>
+              <button id="duplicateButton" type="button">复制部件</button>
+              <button class="danger" id="deleteButton" type="button">拆除</button>
+            </div>
+          </section>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <div class="export-popover hidden" id="exportPopover">
+    <button id="exportImageButton" type="button"><b>导出 PNG</b><small>生成当前画面，不包含辅助线</small></button>
+    <button id="exportProjectButton" type="button"><b>导出工程 JSON</b><small>包含位置、状态与临时素材</small></button>
+    <button id="importProjectButton" type="button"><b>导入工程 JSON</b><small>恢复之前保存的改装方案</small></button>
+    <button id="resetProjectButton" type="button"><b>重置工程</b><small>返回初始部件树</small></button>
+  </div>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+
+  <input id="addonInput" type="file" accept="image/png,image/webp,image/svg+xml,image/jpeg" hidden>
+  <input id="partInput" type="file" accept="image/png,image/webp,image/svg+xml,image/jpeg" hidden>
+  <input id="revealInput" type="file" accept="image/png,image/webp,image/jpeg" hidden>
+  <input id="projectInput" type="file" accept="application/json,.json" hidden>
+
+  <script type="module" src="./js/editor.js"></script>
+</body>
+</html>
