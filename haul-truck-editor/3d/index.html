@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#d7e3e7">
+  <meta name="description" content="可拆装、可编辑的十轮重型矿山运输车三维编辑器">
+  <title>矿卡 3D 模块化编辑器</title>
+  <script type="module" crossorigin src="../assets/app/editor-TS5pMnPT.js"></script>
+  <link rel="stylesheet" crossorigin href="../assets/app/index-BSWBVZ6B.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="矿卡 3D 模块化编辑器首页">
+        <span class="brand-mark">HT</span>
+        <span class="brand-copy">
+          <small>HAUL TRUCK · MODULAR 3D</small>
+          <strong>矿卡 3D 模块化编辑器</strong>
+        </span>
+      </a>
+
+      <div class="project-status" id="projectStatus" aria-live="polite">
+        <span class="status-light"></span>
+        <span>正在装配三维车辆……</span>
+      </div>
+
+      <nav class="top-actions" aria-label="工程操作">
+        <button class="button accent" id="addPartButton" type="button">＋ 添加设施</button>
+        <button class="button" id="undoButton" type="button" disabled>↶ 撤销</button>
+        <button class="button" id="redoButton" type="button" disabled>↷ 重做</button>
+        <button class="button" id="saveButton" type="button">保存</button>
+        <button class="button" id="exportButton" type="button">导出 ▾</button>
+      </nav>
+    </header>
+
+    <main class="workspace">
+      <aside class="panel layer-panel" aria-label="车辆部件列表">
+        <div class="panel-head">
+          <div>
+            <small>COMPONENT TREE</small>
+            <h1>车辆部件</h1>
+          </div>
+          <button class="icon-button" id="collapseButton" type="button" title="折叠或展开全部">≡</button>
+        </div>
+
+        <label class="search-box">
+          <span>⌕</span>
+          <input id="partSearch" type="search" autocomplete="off" placeholder="搜索轮胎、车斗或驾驶室">
+        </label>
+
+        <div class="summary-strip" id="partSummary">正在读取结构……</div>
+        <div class="part-tree" id="partTree" role="tree" aria-label="三维车辆部件树"></div>
+
+        <div class="orientation-note">
+          <span class="orientation-icon">↗</span>
+          <div>
+            <strong>方向约定</strong>
+            <p>站在车头面向外侧：左边是驾驶室，右边是设备室。</p>
+          </div>
+        </div>
+      </aside>
+
+      <section class="stage-column" aria-label="三维编辑场景">
+        <div class="stage-toolbar">
+          <div class="tool-segment" role="group" aria-label="编辑工具">
+            <button class="tool active" type="button" data-mode="select" title="选择部件（V）">↖ <span>选择</span></button>
+            <button class="tool" type="button" data-mode="translate" title="移动部件（G）">✥ <span>移动</span></button>
+            <button class="tool" type="button" data-mode="rotate" title="旋转部件（R）">↻ <span>旋转</span></button>
+            <button class="tool" type="button" data-mode="scale" title="缩放部件（S）">⤢ <span>缩放</span></button>
+          </div>
+
+          <div class="tool-segment view-tools" role="group" aria-label="视图工具">
+            <button class="tool" id="homeViewButton" type="button">⌂ <span>原图视角</span></button>
+            <button class="tool" id="calibrationButton" type="button">▧ <span>原图叠加</span></button>
+            <button class="tool" id="focusButton" type="button">◎ <span>聚焦部件</span></button>
+            <button class="tool" id="wireframeButton" type="button">◇ <span>结构线</span></button>
+            <button class="tool" id="anchorButton" type="button">⌾ <span>安装点</span></button>
+          </div>
+
+          <div class="scene-stat" id="sceneStat"><b>0</b> 个可编辑对象</div>
+        </div>
+
+        <div class="stage" id="stage" tabindex="0" aria-label="三维矿卡编辑区。左键旋转视角，右键平移，滚轮缩放，点击车辆选择部件。">
+          <img class="calibration-image" id="calibrationImage" alt="用于三维模型比例校准的矿卡原图">
+          <canvas id="sceneCanvas"></canvas>
+
+          <div class="loading-screen" id="loadingScreen">
+            <div class="loader-model" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+            <strong>正在装配十轮矿卡</strong>
+            <small>建立车架、轮轴、车斗和机械细节</small>
+          </div>
+
+          <div class="stage-tip" id="stageTip">
+            <span>鼠标左键旋转视角</span>
+            <i></i>
+            <span>滚轮缩放</span>
+            <i></i>
+            <span>点击部件选择</span>
+          </div>
+
+          <button class="reference-card" id="referenceCard" type="button" aria-label="显示或隐藏参考原图">
+            <img id="referenceImage" alt="矿卡建模参考原图">
+            <span><b>造型参考</b><small>点击收起</small></span>
+          </button>
+
+          <div class="selection-badge hidden" id="selectionBadge">
+            <span>当前选择</span>
+            <strong id="selectionBadgeName">—</strong>
+          </div>
+        </div>
+
+        <footer class="stage-footer">
+          <span><b>视图</b><em id="viewStatus">透视 · 原图角度</em></span>
+          <span><b>选择</b><em id="selectionStatus">未选择部件</em></span>
+          <span class="stage-message" id="stageMessage">所有主要车辆结构均为真实三维对象</span>
+        </footer>
+      </section>
+
+      <aside class="panel inspector-panel" aria-label="选中部件属性">
+        <div class="panel-head">
+          <div>
+            <small>OBJECT INSPECTOR</small>
+            <h2>部件属性</h2>
+          </div>
+          <span class="object-number" id="objectNumber">—</span>
+        </div>
+
+        <div class="empty-inspector" id="emptyInspector">
+          <div class="empty-orbit">◎</div>
+          <h3>点击车辆选择部件</h3>
+          <p>车轮、车斗、驾驶室、设备室、平台和栏杆都可以独立选择。</p>
+        </div>
+
+        <div class="inspector-content hidden" id="inspectorContent">
+          <div class="selected-object-card">
+            <div class="object-icon" id="objectIcon">▦</div>
+            <div>
+              <span class="object-category" id="objectCategory">车辆主体</span>
+              <h3 id="objectName">部件名称</h3>
+              <code id="objectId">part_id</code>
+            </div>
+          </div>
+
+          <div class="reality-badge">
+            <span>3D MESH</span>
+            <p>这是独立三维对象。隐藏或拆除后，后方结构会真实露出。</p>
+          </div>
+
+          <section class="inspector-section quick-actions">
+            <button id="visibilityButton" type="button"><span>◉</span>隐藏</button>
+            <button id="lockButton" type="button"><span>◇</span>锁定</button>
+            <button id="duplicateButton" type="button"><span>⧉</span>复制</button>
+            <button class="danger" id="removeButton" type="button"><span>×</span>拆除</button>
+          </section>
+
+          <section class="inspector-section">
+            <div class="section-title">
+              <h4>位置</h4>
+              <button id="resetButton" type="button">恢复初始</button>
+            </div>
+            <div class="vector-grid">
+              <label><span>X</span><input id="posX" type="number" step="0.1"></label>
+              <label><span>Y</span><input id="posY" type="number" step="0.1"></label>
+              <label><span>Z</span><input id="posZ" type="number" step="0.1"></label>
+            </div>
+          </section>
+
+          <section class="inspector-section">
+            <div class="section-title"><h4>旋转</h4><span>角度</span></div>
+            <div class="vector-grid">
+              <label><span>X°</span><input id="rotX" type="number" step="1"></label>
+              <label><span>Y°</span><input id="rotY" type="number" step="1"></label>
+              <label><span>Z°</span><input id="rotZ" type="number" step="1"></label>
+            </div>
+          </section>
+
+          <section class="inspector-section">
+            <div class="section-title"><h4>缩放</h4><label class="inline-check"><input id="uniformScale" type="checkbox" checked>等比</label></div>
+            <div class="vector-grid">
+              <label><span>X</span><input id="scaleX" type="number" min="0.05" step="0.05"></label>
+              <label><span>Y</span><input id="scaleY" type="number" min="0.05" step="0.05"></label>
+              <label><span>Z</span><input id="scaleZ" type="number" min="0.05" step="0.05"></label>
+            </div>
+          </section>
+
+          <section class="inspector-section">
+            <div class="section-title"><h4>安装点</h4><span>附加设施</span></div>
+            <select id="anchorSelect" aria-label="选择安装点"></select>
+            <button class="wide-button" id="snapButton" type="button">吸附到所选安装点</button>
+          </section>
+
+          <section class="inspector-section object-info">
+            <div><span>网格数</span><b id="meshCount">0</b></div>
+            <div><span>三角面</span><b id="triangleCount">0</b></div>
+            <div><span>状态</span><b id="objectState">正常</b></div>
+          </section>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <div class="popover add-popover hidden" id="addPopover" role="dialog" aria-label="添加附加设施">
+    <div class="popover-head"><b>添加独立设施</b><button type="button" data-close="addPopover">×</button></div>
+    <button type="button" data-preset="tent"><span>△</span><b>工业帐篷</b><small>带骨架和篷布</small></button>
+    <button type="button" data-preset="campfire"><span>✦</span><b>篝火炉</b><small>金属火盆、木柴和动态火光</small></button>
+    <button type="button" data-preset="crate"><span>▣</span><b>储物箱</b><small>加固钢制设备箱</small></button>
+    <button type="button" data-preset="shelter"><span>⌂</span><b>铁棚生活区</b><small>钢梁、顶棚和后壁</small></button>
+    <button class="file-option" id="importModelButton" type="button"><span>↑</span><b>导入外部部件</b><small>GLB 三维模型或透明图片</small></button>
+  </div>
+
+  <div class="popover export-popover hidden" id="exportPopover" role="dialog" aria-label="导出工程">
+    <div class="popover-head"><b>导出与工程</b><button type="button" data-close="exportPopover">×</button></div>
+    <button id="exportPngButton" type="button"><b>导出当前画面 PNG</b><small>保存当前三维视角</small></button>
+    <button id="exportGlbButton" type="button"><b>导出车辆 GLB</b><small>保留独立节点的三维模型</small></button>
+    <button id="exportJsonButton" type="button"><b>导出工程 JSON</b><small>保存所有部件的变换和状态</small></button>
+    <button id="importJsonButton" type="button"><b>导入工程 JSON</b><small>恢复之前的编辑状态</small></button>
+    <button class="danger-text" id="resetProjectButton" type="button"><b>重置整个工程</b><small>恢复车辆初始装配</small></button>
+  </div>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+  <input id="assetInput" type="file" accept=".glb,image/png,image/webp,image/jpeg" hidden>
+  <input id="projectInput" type="file" accept="application/json,.json" hidden>
+
+</body>
+</html>

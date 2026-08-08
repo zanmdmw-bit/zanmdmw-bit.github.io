@@ -1,0 +1,248 @@
+{
+  "version": 1,
+  "viewId": "main",
+  "name": "矿卡主视角 2.5D 分层工程",
+  "canvas": {
+    "width": 1168,
+    "height": 380
+  },
+  "categories": [
+    { "id": "structure", "name": "车辆主体", "open": true },
+    { "id": "rooms", "name": "舱室", "open": true },
+    { "id": "bed", "name": "车斗与上层", "open": true },
+    { "id": "access", "name": "栏杆与通道", "open": false },
+    { "id": "wheels_near", "name": "近侧轮组", "open": true },
+    { "id": "wheels_far", "name": "远侧轮组（原图遮挡）", "open": false },
+    { "id": "addons", "name": "附加设施", "open": true }
+  ],
+  "parts": [
+    {
+      "id": "lower_chassis",
+      "name": "底部车架 / 承载结构",
+      "category": "structure",
+      "kind": "photo",
+      "path": "M272 212 L337 184 L517 211 L633 248 L625 315 L558 353 L423 367 L344 349 L301 301 Z",
+      "bounds": { "x": 272, "y": 184, "width": 361, "height": 183 },
+      "x": 272, "y": 184, "width": 361, "height": 183,
+      "rotation": 0, "scaleX": 1, "scaleY": 1, "zIndex": 18,
+      "visible": true, "locked": false, "status": "layered", "reveal": "ground"
+    },
+    {
+      "id": "front_deck",
+      "name": "前部维护平台",
+      "category": "structure",
+      "kind": "photo",
+      "path": "M250 154 L326 119 L471 142 L615 203 L629 258 L584 283 L430 273 L316 239 L251 200 Z",
+      "bounds": { "x": 250, "y": 119, "width": 379, "height": 164 },
+      "x": 250, "y": 119, "width": 379, "height": 164,
+      "rotation": 0, "scaleX": 1, "scaleY": 1, "zIndex": 27,
+      "visible": true, "locked": false, "status": "layered", "reveal": "chassis"
+    },
+    {
+      "id": "front_nose",
+      "name": "前部装甲 / 保险杠",
+      "category": "structure",
+      "kind": "photo",
+      "path": "M341 249 L542 261 L548 329 L493 365 L383 354 L348 325 Z",
+      "bounds": { "x": 341, "y": 249, "width": 207, "height": 116 },
+      "x": 341, "y": 249, "width": 207, "height": 116,
+      "rotation": 0, "scaleX": 1, "scaleY": 1, "zIndex": 31,
+      "visible": true, "locked": false, "status": "layered", "reveal": "chassis"
+    },
+    {
+      "id": "driver_cab",
+      "name": "驾驶室（车头向外左侧）",
+      "category": "rooms",
+      "kind": "photo",
+      "path": "M294 91 L363 76 L417 99 L414 176 L391 195 L324 182 L297 152 Z",
+      "bounds": { "x": 294, "y": 76, "width": 123, "height": 119 },
+      "x": 294, "y": 76, "width": 123, "height": 119,
+      "rotation": 0, "scaleX": 1, "scaleY": 1, "zIndex": 35,
+      "visible": true, "locked": false, "status": "layered", "reveal": "deck"
+    },
+    {
+      "id": "equipment_room",
+      "name": "设备室（车头向外右侧）",
+      "category": "rooms",
+      "kind": "photo",
+      "path": "M423 163 L501 148 L557 177 L556 239 L528 260 L450 248 L425 219 Z",
+      "bounds": { "x": 423, "y": 148, "width": 134, "height": 112 },
+      "x": 423, "y": 148, "width": 134, "height": 112,
+      "rotation": 0, "scaleX": 1, "scaleY": 1, "zIndex": 38,
+      "visible": true, "locked": false, "status": "layered", "reveal": "deck"
+    },
+    {
+      "id": "dump_bed",
+      "name": "主车斗",
+      "category": "bed",
+      "kind": "photo",
+      "path": "M453 76 L512 38 L615 11 L753 18 L941 65 L932 93 L884 132 L810 160 L715 187 L611 216 L566 191 L535 142 L491 113 Z",
+      "bounds": { "x": 453, "y": 11, "width": 488, "height": 205 },
+      "x": 453, "y": 11, "width": 488, "height": 205,
+      "rotation": 0, "scaleX": 1, "scaleY": 1, "zIndex": 42,
+      "visible": true, "locked": false, "status": "layered", "reveal": "factory"
+    },
+    {
+      "id": "upper_platform",
+      "name": "上层防护平台 / 顶板",
+      "category": "bed",
+      "kind": "photo",
+      "path": "M302 83 L367 45 L487 54 L574 96 L575 151 L530 170 L417 148 L332 121 Z",
+      "bounds": { "x": 302, "y": 45, "width": 273, "height": 125 },
+      "x": 302, "y": 45, "width": 273, "height": 125,
+      "rotation": 0, "scaleX": 1, "scaleY": 1, "zIndex": 47,
+      "visible": true, "locked": false, "status": "layered", "reveal": "factory"
+    },
+    {
+      "id": "front_railings",
+      "name": "前部环绕栏杆",
+      "category": "access",
+      "kind": "photo",
+      "path": "M246 141 L326 112 L442 138 L598 196 L628 208 L628 244 L585 258 L449 245 L330 217 L257 190 Z",
+      "bounds": { "x": 246, "y": 112, "width": 382, "height": 146 },
+      "x": 246, "y": 112, "width": 382, "height": 146,
+      "rotation": 0, "scaleX": 1, "scaleY": 1, "zIndex": 51,
+      "visible": true, "locked": false, "status": "grouped", "reveal": "none"
+    },
+    {
+      "id": "side_ladder",
+      "name": "左前侧斜梯",
+      "category": "access",
+      "kind": "photo",
+      "path": "M307 229 L344 238 L317 345 L291 337 Z",
+      "bounds": { "x": 291, "y": 229, "width": 53, "height": 116 },
+      "x": 291, "y": 229, "width": 53, "height": 116,
+      "rotation": 0, "scaleX": 1, "scaleY": 1, "zIndex": 55,
+      "visible": true, "locked": false, "status": "layered", "reveal": "ground"
+    },
+    {
+      "id": "front_ladder",
+      "name": "车头垂直梯",
+      "category": "access",
+      "kind": "photo",
+      "path": "M495 274 L528 274 L525 368 L493 367 Z",
+      "bounds": { "x": 493, "y": 274, "width": 35, "height": 94 },
+      "x": 493, "y": 274, "width": 35, "height": 94,
+      "rotation": 0, "scaleX": 1, "scaleY": 1, "zIndex": 57,
+      "visible": true, "locked": false, "status": "layered", "reveal": "chassis"
+    },
+    {
+      "id": "wheel_near_front",
+      "name": "近侧前轮",
+      "category": "wheels_near",
+      "kind": "photo",
+      "shape": "ellipse",
+      "bounds": { "x": 535, "y": 252, "width": 113, "height": 116 },
+      "x": 535, "y": 252, "width": 113, "height": 116,
+      "rotation": 0, "scaleX": 1, "scaleY": 1, "zIndex": 61,
+      "visible": true, "locked": false, "status": "layered", "reveal": "wheel"
+    },
+    {
+      "id": "wheel_near_middle_01",
+      "name": "近侧中轮 1",
+      "category": "wheels_near",
+      "kind": "photo",
+      "shape": "ellipse",
+      "bounds": { "x": 627, "y": 226, "width": 109, "height": 113 },
+      "x": 627, "y": 226, "width": 109, "height": 113,
+      "rotation": 0, "scaleX": 1, "scaleY": 1, "zIndex": 63,
+      "visible": true, "locked": false, "status": "layered", "reveal": "wheel"
+    },
+    {
+      "id": "wheel_near_middle_02",
+      "name": "近侧中轮 2",
+      "category": "wheels_near",
+      "kind": "photo",
+      "shape": "ellipse",
+      "bounds": { "x": 714, "y": 193, "width": 108, "height": 112 },
+      "x": 714, "y": 193, "width": 108, "height": 112,
+      "rotation": 0, "scaleX": 1, "scaleY": 1, "zIndex": 65,
+      "visible": true, "locked": false, "status": "layered", "reveal": "wheel"
+    },
+    {
+      "id": "wheel_near_middle_03",
+      "name": "近侧中轮 3",
+      "category": "wheels_near",
+      "kind": "photo",
+      "shape": "ellipse",
+      "bounds": { "x": 791, "y": 161, "width": 100, "height": 102 },
+      "x": 791, "y": 161, "width": 100, "height": 102,
+      "rotation": 0, "scaleX": 1, "scaleY": 1, "zIndex": 67,
+      "visible": true, "locked": false, "status": "layered", "reveal": "wheel"
+    },
+    {
+      "id": "wheel_near_rear",
+      "name": "近侧后轮",
+      "category": "wheels_near",
+      "kind": "photo",
+      "shape": "ellipse",
+      "bounds": { "x": 840, "y": 137, "width": 82, "height": 88 },
+      "x": 840, "y": 137, "width": 82, "height": 88,
+      "rotation": 0, "scaleX": 1, "scaleY": 1, "zIndex": 69,
+      "visible": true, "locked": false, "status": "layered", "reveal": "wheel"
+    },
+    {
+      "id": "wheel_far_front",
+      "name": "远侧前轮",
+      "category": "wheels_far",
+      "kind": "occluded",
+      "bounds": { "x": 0, "y": 0, "width": 0, "height": 0 },
+      "x": 0, "y": 0, "width": 0, "height": 0,
+      "rotation": 0, "scaleX": 1, "scaleY": 1, "zIndex": 8,
+      "visible": false, "locked": true, "status": "occluded"
+    },
+    {
+      "id": "wheel_far_middle_01",
+      "name": "远侧中轮 1",
+      "category": "wheels_far",
+      "kind": "occluded",
+      "bounds": { "x": 0, "y": 0, "width": 0, "height": 0 },
+      "x": 0, "y": 0, "width": 0, "height": 0,
+      "rotation": 0, "scaleX": 1, "scaleY": 1, "zIndex": 9,
+      "visible": false, "locked": true, "status": "occluded"
+    },
+    {
+      "id": "wheel_far_middle_02",
+      "name": "远侧中轮 2",
+      "category": "wheels_far",
+      "kind": "occluded",
+      "bounds": { "x": 0, "y": 0, "width": 0, "height": 0 },
+      "x": 0, "y": 0, "width": 0, "height": 0,
+      "rotation": 0, "scaleX": 1, "scaleY": 1, "zIndex": 10,
+      "visible": false, "locked": true, "status": "occluded"
+    },
+    {
+      "id": "wheel_far_middle_03",
+      "name": "远侧中轮 3",
+      "category": "wheels_far",
+      "kind": "occluded",
+      "bounds": { "x": 0, "y": 0, "width": 0, "height": 0 },
+      "x": 0, "y": 0, "width": 0, "height": 0,
+      "rotation": 0, "scaleX": 1, "scaleY": 1, "zIndex": 11,
+      "visible": false, "locked": true, "status": "occluded"
+    },
+    {
+      "id": "wheel_far_rear",
+      "name": "远侧后轮",
+      "category": "wheels_far",
+      "kind": "occluded",
+      "bounds": { "x": 0, "y": 0, "width": 0, "height": 0 },
+      "x": 0, "y": 0, "width": 0, "height": 0,
+      "rotation": 0, "scaleX": 1, "scaleY": 1, "zIndex": 12,
+      "visible": false, "locked": true, "status": "occluded"
+    }
+  ],
+  "mountSurfaces": [
+    { "id": "front_deck_surface", "name": "前部维护平台", "x": 426, "y": 190, "width": 190, "height": 54, "rotation": 10 },
+    { "id": "upper_platform_surface", "name": "上层顶板", "x": 420, "y": 77, "width": 185, "height": 58, "rotation": 9 },
+    { "id": "bed_front_surface", "name": "车斗前段", "x": 566, "y": 87, "width": 170, "height": 54, "rotation": -8 },
+    { "id": "bed_center_surface", "name": "车斗中央", "x": 704, "y": 83, "width": 190, "height": 54, "rotation": -1 },
+    { "id": "bed_rear_surface", "name": "车斗后段", "x": 850, "y": 92, "width": 145, "height": 48, "rotation": 9 }
+  ],
+  "addonTemplates": [
+    { "id": "tent", "name": "工业帐篷", "width": 124, "height": 76, "defaultSurface": "bed_center_surface" },
+    { "id": "campfire", "name": "篝火炉", "width": 58, "height": 62, "defaultSurface": "front_deck_surface" },
+    { "id": "crate", "name": "储物箱", "width": 72, "height": 52, "defaultSurface": "front_deck_surface" },
+    { "id": "shelter", "name": "铁棚生活区", "width": 142, "height": 90, "defaultSurface": "bed_front_surface" }
+  ]
+}

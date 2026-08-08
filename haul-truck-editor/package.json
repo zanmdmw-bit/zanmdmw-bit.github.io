@@ -1,7 +1,7 @@
 {
   "name": "haul-truck-editor",
-  "version": "2.0.0",
-  "description": "可拆装的十轮矿山运输车 Three.js 三维编辑器",
+  "version": "3.0.0",
+  "description": "基于原始矿卡照片分层重建的 2.5D 模块化车辆编辑器",
   "private": true,
   "type": "module",
   "scripts": {
