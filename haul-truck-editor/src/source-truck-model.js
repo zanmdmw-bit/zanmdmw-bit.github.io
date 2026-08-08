@@ -10,6 +10,7 @@ const SOURCE_MODEL_PART_URLS = Object.entries(import.meta.glob(
 const TARGET_WHEEL_DIAMETER = 4.9;
 
 const SOURCE_PARTS = new Map([
+  ["metarig papa_129", ["scale_reference_worker", "人物比例参考（约 2.0 米）", "reference", "源模型自带成年人，用于判断栏杆、平台、舱室与轮组的真实尺度。"]],
   ["tire 59/80 r63 michelin002_1", ["source_tire_assembly", "原型六轮轮胎总成", "wheels", "源素材把六条轮胎合并在同一组网格中；下一阶段将按空间区域切分为独立轮组。"]],
   ["rim t287_2", ["source_rim_assembly", "原型六轮轮毂总成", "wheels", "原始 T284 轮毂总成。"]],
   ["64_3", ["front_wheel_support", "前轮转向与支撑总成", "wheels"]],
@@ -129,9 +130,9 @@ export async function buildHaulTruck(scene, blueprint) {
   root.add(alignment);
 
   const semanticRoot = gltf.scene.getObjectByName("GLTF_SceneRootNode") || gltf.scene;
-  const excludedNames = new Set(["Plane_75", "Armature_100", "metarig papa_129", "metarig mama_158", "Armature bluey_175"]);
+  const excludedNames = new Set(["Plane_75", "Armature_100", "metarig mama_158", "Armature bluey_175"].map(normalizedSourceKey));
   for (const child of [...semanticRoot.children]) {
-    if (excludedNames.has(child.name)) child.removeFromParent();
+    if (excludedNames.has(normalizedSourceKey(child.name))) child.removeFromParent();
   }
 
   gltf.scene.traverse((child) => {
@@ -178,6 +179,8 @@ export async function buildHaulTruck(scene, blueprint) {
     });
   });
   root.remove(alignment);
+
+  createReferenceConversion(registerPart, materials, blueprint.referenceConversion?.parts || []);
 
   const anchors = createSourceAnchors();
   const anchorGroup = createAnchors(anchors, materials);
@@ -326,6 +329,7 @@ function createWorldCenteredPivot(root, object) {
 
 function classifySourcePart(name) {
   const value = name.toLowerCase();
+  if (/armature|metarig|worker|person/.test(value)) return "reference";
   if (/tire|rim|axxle|reductor|tanbor|wheel/.test(value)) return "wheels";
   if (/buket|silindro|ansul|tuerca/.test(value)) return "dump";
   if (/plataforma|pltf|barrera|pasos|baranada/.test(value)) return "access";
@@ -365,8 +369,234 @@ function createEditorMaterials() {
     wood: new THREE.MeshStandardMaterial({ color: 0x5a311d, roughness: 0.9, metalness: 0.02 }),
     flameOuter: new THREE.MeshBasicMaterial({ color: 0xff6a1a, transparent: true, opacity: 0.82 }),
     flameInner: new THREE.MeshBasicMaterial({ color: 0xffd45c, transparent: true, opacity: 0.9 }),
-    anchor: new THREE.MeshBasicMaterial({ color: 0xf4b454, transparent: true, opacity: 0.86 })
+    anchor: new THREE.MeshBasicMaterial({ color: 0xf4b454, transparent: true, opacity: 0.86 }),
+    referencePaint: new THREE.MeshStandardMaterial({ color: 0x9a7449, roughness: 0.82, metalness: 0.58 }),
+    referencePaintDark: new THREE.MeshStandardMaterial({ color: 0x5d4934, roughness: 0.9, metalness: 0.5 }),
+    referenceRust: new THREE.MeshStandardMaterial({ color: 0x674027, roughness: 0.96, metalness: 0.34 }),
+    referenceGlass: new THREE.MeshStandardMaterial({ color: 0x182528, roughness: 0.22, metalness: 0.18, transparent: true, opacity: 0.84 }),
+    referenceGrille: new THREE.MeshStandardMaterial({ color: 0x171b1a, roughness: 0.7, metalness: 0.82 }),
+    referenceLight: new THREE.MeshStandardMaterial({ color: 0xf2e5be, emissive: 0xe0c17d, emissiveIntensity: 1.6, roughness: 0.28, metalness: 0.12 }),
+    referenceInner: new THREE.MeshStandardMaterial({ color: 0x373a35, roughness: 0.94, metalness: 0.48, side: THREE.DoubleSide })
   };
+}
+
+function createReferenceConversion(registerPart, materials, configuredParts) {
+  const factories = {
+    frontDeck: [makeReferenceFrontDeck, "以源模型轮径为基准扩宽、加厚的环绕式前维护甲板。"],
+    driverCab: [(value) => makeReferenceCab(value, false), "站在车头向外看时位于左侧；独立舱体、玻璃、框架和顶盖。"],
+    equipmentRoom: [(value) => makeReferenceCab(value, true), "站在车头向外看时位于右侧；外形与驾驶室呼应，但正面采用检修门和通风格栅。"],
+    upperCanopy: [makeReferenceUpperCanopy, "跨越双舱并向货斗前端延伸的大型斜甲板，保持源模型整体尺度。"],
+    dumpWallLeft: [(value) => makeReferenceDumpWall(value, 1), "加长、加深并带密集竖向加强筋的独立货斗侧壁。"],
+    dumpWallRight: [(value) => makeReferenceDumpWall(value, -1), "与左侧分离，可独立隐藏、移动、缩放或拆除。"],
+    frontArmor: [makeReferenceFrontArmor, "宽体装甲前脸、中央格栅、四组前灯和厚重保险杠。"],
+    railings: [makeReferenceRailings, "围绕前维护甲板和上层斜甲板布置的双层工业栏杆。"],
+    accessLadder: [makeReferenceLadder, "从地面通往前维护甲板的独立重型直梯。"]
+  };
+
+  for (const part of configuredParts) {
+    const definition = factories[part.factory];
+    if (!definition) continue;
+    const object = definition[0](materials);
+    object.position.fromArray(part.position || [0, 0, 0]);
+    object.rotation.set(...(part.rotation || [0, 0, 0]));
+    object.scale.fromArray(part.scale || [1, 1, 1]);
+    object.visible = part.visible !== false;
+    registerPart(part.id, part.name, part.category, object, {
+      dynamic: true,
+      locked: Boolean(part.locked),
+      preset: "reference-conversion",
+      specification: part.specification || definition[1]
+    });
+  }
+}
+
+function makeReferenceFrontDeck(materials) {
+  const group = new THREE.Group();
+  addBox(group, [5.9, 0.26, 10.7], [0, 0.13, 0], materials.referencePaintDark);
+  addBox(group, [0.42, 0.62, 10.95], [-2.82, -0.02, 0], materials.referencePaint);
+  addBox(group, [5.55, 0.12, 0.24], [0.08, 0.31, 5.25], materials.steel);
+  addBox(group, [5.55, 0.12, 0.24], [0.08, 0.31, -5.25], materials.steel);
+  for (let x = -2.35; x <= 2.35; x += 0.78) {
+    addBox(group, [0.08, 0.08, 10.15], [x, 0.31, 0], materials.steelDark);
+  }
+  addRivetRows(group, materials, [-2.72, 2.72], 5.05, 0.36, 13);
+  return group;
+}
+
+function makeReferenceCab(materials, equipmentRoom) {
+  const group = new THREE.Group();
+  addBox(group, [2.75, 0.34, 3.35], [0, 0.17, 0], materials.referencePaintDark);
+  addBox(group, [2.5, 1.9, 3.08], [0.12, 1.22, 0], materials.referencePaint);
+  addBox(group, [2.9, 0.2, 3.48], [0.05, 2.27, 0], materials.referencePaintDark);
+
+  if (equipmentRoom) {
+    addBox(group, [0.06, 1.28, 2.34], [-1.16, 1.3, 0], materials.referenceGrille);
+    for (let z = -0.98; z <= 0.98; z += 0.24) {
+      addBox(group, [0.08, 1.08, 0.055], [-1.205, 1.3, z], materials.steel);
+    }
+    addBox(group, [1.45, 1.3, 0.06], [0.32, 1.25, -1.57], materials.referencePaintDark);
+    addBox(group, [0.08, 0.08, 0.28], [0.95, 1.35, -1.62], materials.steel);
+  } else {
+    addBox(group, [0.06, 1.1, 2.42], [-1.16, 1.45, 0], materials.referenceGlass);
+    addBox(group, [1.45, 1.08, 0.055], [-0.2, 1.45, 1.57], materials.referenceGlass);
+    addBox(group, [1.45, 1.08, 0.055], [-0.2, 1.45, -1.57], materials.referenceGlass);
+    addBox(group, [0.1, 1.38, 0.12], [-1.2, 1.43, 0], materials.steelDark);
+    addBox(group, [0.1, 0.12, 2.55], [-1.2, 1.98, 0], materials.steelDark);
+    addBox(group, [0.1, 0.12, 2.55], [-1.2, 0.91, 0], materials.steelDark);
+  }
+
+  for (const z of [-1.52, 1.52]) {
+    addBox(group, [2.2, 0.12, 0.09], [0, 0.68, z], materials.referenceRust);
+    addBox(group, [0.11, 1.65, 0.09], [1.14, 1.33, z], materials.referenceRust);
+  }
+  addRivetRows(group, materials, [-1.17, 1.17], 1.48, 0.62, 7, true);
+  return group;
+}
+
+function makeReferenceUpperCanopy(materials) {
+  const group = new THREE.Group();
+  addBox(group, [7.5, 0.3, 10.95], [0, 0, 0], materials.referencePaint);
+  addBox(group, [7.62, 0.16, 0.26], [0, 0.2, 5.32], materials.referencePaintDark);
+  addBox(group, [7.62, 0.16, 0.26], [0, 0.2, -5.32], materials.referencePaintDark);
+  addBox(group, [0.28, 0.46, 10.95], [-3.64, -0.02, 0], materials.referencePaintDark);
+  for (let z = -4.65; z <= 4.65; z += 1.16) {
+    addBox(group, [7.15, 0.1, 0.09], [0, 0.21, z], materials.referenceRust);
+  }
+  for (let x = -2.9; x <= 2.9; x += 1.15) {
+    addBox(group, [0.09, 0.1, 10.25], [x, 0.22, 0], materials.steelDark);
+  }
+  return group;
+}
+
+function makeReferenceDumpWall(materials, side) {
+  const group = new THREE.Group();
+  const shape = new THREE.Shape();
+  shape.moveTo(-4.45, -1.65);
+  shape.lineTo(-4.45, 2.75);
+  shape.lineTo(4.55, 2.18);
+  shape.lineTo(4.55, -2.32);
+  shape.closePath();
+  const wall = new THREE.Mesh(new THREE.ShapeGeometry(shape), materials.referencePaint);
+  wall.position.z = 0;
+  wall.castShadow = true;
+  wall.receiveShadow = true;
+  group.add(wall);
+  addBeam(group, [-4.45, 2.78, side * 0.05], [4.58, 2.21, side * 0.05], 0.14, materials.steelDark);
+  addBeam(group, [-4.42, -1.55, side * 0.04], [4.52, -2.24, side * 0.04], 0.12, materials.referenceRust);
+  for (let x = -3.75; x <= 3.75; x += 1.25) {
+    const t = (x + 4.45) / 9;
+    const lower = THREE.MathUtils.lerp(-1.65, -2.32, t);
+    const upper = THREE.MathUtils.lerp(2.75, 2.18, t);
+    addBox(group, [0.18, upper - lower + 0.08, 0.24], [x, (lower + upper) / 2, side * 0.13], materials.referencePaintDark);
+  }
+  for (let x = -3.8; x <= 4.1; x += 0.62) {
+    const t = (x + 4.45) / 9;
+    const y = THREE.MathUtils.lerp(2.75, 2.18, t) - 0.24;
+    addBox(group, [0.08, 0.08, 0.12], [x, y, side * 0.16], materials.steel);
+  }
+  return group;
+}
+
+function makeReferenceFrontArmor(materials) {
+  const group = new THREE.Group();
+  addBox(group, [0.62, 3.05, 7.25], [0, 0, 0], materials.referencePaint);
+  addBox(group, [0.09, 1.85, 4.45], [-0.36, 0.2, 0], materials.referenceGrille);
+  for (let z = -1.95; z <= 1.95; z += 0.3) {
+    addBox(group, [0.08, 1.58, 0.075], [-0.42, 0.2, z], materials.steelDark);
+  }
+  addBox(group, [0.78, 0.46, 7.9], [-0.02, -1.66, 0], materials.referencePaintDark);
+  addBox(group, [0.42, 0.35, 7.55], [-0.48, -1.66, 0], materials.steelDark);
+  for (const z of [-3.0, -2.36, 2.36, 3.0]) {
+    const lamp = new THREE.Mesh(new THREE.CylinderGeometry(0.27, 0.27, 0.16, 24), materials.referenceLight);
+    lamp.rotation.z = Math.PI / 2;
+    lamp.position.set(-0.4, 0.78, z);
+    group.add(lamp);
+  }
+  for (const z of [-3.42, 3.42]) addBox(group, [0.18, 2.6, 0.24], [-0.38, 0, z], materials.referencePaintDark);
+  return group;
+}
+
+function makeReferenceRailings(materials) {
+  const group = new THREE.Group();
+  const railMaterial = materials.steel;
+  const deckY = 7.35;
+  const paths = [
+    [[-7.55, deckY, -5.12], [-1.82, deckY, -5.12]],
+    [[-7.55, deckY, 5.12], [-1.82, deckY, 5.12]],
+    [[-7.55, deckY, -5.12], [-7.55, deckY, 5.12]]
+  ];
+  for (const [start, end] of paths) {
+    addBeam(group, start, end, 0.065, railMaterial);
+    addBeam(group, [start[0], start[1] - 0.48, start[2]], [end[0], end[1] - 0.48, end[2]], 0.045, railMaterial);
+    const distance = new THREE.Vector3(...start).distanceTo(new THREE.Vector3(...end));
+    const count = Math.max(2, Math.ceil(distance / 1.05));
+    for (let i = 0; i <= count; i += 1) {
+      const t = i / count;
+      const x = THREE.MathUtils.lerp(start[0], end[0], t);
+      const z = THREE.MathUtils.lerp(start[2], end[2], t);
+      addBeam(group, [x, deckY - 1.05, z], [x, deckY + 0.02, z], 0.055, railMaterial);
+    }
+  }
+  const upperY = 9.72;
+  for (const z of [-5.05, 5.05]) {
+    addBeam(group, [-5.55, upperY, z], [0.9, upperY + 0.45, z], 0.06, railMaterial);
+    for (let x = -5.5; x <= 0.75; x += 1.05) {
+      const y = upperY + (x + 5.55) * 0.07;
+      addBeam(group, [x, y - 0.95, z], [x, y, z], 0.05, railMaterial);
+    }
+  }
+  return group;
+}
+
+function makeReferenceLadder(materials) {
+  const group = new THREE.Group();
+  for (const z of [-0.42, 0.42]) addBeam(group, [0, 0, z], [0, 5.55, z], 0.075, materials.steel);
+  for (let y = 0.18; y <= 5.35; y += 0.42) addBeam(group, [0, y, -0.42], [0, y, 0.42], 0.055, materials.steel);
+  addBox(group, [0.18, 0.34, 1.25], [0.08, -0.12, 0], materials.referencePaintDark);
+  return group;
+}
+
+function addBox(group, size, position, material) {
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(...size), material);
+  mesh.position.fromArray(position);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  group.add(mesh);
+  return mesh;
+}
+
+function addBeam(group, start, end, radius, material) {
+  const startVector = new THREE.Vector3(...start);
+  const endVector = new THREE.Vector3(...end);
+  const direction = endVector.clone().sub(startVector);
+  const length = direction.length();
+  const mesh = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, length, 10), material);
+  mesh.position.copy(startVector).add(endVector).multiplyScalar(0.5);
+  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize());
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  group.add(mesh);
+  return mesh;
+}
+
+function addRivetRows(group, materials, xRange, zRange, y, count, sideRows = false) {
+  const geometry = new THREE.SphereGeometry(0.055, 7, 5);
+  for (let i = 0; i < count; i += 1) {
+    const t = count === 1 ? 0.5 : i / (count - 1);
+    if (sideRows) {
+      for (const z of [-zRange, zRange]) {
+        const rivet = new THREE.Mesh(geometry, materials.steel);
+        rivet.position.set(THREE.MathUtils.lerp(xRange[0], xRange[1], t), y, z);
+        group.add(rivet);
+      }
+    } else {
+      for (const z of [-zRange, zRange]) {
+        const rivet = new THREE.Mesh(geometry, materials.steel);
+        rivet.position.set(THREE.MathUtils.lerp(xRange[0], xRange[1], t), y, z);
+        group.add(rivet);
+      }
+    }
+  }
 }
 
 function createAnchors(anchors, materials) {

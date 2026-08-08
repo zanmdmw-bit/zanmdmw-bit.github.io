@@ -1,8 +1,8 @@
 {
   "projectId": "haul-truck-editor-metric-3d",
-  "version": 6,
-  "name": "Liebherr T284 精细源模型与八轮改造工程",
-  "description": "当前阶段先原样接入 Liebherr T284 精细模型并验证真实网格编辑；24 米八轮结构是下一阶段改造硬基准。",
+  "version": 7,
+  "name": "Liebherr T284 原图外形改造工程",
+  "description": "保留 T284 正确轮径与人物尺度，以独立可拆模块重建原图中的双舱、宽甲板、倾斜货斗和重型工业前脸。",
   "units": "meter",
   "orientation": {
     "front": "negative-x",
@@ -40,6 +40,21 @@
     "14.0 × 8.2 米车斗内部地板用于满足超过 100 平方米的硬约束",
     "14.2 米最高点、车斗深度及生活设施布置均可在后续资料到位后调整"
   ],
+  "referenceConversion": {
+    "sourceImage": "truck-original.png",
+    "principle": "保留 T284 轮径、车宽与人物尺度，只用独立模块调整原图特征",
+    "parts": [
+      { "id": "reference_front_deck", "name": "原图式超宽前维护甲板", "factory": "frontDeck", "category": "front", "position": [-4.75, 6.08, 0], "rotation": [0, 0, 0], "scale": [1, 1, 1], "visible": true, "locked": false },
+      { "id": "reference_driver_cab", "name": "原图式左侧驾驶室", "factory": "driverCab", "category": "front", "position": [-4.55, 6.3, 2.75], "rotation": [0, 0, 0], "scale": [1, 1, 1], "visible": true, "locked": false },
+      { "id": "reference_equipment_room", "name": "原图式右侧设备室", "factory": "equipmentRoom", "category": "front", "position": [-4.55, 6.3, -2.75], "rotation": [0, 0, 0], "scale": [1, 1, 1], "visible": true, "locked": false },
+      { "id": "reference_upper_canopy", "name": "原图式覆盖上层斜甲板", "factory": "upperCanopy", "category": "front", "position": [-2.25, 8.78, 0], "rotation": [0, 0, 0.115], "scale": [1, 1, 1], "visible": true, "locked": false },
+      { "id": "reference_dump_wall_left", "name": "原图式货斗左侧加高壁", "factory": "dumpWallLeft", "category": "dump", "position": [4.05, 8.25, 5.2], "rotation": [0, 0, 0], "scale": [1, 1, 1], "visible": true, "locked": false },
+      { "id": "reference_dump_wall_right", "name": "原图式货斗右侧加高壁", "factory": "dumpWallRight", "category": "dump", "position": [4.05, 8.25, -5.2], "rotation": [0, 0, 0], "scale": [1, 1, 1], "visible": true, "locked": false },
+      { "id": "reference_front_armor", "name": "原图式重型前脸与保险杠", "factory": "frontArmor", "category": "front", "position": [-7.65, 4.35, 0], "rotation": [0, 0, 0], "scale": [1, 1, 1], "visible": true, "locked": false },
+      { "id": "reference_platform_railings", "name": "原图式前甲板栏杆", "factory": "railings", "category": "access", "position": [0, 0, 0], "rotation": [0, 0, 0], "scale": [1, 1, 1], "visible": true, "locked": false },
+      { "id": "reference_access_ladder", "name": "原图式前部登车梯", "factory": "accessLadder", "category": "access", "position": [-7.82, 0.55, 4.62], "rotation": [0, 0, 0], "scale": [1, 1, 1], "visible": true, "locked": false }
+    ]
+  },
   "categories": [
     { "id": "structure", "name": "原型承载车体", "open": true },
     { "id": "front", "name": "原型车头与设备", "open": true },
@@ -48,6 +63,7 @@
     { "id": "wheels", "name": "原型轮组与传动", "open": true },
     { "id": "access", "name": "栏杆与通行结构", "open": false },
     { "id": "details", "name": "机械与外观细节", "open": false },
+    { "id": "reference", "name": "人物与尺度参考", "open": true },
     { "id": "addons", "name": "后续附加设施", "open": true }
   ],
   "anchors": [
@@ -71,6 +87,8 @@
     "模型按轮径 4.9 米进行等比显示，不改变源模型长宽高比例。",
     "源素材包含六轮结构；轮胎与轮毂仍分别是合并网格，尚未伪装成八个独立轮组。",
     "车架、车头、驾驶室、设备箱、货斗、平台、栏杆、液压件和机械细节已按源网格组注册为可编辑对象。",
+    "原图外形改造件全部是额外独立对象，没有烘焙或破坏 T284 源模型。",
+    "保留源模型中的一名成年人作为约 2 米尺度参考，可从人物与尺度参考图层隐藏。",
     "24 米车长、12 米以上车宽、8.9 米平台高度、八轮结构和 680 吨级数据保留为下一阶段改造硬目标。",
     "帐篷、篝火、储物箱和铁棚可以作为独立设施添加到原型车辆安装点。"
   ]

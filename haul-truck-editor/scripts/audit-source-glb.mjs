@@ -1,18 +1,20 @@
 import { readdir, readFile, stat } from "node:fs/promises";
+import { join, resolve } from "node:path";
 import * as THREE from "three";
 
 const sourcePath = process.argv[2];
 if (!sourcePath) throw new Error("Usage: node scripts/audit-source-glb.mjs <model.glb>");
 
-const sourceStats = await stat(sourcePath);
+const resolvedSourcePath = resolve(sourcePath);
+const sourceStats = await stat(resolvedSourcePath);
 const buffer = sourceStats.isDirectory()
   ? Buffer.concat(await Promise.all(
-      (await readdir(sourcePath))
+      (await readdir(resolvedSourcePath))
         .filter((name) => name.startsWith("liebherr-t284.part-"))
         .sort()
-        .map((name) => readFile(new URL(name, new URL(`file://${sourcePath.replace(/\/$/, "")}/`))))
+        .map((name) => readFile(join(resolvedSourcePath, name)))
     ))
-  : await readFile(sourcePath);
+  : await readFile(resolvedSourcePath);
 if (buffer.toString("utf8", 0, 4) !== "glTF") throw new Error("Not a GLB file");
 const jsonLength = buffer.readUInt32LE(12);
 const document = JSON.parse(buffer.subarray(20, 20 + jsonLength).toString("utf8"));
@@ -38,6 +40,16 @@ function worldMatrix(index) {
   const world = parent === undefined ? local : worldMatrix(parent).clone().multiply(local);
   worldMatrices.set(index, world);
   return world;
+}
+
+function topLevelParentName(index) {
+  let current = index;
+  let parent = parents.get(current);
+  while (parent !== undefined && document.nodes[parent]?.name !== "GLTF_SceneRootNode") {
+    current = parent;
+    parent = parents.get(current);
+  }
+  return document.nodes[current]?.name || "(root)";
 }
 
 function accessorBox(accessorIndex) {
@@ -77,6 +89,7 @@ const rows = [];
   const parentName = document.nodes[parents.get(nodeIndex)]?.name || "(root)";
   rows.push({
     node: nodeIndex,
+    topLevel: topLevelParentName(nodeIndex),
     parent: parentName,
     mesh: mesh.name || `mesh_${node.mesh}`,
     min: fmt(box.min),

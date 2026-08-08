@@ -1,7 +1,7 @@
 {
   "name": "haul-truck-editor",
-  "version": "6.0.0",
-  "description": "以精细 Liebherr T284 GLB 为底模的模块化矿卡三维编辑器",
+  "version": "7.0.0",
+  "description": "保留精细 T284 比例骨架并按参考图模块化改造的矿卡三维编辑器",
   "private": true,
   "type": "module",
   "scripts": {

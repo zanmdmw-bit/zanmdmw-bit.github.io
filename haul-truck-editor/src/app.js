@@ -14,7 +14,7 @@ import {
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
-const STORAGE_KEY = "haul-truck-editor:3d:v6";
+const STORAGE_KEY = "haul-truck-editor:3d:v7";
 const MAX_HISTORY = 40;
 
 const dom = {
@@ -215,7 +215,7 @@ async function init() {
     dom.projectStatus.querySelector("span:last-child").textContent = restored ? "已恢复本机工程 · WebGL 未启用" : "正式尺寸数据已载入 · WebGL 未启用";
   } else {
     dom.loading.classList.add("done");
-    dom.projectStatus.querySelector("span:last-child").textContent = restored ? "已恢复本机保存工程" : "精细 T284 原始素材已载入 · 待八轮改造";
+    dom.projectStatus.querySelector("span:last-child").textContent = restored ? "已恢复本机保存工程" : "T284 比例骨架与原图改造模块已载入";
   }
   animate();
 }
@@ -804,7 +804,7 @@ function toggleCalibration() {
   dom.metricOverlay.classList.toggle("hidden", !state.calibration);
   dom.stageMessage.textContent = state.calibration
     ? "当前显示原始 T284 素材；尺寸卡是下一阶段八轮改造的硬目标"
-    : "明亮日光场景 · 源模型网格组可独立编辑";
+    : "明亮日光场景 · 原车与原图改造件均可独立编辑";
   toast(state.calibration ? "已显示正式尺寸基准" : "尺寸基准卡已隐藏");
 }
 
