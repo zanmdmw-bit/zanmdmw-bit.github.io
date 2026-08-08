@@ -716,6 +716,69 @@ select:focus-visible,
   font-size: 10px;
 }
 
+.metric-overlay {
+  position: absolute;
+  z-index: 3;
+  top: 14px;
+  right: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(82px, 1fr));
+  width: min(330px, calc(100% - 28px));
+  overflow: hidden;
+  border: 1px solid rgba(87, 99, 95, 0.75);
+  border-radius: 6px;
+  background: rgba(14, 18, 17, 0.86);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  backdrop-filter: blur(12px);
+}
+
+.metric-overlay header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 30px;
+  padding: 0 10px;
+  border-bottom: 1px solid rgba(87, 99, 95, 0.55);
+  color: #d7ddd8;
+  font-size: 9px;
+}
+
+.metric-overlay header span {
+  color: var(--accent);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.metric-overlay > div {
+  display: grid;
+  gap: 2px;
+  padding: 8px 10px;
+  border-right: 1px solid rgba(87, 99, 95, 0.34);
+  border-bottom: 1px solid rgba(87, 99, 95, 0.34);
+}
+
+.metric-overlay > div:nth-last-child(-n + 3) {
+  border-bottom: 0;
+}
+
+.metric-overlay > div:nth-child(4),
+.metric-overlay > div:nth-child(7) {
+  border-right: 0;
+}
+
+.metric-overlay strong {
+  color: #edc486;
+  font-size: 12px;
+}
+
+.metric-overlay small {
+  color: #88928d;
+  font-size: 8px;
+}
+
 .stage-footer {
   display: grid;
   grid-template-columns: auto auto minmax(0, 1fr);

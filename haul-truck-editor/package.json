@@ -1,12 +1,13 @@
 {
   "name": "haul-truck-editor",
-  "version": "3.0.0",
-  "description": "基于原始矿卡照片分层重建的 2.5D 模块化车辆编辑器",
+  "version": "4.0.0",
+  "description": "按正式米制参数建立的八轮独立电驱 680 吨级模块化矿卡三维编辑器",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "audit": "node scripts/audit-model.mjs"
   },
   "devDependencies": {
     "vite": "^7.1.1"

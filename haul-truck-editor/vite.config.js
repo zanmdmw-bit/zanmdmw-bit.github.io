@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  root: "src-25d",
+  root: "src",
   base: "./",
   publicDir: false,
   server: {
@@ -16,34 +16,43 @@ export default defineConfig({
   build: {
     outDir: "..",
     emptyOutDir: false,
-    assetsDir: "assets/editor-25d",
+    assetsDir: "assets/app",
     sourcemap: false,
     rollupOptions: {
       output: {
-        entryFileNames: "assets/editor-25d/editor-[hash].js",
-        chunkFileNames: "assets/editor-25d/chunk-[hash].js",
-        assetFileNames: "assets/editor-25d/[name]-[hash][extname]"
+        entryFileNames: "assets/app/editor-[hash].js",
+        chunkFileNames: "assets/app/chunk-[hash].js",
+        assetFileNames: "assets/app/[name]-[hash][extname]"
       }
     }
   },
   plugins: [
     {
-      name: "preserve-legacy-3d-and-clean-25d-assets",
+      name: "preserve-2d-and-sync-3d-entry",
       apply: "build",
       async buildStart() {
         const projectRoot = process.cwd();
-        const legacyDirectory = resolve(projectRoot, "3d");
-        const legacyIndex = resolve(legacyDirectory, "index.html");
+        const twoDDirectory = resolve(projectRoot, "2d");
+        const twoDIndex = resolve(twoDDirectory, "index.html");
         try {
-          await access(legacyIndex);
+          await access(twoDIndex);
         } catch {
           const currentIndex = await readFile(resolve(projectRoot, "index.html"), "utf8");
-          if (currentIndex.includes("矿卡 3D 模块化编辑器")) {
-            await mkdir(legacyDirectory, { recursive: true });
-            await writeFile(legacyIndex, currentIndex.replaceAll("./assets/app/", "../assets/app/"), "utf8");
+          if (currentIndex.includes("矿卡 2.5D 分层编辑器")) {
+            await mkdir(twoDDirectory, { recursive: true });
+            await writeFile(twoDIndex, currentIndex
+              .replaceAll("./assets/editor-25d/", "../assets/editor-25d/")
+              .replace('href="./3d/">查看保留的 3D 版本', 'href="../">返回正式 3D 版本'), "utf8");
           }
         }
-        await rm(resolve(projectRoot, "assets/editor-25d"), { recursive: true, force: true });
+        await rm(resolve(projectRoot, "assets/app"), { recursive: true, force: true });
+      },
+      async closeBundle() {
+        const projectRoot = process.cwd();
+        const builtIndex = await readFile(resolve(projectRoot, "index.html"), "utf8");
+        const threeDDirectory = resolve(projectRoot, "3d");
+        await mkdir(threeDDirectory, { recursive: true });
+        await writeFile(resolve(threeDDirectory, "index.html"), builtIndex.replaceAll("./assets/app/", "../assets/app/"), "utf8");
       }
     }
   ]

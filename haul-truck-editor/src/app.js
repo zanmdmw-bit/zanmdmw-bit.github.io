@@ -14,7 +14,7 @@ import {
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
-const STORAGE_KEY = "haul-truck-editor:3d:v3";
+const STORAGE_KEY = "haul-truck-editor:3d:v4";
 const MAX_HISTORY = 40;
 
 const dom = {
@@ -34,8 +34,8 @@ const dom = {
   selectionBadgeName: $("#selectionBadgeName"),
   referenceCard: $("#referenceCard"),
   referenceImage: $("#referenceImage"),
-  calibrationImage: $("#calibrationImage"),
   calibrationButton: $("#calibrationButton"),
+  metricOverlay: $("#metricOverlay"),
   emptyInspector: $("#emptyInspector"),
   inspectorContent: $("#inspectorContent"),
   objectNumber: $("#objectNumber"),
@@ -54,6 +54,7 @@ const dom = {
   meshCount: $("#meshCount"),
   triangleCount: $("#triangleCount"),
   objectState: $("#objectState"),
+  specificationText: $("#specificationText"),
   homeViewButton: $("#homeViewButton"),
   focusButton: $("#focusButton"),
   wireframeButton: $("#wireframeButton"),
@@ -103,7 +104,7 @@ const state = {
   pointerStart: null,
   transforming: false,
   suppressHistory: false,
-  calibration: false,
+  calibration: true,
   environmentRoot: null
 };
 
@@ -200,8 +201,8 @@ init().catch((error) => {
 
 async function init() {
   dom.referenceImage.src = referenceImageUrl;
-  dom.calibrationImage.src = referenceImageUrl;
   state.model = buildHaulTruck(scene, blueprint);
+  exposeEngineeringAudit();
   createEnvironment();
   populateAnchors();
   bindEvents();
@@ -211,12 +212,38 @@ async function init() {
   homeView(false);
   if (renderer.isFallbackRenderer) {
     dom.loading.innerHTML = "<strong>当前浏览器没有启用 WebGL</strong><small>车辆数据与部件树已载入，请使用支持 WebGL 2 的桌面浏览器查看模型</small>";
-    dom.projectStatus.querySelector("span:last-child").textContent = restored ? "已恢复本机工程 · WebGL 未启用" : "车辆数据已载入 · WebGL 未启用";
+    dom.projectStatus.querySelector("span:last-child").textContent = restored ? "已恢复本机工程 · WebGL 未启用" : "正式尺寸数据已载入 · WebGL 未启用";
   } else {
     dom.loading.classList.add("done");
-    dom.projectStatus.querySelector("span:last-child").textContent = restored ? "已恢复本机保存工程" : "三维车辆已装配 · 本机工程";
+    dom.projectStatus.querySelector("span:last-child").textContent = restored ? "已恢复本机保存工程" : "24 米八轮矿卡已装配 · 本机工程";
   }
   animate();
+}
+
+function exposeEngineeringAudit() {
+  state.model.root.updateMatrixWorld(true);
+  const bounds = new THREE.Box3().setFromObject(state.model.root);
+  const size = bounds.getSize(new THREE.Vector3());
+  const wheelParts = [...state.model.parts.values()].filter((part) => /^wheel_\d{2}_(left|right)$/.test(part.userData.partId));
+  window.__HAUL_TRUCK_AUDIT__ = Object.freeze({
+    units: "meter",
+    envelope: {
+      length: rounded(size.x, 2),
+      height: rounded(size.y, 2),
+      width: rounded(size.z, 2)
+    },
+    hardTargets: {
+      length: blueprint.dimensionsMeters.length,
+      minimumWidth: 12,
+      modeledWidth: blueprint.dimensionsMeters.width,
+      frontPlatformHeight: blueprint.dimensionsMeters.frontPlatformHeight,
+      wheelDiameter: blueprint.dimensionsMeters.wheelDiameter,
+      bedFloorArea: blueprint.dimensionsMeters.bedFloorArea,
+      payloadTons: blueprint.engineering.ratedPayloadTons
+    },
+    wheelIds: wheelParts.map((part) => part.userData.partId),
+    editableParts: state.model.parts.size
+  });
 }
 
 function createEnvironment() {
@@ -521,6 +548,7 @@ function renderInspector() {
   dom.objectCategory.textContent = part.userData.categoryName;
   dom.objectName.textContent = part.userData.name;
   dom.objectId.textContent = part.userData.partId;
+  dom.specificationText.textContent = part.userData.specification || "独立三维对象；可隐藏、拆除、移动、旋转、缩放和恢复。";
   dom.objectIcon.textContent = part.userData.category === "wheels" ? "◉" : part.userData.category === "addons" ? "＋" : "▦";
   dom.selectionStatus.textContent = part.userData.name;
   dom.selectionBadgeName.textContent = part.userData.name;
@@ -727,7 +755,7 @@ function homeView(animateCamera = true) {
   } else {
     tweenCamera(destination, target);
   }
-  dom.viewStatus.textContent = "透视 · 原图角度";
+  dom.viewStatus.textContent = "透视 · 工程视角";
 }
 
 function focusSelected() {
@@ -763,36 +791,26 @@ function tweenCamera(destination, target) {
 
 function toggleWireframe() {
   state.wireframe = !state.wireframe;
-  state.model.setWireframe(state.calibration || state.wireframe);
+  state.model.setWireframe(state.wireframe);
   dom.wireframeButton.classList.toggle("active", state.wireframe);
   dom.viewStatus.textContent = state.wireframe ? "透视 · 结构线模式" : "透视 · 实体材质";
 }
 
 function toggleCalibration() {
   state.calibration = !state.calibration;
-  dom.stage.classList.toggle("calibration-mode", state.calibration);
-  dom.calibrationImage.classList.toggle("active", state.calibration);
   dom.calibrationButton.classList.toggle("active", state.calibration);
-  state.environmentRoot.visible = !state.calibration;
-  scene.background = state.calibration ? null : daylightBackground;
-  scene.fog = state.calibration ? null : daylightFog;
-  renderer.setClearAlpha(state.calibration ? 0 : 1);
-  state.model.setWireframe(state.calibration || state.wireframe);
-  controls.enableRotate = !state.calibration;
-  if (state.calibration) homeView(false);
-  resize();
-  dom.viewStatus.textContent = state.calibration ? "校准 · 原图轮廓叠加" : "透视 · 日光实体视图";
+  dom.metricOverlay.classList.toggle("hidden", !state.calibration);
   dom.stageMessage.textContent = state.calibration
-    ? "原图叠加只用于核对比例；红色实体仍是独立三维部件"
+    ? "尺寸卡只显示正式基准；模型始终采用真实米制比例"
     : "明亮日光场景 · 所有主要结构均可独立编辑";
-  toast(state.calibration ? "已进入原图比例校准视图" : "已返回日光三维编辑视图");
+  toast(state.calibration ? "已显示正式尺寸基准" : "尺寸基准卡已隐藏");
 }
 
 function toggleAnchors() {
   state.anchorsVisible = !state.anchorsVisible;
   state.model.anchorGroup.visible = state.anchorsVisible;
   dom.anchorButton.classList.toggle("active", state.anchorsVisible);
-  toast(state.anchorsVisible ? "已显示八个设施安装点" : "安装点已隐藏");
+  toast(state.anchorsVisible ? "已显示九个设施安装点" : "安装点已隐藏");
 }
 
 function populateAnchors() {
@@ -1061,29 +1079,12 @@ function handleKeyboard(event) {
 function resize() {
   const stageWidth = Math.max(1, dom.stage.clientWidth);
   const stageHeight = Math.max(1, dom.stage.clientHeight);
-  let width = stageWidth;
-  let height = stageHeight;
-  if (state.calibration) {
-    const referenceAspect = 1168 / 380;
-    if (stageWidth / stageHeight > referenceAspect) {
-      height = stageHeight;
-      width = height * referenceAspect;
-    } else {
-      width = stageWidth;
-      height = width / referenceAspect;
-    }
-    dom.canvas.style.left = `${(stageWidth - width) / 2}px`;
-    dom.canvas.style.top = `${(stageHeight - height) / 2}px`;
-    dom.canvas.style.width = `${width}px`;
-    dom.canvas.style.height = `${height}px`;
-  } else {
-    dom.canvas.style.left = "0";
-    dom.canvas.style.top = "0";
-    dom.canvas.style.width = "100%";
-    dom.canvas.style.height = "100%";
-  }
-  renderer.setSize(Math.round(width), Math.round(height), false);
-  camera.aspect = width / height;
+  dom.canvas.style.left = "0";
+  dom.canvas.style.top = "0";
+  dom.canvas.style.width = "100%";
+  dom.canvas.style.height = "100%";
+  renderer.setSize(Math.round(stageWidth), Math.round(stageHeight), false);
+  camera.aspect = stageWidth / stageHeight;
   camera.updateProjectionMatrix();
 }
 

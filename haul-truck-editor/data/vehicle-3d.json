@@ -1,49 +1,78 @@
 {
-  "projectId": "haul-truck-editor-3d",
-  "version": 3,
-  "name": "十轮重型矿山运输车",
-  "description": "按参考原图轮心、车斗轮廓和双舱位置校准的网页实时模块化三维矿卡。可见结构使用独立 Mesh 组合，未见区域按同类重型矿卡结构补全。",
+  "projectId": "haul-truck-editor-metric-3d",
+  "version": 4,
+  "name": "680 吨级八轮独立电驱矿山运输车",
+  "description": "以正文正式尺寸为硬基准建立的模块化三维矿卡。参考图只用于造型语言，不参与尺寸校准。",
+  "units": "meter",
   "orientation": {
     "front": "negative-x",
+    "rear": "positive-x",
     "driverCab": "站在车头面向车辆外侧时的左侧",
     "equipmentRoom": "站在车头面向车辆外侧时的右侧"
   },
   "dimensionsMeters": {
-    "length": 25.4,
-    "width": 9.4,
-    "height": 9.2
+    "length": 24,
+    "width": 12.4,
+    "frontPlatformHeight": 8.9,
+    "wheelDiameter": 4.9,
+    "wheelWidth": 1.45,
+    "bedInteriorLength": 14,
+    "bedInteriorWidth": 8.2,
+    "bedFloorArea": 114.8,
+    "provisionalMaxHeight": 14.2
   },
+  "engineering": {
+    "ratedPayloadTons": 680,
+    "wheelGroups": 8,
+    "axles": 4,
+    "drive": "八轮独立电驱",
+    "steering": "全轮转向",
+    "suspension": "主动承载悬挂",
+    "wheelConstruction": "柔性金属骨架、复合缓冲层、可更换耐磨模块",
+    "waterTankCubicMeters": 6,
+    "chillerCubicMeters": 1.5,
+    "chillerTemperatureC": "2–4",
+    "freezerCubicMeters": 3,
+    "freezerTemperatureC": "约 -20"
+  },
+  "provisionalParameters": [
+    "12.4 米总宽是在“超过 12 米”范围内采用的第一版建模值",
+    "14.0 × 8.2 米车斗内部地板用于满足超过 100 平方米的硬约束",
+    "14.2 米最高点、车斗深度及生活设施布置均可在后续资料到位后调整"
+  ],
   "categories": [
-    { "id": "structure", "name": "车辆主体", "open": true },
-    { "id": "front", "name": "前部结构", "open": true },
-    { "id": "dump", "name": "车斗系统", "open": true },
-    { "id": "wheels", "name": "轮胎与轮轴", "open": true },
+    { "id": "structure", "name": "承载车体", "open": true },
+    { "id": "front", "name": "车头与双舱", "open": true },
+    { "id": "dump", "name": "倾斜货斗", "open": true },
+    { "id": "habitation", "name": "斗内生活改造", "open": true },
+    { "id": "wheels", "name": "八轮与主动悬挂", "open": true },
     { "id": "access", "name": "栏杆与通行结构", "open": false },
     { "id": "details", "name": "机械与外观细节", "open": false },
-    { "id": "addons", "name": "附加设施", "open": true }
+    { "id": "addons", "name": "后续附加设施", "open": true }
   ],
   "anchors": [
-    { "id": "front_deck_left", "name": "前维护平台 · 左", "position": [-8.2, 5.55, -2.65], "rotation": [0, 0, 0] },
-    { "id": "front_deck_center", "name": "前维护平台 · 中央", "position": [-8.0, 5.55, 0], "rotation": [0, 0, 0] },
-    { "id": "front_deck_right", "name": "前维护平台 · 右", "position": [-8.2, 5.55, 2.65], "rotation": [0, 0, 0] },
-    { "id": "upper_platform", "name": "上层平台", "position": [-7.9, 8.25, 0], "rotation": [0, 0, 0] },
-    { "id": "dump_front", "name": "车斗前部", "position": [-2.2, 8.25, 0], "rotation": [0, 0, 0] },
-    { "id": "dump_center", "name": "车斗中央", "position": [3.8, 7.35, 0], "rotation": [0, 0, 0] },
-    { "id": "dump_rear", "name": "车斗后部", "position": [8.6, 6.4, 0], "rotation": [0, 0, 0] },
-    { "id": "rear_frame", "name": "车尾框架", "position": [10.0, 3.85, 0], "rotation": [0, 0, 0] }
+    { "id": "front_deck_left", "name": "前维护平台 · 驾驶室侧", "position": [-8.8, 9.08, -4.25], "rotation": [0, 0, 0] },
+    { "id": "front_deck_center", "name": "前维护平台 · 中央", "position": [-8.6, 9.08, 0], "rotation": [0, 0, 0] },
+    { "id": "front_deck_right", "name": "前维护平台 · 设备室侧", "position": [-8.8, 9.08, 4.25], "rotation": [0, 0, 0] },
+    { "id": "upper_platform", "name": "车头上层平台", "position": [-6.8, 12.68, 0], "rotation": [0, 0, 0] },
+    { "id": "warehouse_front", "name": "水平仓库地板 · 前部", "position": [0.0, 9.08, 0], "rotation": [0, 0, 0] },
+    { "id": "warehouse_center", "name": "水平仓库地板 · 中央", "position": [4.5, 9.08, 0], "rotation": [0, 0, 0] },
+    { "id": "warehouse_rear", "name": "水平仓库地板 · 后部", "position": [8.9, 9.08, 0], "rotation": [0, 0, 0] },
+    { "id": "second_floor", "name": "一期二层平台", "position": [0.9, 11.75, 0], "rotation": [0, 0, 0] },
+    { "id": "rear_frame", "name": "车尾承载框架", "position": [10.7, 6.15, 0], "rotation": [0, 0, 0] }
   ],
   "camera": {
-    "position": [-30.68, 10.845, 25.707],
-    "target": [-3.208, 3.54, 0],
-    "fov": 17.404
+    "position": [-31, 18.5, 29],
+    "target": [0, 6.1, 0],
+    "fov": 31
   },
   "modelNotes": [
-    "驾驶室位于用户指定的左侧，设备室位于右侧。",
-    "五个可见轮心依据 1168×380 参考原图逐点校准，十个车轮均为独立对象。",
-    "驾驶室与设备室按原图采用前后及高低错层，而不是镜像复制成两个同高方盒。",
-    "车斗底板向车尾下倾，侧板顶线和前部防护平台按原图透视轮廓重建。",
-    "拆除车轮后会露出真实建模的轮轴、悬挂和底盘。",
-    "车斗与车架互相独立，拆除车斗后底盘结构仍然存在。",
-    "原图未展示的车尾、车底与另一侧按同类矿卡进行结构化补全。"
+    "模型严格采用 1 单位 = 1 米，不再通过参考照片轮廓反推尺寸。",
+    "四根车轴、左右共八个轮组；每个轮组是可单独拆装的独立对象。",
+    "轮组表现为金属骨架、复合缓冲环和可更换耐磨块，不使用普通充气胎造型。",
+    "驾驶室在用户指定的左侧，设备室在右侧，两者均为独立对象。",
+    "原倾斜货斗、水平仓库地板、楔形低层空间、一期二层平台和承重柱互相独立。",
+    "6 立方米主水箱、1.5 立方米冷藏区和 3 立方米冷冻区均为独立可编辑对象。",
+    "额定载荷 680 吨作为工程元数据记录，不用于虚构未知的结构尺寸。"
   ]
 }

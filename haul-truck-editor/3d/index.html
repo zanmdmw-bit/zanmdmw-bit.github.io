@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#d7e3e7">
-  <meta name="description" content="可拆装、可编辑的十轮重型矿山运输车三维编辑器">
-  <title>矿卡 3D 模块化编辑器</title>
-  <script type="module" crossorigin src="../assets/app/editor-TS5pMnPT.js"></script>
-  <link rel="stylesheet" crossorigin href="../assets/app/index-BSWBVZ6B.css">
+  <meta name="description" content="按 24 米车长、12.4 米车宽、4.9 米轮径建立的八轮独立电驱矿卡三维编辑器">
+  <title>680 吨级矿卡 3D 模块化编辑器</title>
+  <script type="module" crossorigin src="../assets/app/editor-BIkCYiUk.js"></script>
+  <link rel="stylesheet" crossorigin href="../assets/app/index-G-AIZ8HS.css">
 </head>
 <body>
   <div class="app-shell">
@@ -15,8 +15,8 @@
       <a class="brand" href="./" aria-label="矿卡 3D 模块化编辑器首页">
         <span class="brand-mark">HT</span>
         <span class="brand-copy">
-          <small>HAUL TRUCK · MODULAR 3D</small>
-          <strong>矿卡 3D 模块化编辑器</strong>
+          <small>680T HAUL TRUCK · METRIC 3D</small>
+          <strong>八轮矿卡模块化编辑器</strong>
         </span>
       </a>
 
@@ -71,8 +71,8 @@
           </div>
 
           <div class="tool-segment view-tools" role="group" aria-label="视图工具">
-            <button class="tool" id="homeViewButton" type="button">⌂ <span>原图视角</span></button>
-            <button class="tool" id="calibrationButton" type="button">▧ <span>原图叠加</span></button>
+            <button class="tool" id="homeViewButton" type="button">⌂ <span>工程视角</span></button>
+            <button class="tool active" id="calibrationButton" type="button">▧ <span>尺寸基准</span></button>
             <button class="tool" id="focusButton" type="button">◎ <span>聚焦部件</span></button>
             <button class="tool" id="wireframeButton" type="button">◇ <span>结构线</span></button>
             <button class="tool" id="anchorButton" type="button">⌾ <span>安装点</span></button>
@@ -82,15 +82,14 @@
         </div>
 
         <div class="stage" id="stage" tabindex="0" aria-label="三维矿卡编辑区。左键旋转视角，右键平移，滚轮缩放，点击车辆选择部件。">
-          <img class="calibration-image" id="calibrationImage" alt="用于三维模型比例校准的矿卡原图">
           <canvas id="sceneCanvas"></canvas>
 
           <div class="loading-screen" id="loadingScreen">
             <div class="loader-model" aria-hidden="true">
               <span></span><span></span><span></span>
             </div>
-            <strong>正在装配十轮矿卡</strong>
-            <small>建立车架、轮轴、车斗和机械细节</small>
+            <strong>正在装配八轮 680 吨级矿卡</strong>
+            <small>以 1 单位 = 1 米建立正式比例骨架</small>
           </div>
 
           <div class="stage-tip" id="stageTip">
@@ -103,19 +102,29 @@
 
           <button class="reference-card" id="referenceCard" type="button" aria-label="显示或隐藏参考原图">
             <img id="referenceImage" alt="矿卡建模参考原图">
-            <span><b>造型参考</b><small>点击收起</small></span>
+            <span><b>仅作造型参考</b><small>不参与尺寸校准</small></span>
           </button>
 
           <div class="selection-badge hidden" id="selectionBadge">
             <span>当前选择</span>
             <strong id="selectionBadgeName">—</strong>
           </div>
+
+          <section class="metric-overlay" id="metricOverlay" aria-label="正式建模基准">
+            <header><b>正式建模基准</b><span>1 UNIT = 1 M</span></header>
+            <div><strong>24.0 m</strong><small>整车长度</small></div>
+            <div><strong>12.4 m</strong><small>暂定总宽</small></div>
+            <div><strong>8.9 m</strong><small>前平台离地</small></div>
+            <div><strong>Ø 4.9 m</strong><small>轮组外径</small></div>
+            <div><strong>8</strong><small>独立电驱轮组</small></div>
+            <div><strong>114.8 m²</strong><small>暂定斗内地板</small></div>
+          </section>
         </div>
 
         <footer class="stage-footer">
-          <span><b>视图</b><em id="viewStatus">透视 · 原图角度</em></span>
+          <span><b>视图</b><em id="viewStatus">透视 · 工程视角</em></span>
           <span><b>选择</b><em id="selectionStatus">未选择部件</em></span>
-          <span class="stage-message" id="stageMessage">所有主要车辆结构均为真实三维对象</span>
+          <span class="stage-message" id="stageMessage">原图只决定造型语言，正式数据决定比例</span>
         </footer>
       </section>
 
@@ -146,7 +155,7 @@
 
           <div class="reality-badge">
             <span>3D MESH</span>
-            <p>这是独立三维对象。隐藏或拆除后，后方结构会真实露出。</p>
+            <p id="specificationText">这是独立三维对象。隐藏或拆除后，后方结构会真实露出。</p>
           </div>
 
           <section class="inspector-section quick-actions">
