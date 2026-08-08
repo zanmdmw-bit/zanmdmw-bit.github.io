@@ -1,12 +1,13 @@
 {
-  "name": "infinity-nikki-model-viewer",
-  "version": "1.0.0",
-  "description": "无限暖暖完整角色模型网页查看器",
+  "name": "haul-truck-editor",
+  "version": "6.0.0",
+  "description": "以精细 Liebherr T284 GLB 为底模的模块化矿卡三维编辑器",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "audit": "node scripts/audit-model.mjs"
   },
   "devDependencies": {
     "vite": "^7.1.1"

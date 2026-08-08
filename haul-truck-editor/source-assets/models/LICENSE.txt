@@ -1,0 +1,8 @@
+Liebherr T284
+
+Author: gelber
+Source: https://sketchfab.com/3d-models/liebherr-t284-3b13b4a407cb4640b0c258fa33d3de6f
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+License URL: https://creativecommons.org/licenses/by/4.0/
+
+The model is used as the editable source asset for the haul-truck editor.
