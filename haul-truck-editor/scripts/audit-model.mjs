@@ -1,82 +1,63 @@
-import { readdir, readFile } from "node:fs/promises";
+import * as THREE from "three";
+import { readFile } from "node:fs/promises";
+import { buildHaulTruck } from "../src/truck-model.js";
 
-const partsUrl = new URL("../source-assets/models/parts/", import.meta.url);
-const partNames = (await readdir(partsUrl))
-  .filter((name) => name.startsWith("liebherr-t284.part-"))
-  .sort();
-const buffer = Buffer.concat(await Promise.all(partNames.map((name) => readFile(new URL(name, partsUrl)))));
-const blueprint = JSON.parse(await readFile(new URL("../data/vehicle-3d.json", import.meta.url), "utf8"));
-
-const failures = [];
-if (buffer.toString("utf8", 0, 4) !== "glTF") failures.push("文件头不是有效 GLB");
-if (buffer.readUInt32LE(4) !== 2) failures.push("GLB 版本不是 2");
-if (buffer.readUInt32LE(8) !== buffer.length) failures.push("GLB 声明长度与文件长度不一致");
-
-const jsonLength = buffer.readUInt32LE(12);
-const jsonType = buffer.toString("utf8", 16, 20);
-if (jsonType !== "JSON") failures.push("GLB 第一数据块不是 JSON");
-
-const document = JSON.parse(buffer.subarray(20, 20 + jsonLength).toString("utf8"));
-const nodeNames = new Set((document.nodes || []).map((node) => node.name).filter(Boolean));
-const requiredNodes = [
-  "tire 59/80 r63 michelin002_1",
-  "rim t287_2",
-  "cab ss_35",
-  "cab gls_36",
-  "buket frame_37",
-  "buket body_38",
-  "base plataforma _20"
-];
-
-for (const name of requiredNodes) {
-  if (!nodeNames.has(name)) failures.push("缺少源模型语义节点：" + name);
-}
-
-const conversionParts = blueprint.referenceConversion?.parts || [];
-const conversionIds = conversionParts.map((part) => part.id);
-const requiredConversionIds = [
-  "reference_front_deck",
-  "reference_driver_cab",
-  "reference_equipment_room",
-  "reference_upper_canopy",
-  "reference_dump_wall_left",
-  "reference_dump_wall_right",
-  "reference_front_armor",
-  "reference_platform_railings",
-  "reference_access_ladder"
-];
-if (new Set(conversionIds).size !== conversionIds.length) failures.push("原图改造部件 ID 存在重复");
-for (const id of requiredConversionIds) {
-  if (!conversionIds.includes(id)) failures.push("缺少原图改造部件：" + id);
-}
-for (const part of conversionParts) {
-  if (!Array.isArray(part.position) || part.position.length !== 3) failures.push(`${part.id} 缺少三维位置数据`);
-  if (!Array.isArray(part.rotation) || part.rotation.length !== 3) failures.push(`${part.id} 缺少三维旋转数据`);
-  if (!Array.isArray(part.scale) || part.scale.length !== 3) failures.push(`${part.id} 缺少三维缩放数据`);
-}
-
-const report = {
-  status: failures.length ? "failed" : "passed",
-  title: document.asset?.extras?.title || null,
-  author: document.asset?.extras?.author || null,
-  license: document.asset?.extras?.license || null,
-  bytes: buffer.length,
-  nodes: document.nodes?.length || 0,
-  meshes: document.meshes?.length || 0,
-  materials: document.materials?.length || 0,
-  textures: document.textures?.length || 0,
-  images: document.images?.length || 0,
-  modelParts: partNames.length,
-  conversionParts: conversionParts.length,
-  blueprintVersion: blueprint.version,
-  sourceStage: "T284 source model loaded; six-wheel assemblies are not yet split into the target eight independent wheel groups.",
-  failures
+const context = {
+  fillStyle: "",
+  strokeStyle: "",
+  lineWidth: 1,
+  fillRect() {},
+  beginPath() {},
+  arc() {},
+  fill() {},
+  moveTo() {},
+  lineTo() {},
+  stroke() {}
 };
 
-if (report.title !== "Liebherr T284") failures.push("模型标题与预期不符");
-if ((document.meshes?.length || 0) < 70) failures.push("模型网格数量异常偏少");
-if ((document.images?.length || 0) < 10) failures.push("内嵌贴图数量异常偏少");
-report.status = failures.length ? "failed" : "passed";
+globalThis.document = {
+  createElement() {
+    return { width: 256, height: 256, getContext: () => context };
+  }
+};
+
+const blueprint = JSON.parse(await readFile(new URL("../data/vehicle-3d.json", import.meta.url), "utf8"));
+const scene = new THREE.Scene();
+const model = buildHaulTruck(scene, blueprint);
+model.root.updateMatrixWorld(true);
+
+const bounds = (object) => {
+  const box = new THREE.Box3().setFromObject(object);
+  const size = box.getSize(new THREE.Vector3());
+  return size.toArray().map((value) => Number(value.toFixed(3)));
+};
+
+const envelope = bounds(model.root);
+const wheelIds = [...model.parts.keys()].filter((id) => /^wheel_\d{2}_(left|right)$/.test(id));
+const sampleWheel = bounds(model.parts.get(wheelIds[0]));
+const frontDeck = new THREE.Box3().setFromObject(model.parts.get("front_service_deck"));
+const warehouseFloor = bounds(model.parts.get("warehouse_level_floor"));
+
+const checks = [
+  [Math.abs(envelope[0] - 24) <= 0.15, `整车长度 ${envelope[0]} m 不在 24±0.15 m 内`],
+  [envelope[2] > 12 && Math.abs(envelope[2] - 12.4) <= 0.15, `整车宽度 ${envelope[2]} m 不符合 12 m 以上／暂定 12.4 m`],
+  [Math.abs(frontDeck.max.y - 9.1) <= 0.08, `前平台上表面 ${frontDeck.max.y.toFixed(3)} m 未接近 8.9 m 平台基准`],
+  [wheelIds.length === 8, `独立轮组数量为 ${wheelIds.length}，应为 8`],
+  [Math.abs(sampleWheel[0] - 4.9) <= 0.1 && Math.abs(sampleWheel[1] - 4.9) <= 0.1, `轮组外廓 ${sampleWheel[0]} × ${sampleWheel[1]} m 未接近 4.9 m`],
+  [Math.abs(warehouseFloor[0] * warehouseFloor[2] - 114.8) <= 0.2, `斗内水平地板面积未达到暂定 114.8 m²`]
+];
+
+const failures = checks.filter(([passed]) => !passed).map(([, message]) => message);
+const report = {
+  units: "meter",
+  envelope: { length: envelope[0], height: envelope[1], width: envelope[2] },
+  wheelGroups: wheelIds.length,
+  sampleWheel: { diameterX: sampleWheel[0], diameterY: sampleWheel[1], width: sampleWheel[2] },
+  warehouseFloor: { length: warehouseFloor[0], width: warehouseFloor[2], area: Number((warehouseFloor[0] * warehouseFloor[2]).toFixed(1)) },
+  editableParts: model.parts.size,
+  status: failures.length ? "failed" : "passed",
+  failures
+};
 
 console.log(JSON.stringify(report, null, 2));
 if (failures.length) process.exitCode = 1;

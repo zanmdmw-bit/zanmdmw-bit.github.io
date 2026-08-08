@@ -1,8 +1,8 @@
 {
   "projectId": "haul-truck-editor-metric-3d",
-  "version": 7,
-  "name": "Liebherr T284 原图外形改造工程",
-  "description": "保留 T284 正确轮径与人物尺度，以独立可拆模块重建原图中的双舱、宽甲板、倾斜货斗和重型工业前脸。",
+  "version": 4,
+  "name": "680 吨级八轮独立电驱矿山运输车",
+  "description": "以正文正式尺寸为硬基准建立的模块化三维矿卡。参考图只用于造型语言，不参与尺寸校准。",
   "units": "meter",
   "orientation": {
     "front": "negative-x",
@@ -40,30 +40,14 @@
     "14.0 × 8.2 米车斗内部地板用于满足超过 100 平方米的硬约束",
     "14.2 米最高点、车斗深度及生活设施布置均可在后续资料到位后调整"
   ],
-  "referenceConversion": {
-    "sourceImage": "truck-original.png",
-    "principle": "保留 T284 轮径、车宽与人物尺度，只用独立模块调整原图特征",
-    "parts": [
-      { "id": "reference_front_deck", "name": "原图式超宽前维护甲板", "factory": "frontDeck", "category": "front", "position": [-4.75, 6.08, 0], "rotation": [0, 0, 0], "scale": [1, 1, 1], "visible": true, "locked": false },
-      { "id": "reference_driver_cab", "name": "原图式左侧驾驶室", "factory": "driverCab", "category": "front", "position": [-4.55, 6.3, 2.75], "rotation": [0, 0, 0], "scale": [1, 1, 1], "visible": true, "locked": false },
-      { "id": "reference_equipment_room", "name": "原图式右侧设备室", "factory": "equipmentRoom", "category": "front", "position": [-4.55, 6.3, -2.75], "rotation": [0, 0, 0], "scale": [1, 1, 1], "visible": true, "locked": false },
-      { "id": "reference_upper_canopy", "name": "原图式覆盖上层斜甲板", "factory": "upperCanopy", "category": "front", "position": [-2.25, 8.78, 0], "rotation": [0, 0, 0.115], "scale": [1, 1, 1], "visible": true, "locked": false },
-      { "id": "reference_dump_wall_left", "name": "原图式货斗左侧加高壁", "factory": "dumpWallLeft", "category": "dump", "position": [4.05, 8.25, 5.2], "rotation": [0, 0, 0], "scale": [1, 1, 1], "visible": true, "locked": false },
-      { "id": "reference_dump_wall_right", "name": "原图式货斗右侧加高壁", "factory": "dumpWallRight", "category": "dump", "position": [4.05, 8.25, -5.2], "rotation": [0, 0, 0], "scale": [1, 1, 1], "visible": true, "locked": false },
-      { "id": "reference_front_armor", "name": "原图式重型前脸与保险杠", "factory": "frontArmor", "category": "front", "position": [-7.65, 4.35, 0], "rotation": [0, 0, 0], "scale": [1, 1, 1], "visible": true, "locked": false },
-      { "id": "reference_platform_railings", "name": "原图式前甲板栏杆", "factory": "railings", "category": "access", "position": [0, 0, 0], "rotation": [0, 0, 0], "scale": [1, 1, 1], "visible": true, "locked": false },
-      { "id": "reference_access_ladder", "name": "原图式前部登车梯", "factory": "accessLadder", "category": "access", "position": [-7.82, 0.55, 4.62], "rotation": [0, 0, 0], "scale": [1, 1, 1], "visible": true, "locked": false }
-    ]
-  },
   "categories": [
-    { "id": "structure", "name": "原型承载车体", "open": true },
-    { "id": "front", "name": "原型车头与设备", "open": true },
-    { "id": "dump", "name": "原型倾斜货斗", "open": true },
-    { "id": "habitation", "name": "斗内生活改造（待添加）", "open": true },
-    { "id": "wheels", "name": "原型轮组与传动", "open": true },
+    { "id": "structure", "name": "承载车体", "open": true },
+    { "id": "front", "name": "车头与双舱", "open": true },
+    { "id": "dump", "name": "倾斜货斗", "open": true },
+    { "id": "habitation", "name": "斗内生活改造", "open": true },
+    { "id": "wheels", "name": "八轮与主动悬挂", "open": true },
     { "id": "access", "name": "栏杆与通行结构", "open": false },
     { "id": "details", "name": "机械与外观细节", "open": false },
-    { "id": "reference", "name": "人物与尺度参考", "open": true },
     { "id": "addons", "name": "后续附加设施", "open": true }
   ],
   "anchors": [
@@ -78,18 +62,17 @@
     { "id": "rear_frame", "name": "车尾承载框架", "position": [10.7, 6.15, 0], "rotation": [0, 0, 0] }
   ],
   "camera": {
-    "position": [-18.5, 12.8, 19.5],
-    "target": [0, 4.8, 0],
-    "fov": 34
+    "position": [-31, 18.5, 29],
+    "target": [0, 6.1, 0],
+    "fov": 31
   },
   "modelNotes": [
-    "当前载入 Sketchfab 作者 gelber 发布的 Liebherr T284 GLB，保留其原始材质和贴图。",
-    "模型按轮径 4.9 米进行等比显示，不改变源模型长宽高比例。",
-    "源素材包含六轮结构；轮胎与轮毂仍分别是合并网格，尚未伪装成八个独立轮组。",
-    "车架、车头、驾驶室、设备箱、货斗、平台、栏杆、液压件和机械细节已按源网格组注册为可编辑对象。",
-    "原图外形改造件全部是额外独立对象，没有烘焙或破坏 T284 源模型。",
-    "保留源模型中的一名成年人作为约 2 米尺度参考，可从人物与尺度参考图层隐藏。",
-    "24 米车长、12 米以上车宽、8.9 米平台高度、八轮结构和 680 吨级数据保留为下一阶段改造硬目标。",
-    "帐篷、篝火、储物箱和铁棚可以作为独立设施添加到原型车辆安装点。"
+    "模型严格采用 1 单位 = 1 米，不再通过参考照片轮廓反推尺寸。",
+    "四根车轴、左右共八个轮组；每个轮组是可单独拆装的独立对象。",
+    "轮组表现为金属骨架、复合缓冲环和可更换耐磨块，不使用普通充气胎造型。",
+    "驾驶室在用户指定的左侧，设备室在右侧，两者均为独立对象。",
+    "原倾斜货斗、水平仓库地板、楔形低层空间、一期二层平台和承重柱互相独立。",
+    "6 立方米主水箱、1.5 立方米冷藏区和 3 立方米冷冻区均为独立可编辑对象。",
+    "额定载荷 680 吨作为工程元数据记录，不用于虚构未知的结构尺寸。"
   ]
 }
